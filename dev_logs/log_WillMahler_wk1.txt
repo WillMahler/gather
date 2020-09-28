@@ -1,1 +1,9 @@
-.
+- Had a Team meeting where we started planning out all of the high-level areas
+  we need to address and complete, along with the lower-level tasks within those
+  categories
+- Having a team meeting the week of Sept 27 to more or less finalize this
+  planning out and start delegating areas/tasks to people to work on
+- Also going to be discussing in this team meeting how we can ensure we meet the
+  deadlines and how often would be good to come together to touch base and
+  update each other
+- Will be pushing a basic android app commit

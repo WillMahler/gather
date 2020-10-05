@@ -1,0 +1,23 @@
+- Had a team meeting where:
+  - We decided to split the work in 2 areas with 2 team members on each
+  - One area is the backend/server, the other is the Android implementation/UI/UX
+  - Shaun and Will are doing the Android/UI/UX
+  - Katrina and Nick will be on the backend/server side
+- Pushed a basic Android app with min SDK for Android 8.0
+- We have access to 2 Android devices (Nick & Katrina)
+- Met with Shaun and we did more planning:
+  - Mapped out more screens that need to be present
+  - Mapped out more areas within Android that we need to handle
+  - Joined Shaun's Figma project, where we'll continue with mockups to
+    get everything planned out before we do any implementation
+- First screen that we are looking at implementing will be the login screen and
+  there are a couple of things to address on top of the UI
+  - Need to have logic in place where if you've already signed in, you go to
+    the home screen instead
+  - Need to have clarity that you can create an account/log in with Google/Facebook
+    "automatically", but if you want to create with email, you have to do that separately
+- Also need to figure out the account creation process for email...
+  - Forgot password flow
+  - Account creation; should they get a confirmation email and they have to confirm it?
+    Will probably need to get together as a team to sort that out, backend/server
+    involvement in them.

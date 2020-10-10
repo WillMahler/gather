@@ -1,0 +1,5 @@
+- Delegated tasks of project during team meeting and decided to have two sub-teams:
+	- Team 1 responsible for back-end services required for our system (Nick & Katrina).
+	- Team 2 responsible for front-end / Android integration (Shaun & Will).
+- Invited Will to Figma project to help finalize UI/UX of application before any development / 
+  implementation takes place.

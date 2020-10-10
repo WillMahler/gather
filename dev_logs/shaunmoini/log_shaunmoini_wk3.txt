@@ -1,0 +1,4 @@
+- Discussed UI and various user flows of application with Will.
+- Finilized UI through Figma project and moved onto development.
+- Initialized Android application with basic UI boilerplate based on Figma project.
+- Continuing to work on front-end of applcation and prepare for integration with back-end team.

@@ -1,0 +1,4 @@
+- Discussed with team the delegation of work and specific areas that must be
+  addressed early on in our development process.
+- Discussed priorities of different requirements for our system.
+- Continued to work on UI mockups using Figma.

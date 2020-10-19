@@ -3,8 +3,9 @@
 
     <!--nav bar-->
     <string name="title_home">Home</string>
-    <string name="title_calendar">Calendar</string>
     <string name="title_search">Search</string>
+    <string name="title_calendar">Calendar</string>
+    <string name="title_notification">Notifications</string>
     <string name="title_profile">Profile</string>
 
     <!--login page-->
@@ -12,4 +13,7 @@
     <string name="label_password">Password</string>
     <string name="label_login">Sign in</string>
     <string name="label_login_google">Sign in with Google</string>
+
+    <!--calendar page-->
+    <string name="events_this_month">Events this month</string>
 </resources>

@@ -18,18 +18,9 @@ public class SearchFragment extends Fragment {
 
     private com.WKNS.gather.ui.search.SearchViewModel searchViewModel;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        searchViewModel =
-                ViewModelProviders.of(this).get(com.WKNS.gather.ui.search.SearchViewModel.class);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        searchViewModel = ViewModelProviders.of(this).get(com.WKNS.gather.ui.search.SearchViewModel.class);
         View root = inflater.inflate(R.layout.fragment_search, container, false);
-        final TextView textView = root.findViewById(R.id.text_search);
-        searchViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
         return root;
     }
 }

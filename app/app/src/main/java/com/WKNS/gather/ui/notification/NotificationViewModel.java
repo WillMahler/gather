@@ -1,13 +1,13 @@
-package com.WKNS.gather.ui.search;
+package com.WKNS.gather.ui.notification;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class SearchViewModel extends ViewModel {
+public class NotificationViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public SearchViewModel() {
+    public NotificationViewModel() {
     }
 }

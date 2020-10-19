@@ -5,6 +5,8 @@
     <color name="colorAccent">@android:color/holo_orange_light</color>
 
     <color name="actionBarTitle">#000000</color>
+    <color name="actionBarBg">#FFFFFF</color>
+
     <color name="navBarText">#000000</color>
     <color name="navBarIdleIcon">#606060</color>
 </resources>

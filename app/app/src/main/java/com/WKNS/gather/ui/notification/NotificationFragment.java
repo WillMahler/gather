@@ -1,5 +1,6 @@
-package com.WKNS.gather.ui.profile;
+package com.WKNS.gather.ui.notification;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +15,12 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.WKNS.gather.R;
 
-public class ProfileFragment extends Fragment {
+public class NotificationFragment extends Fragment {
 
-    private com.WKNS.gather.ui.profile.ProfileViewModel profileViewModel;
+    private com.WKNS.gather.ui.notification.NotificationViewModel notificationViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        profileViewModel = ViewModelProviders.of(this).get(com.WKNS.gather.ui.profile.ProfileViewModel.class);
+        notificationViewModel = ViewModelProviders.of(this).get(com.WKNS.gather.ui.notification.NotificationViewModel.class);
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         return root;
     }

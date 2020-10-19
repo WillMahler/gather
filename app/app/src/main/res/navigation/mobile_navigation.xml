@@ -12,16 +12,22 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/navigation_search"
+        android:name="com.WKNS.gather.ui.search.SearchFragment"
+        android:label="@string/title_search"
+        tools:layout="@layout/fragment_search" />
+
+    <fragment
         android:id="@+id/navigation_calendar"
         android:name="com.WKNS.gather.ui.calendar.CalendarFragment"
         android:label="@string/title_calendar"
         tools:layout="@layout/fragment_calendar" />
 
     <fragment
-        android:id="@+id/navigation_search"
-        android:name="com.WKNS.gather.ui.search.SearchFragment"
-        android:label="@string/title_search"
-        tools:layout="@layout/fragment_search" />
+        android:id="@+id/navigation_notification"
+        android:name="com.WKNS.gather.ui.notification.NotificationFragment"
+        android:label="@string/title_notification"
+        tools:layout="@layout/fragment_notification" />
 
     <fragment
         android:id="@+id/navigation_profile"

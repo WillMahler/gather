@@ -16,4 +16,9 @@
 
     <!--calendar page-->
     <string name="events_this_month">Events this month</string>
+
+    <!--event details activity-->
+    <string name="tab_text_1">Overview</string>
+    <string name="tab_text_2">Tasks</string>
+    <string name="tab_text_3">Budget</string>
 </resources>

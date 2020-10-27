@@ -4,4 +4,3 @@
 - Many behind the scenes optimization and changes made for more fluid and consistent UI experience
     - Collborated with Will through Figma and made vital changes in regards to UI layout
     - Animations and 'bubbling' effect on button presses
-- Looking forward to begin some back-end integration in the following week

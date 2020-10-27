@@ -1,0 +1,6 @@
+- Continued work on front-end of application
+- Initialized event details tabbed activity
+    - Individual tabs for overview, tasks, and budgeting
+    - Users will be able to see all event details in overview tab (description, location, date, etc)
+    - Tasks can be delegated and completed in the tasks tab
+    - Funds can be managed and visually represented in budgeting tab

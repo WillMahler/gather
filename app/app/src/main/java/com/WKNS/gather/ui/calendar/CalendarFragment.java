@@ -8,13 +8,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-
 import com.WKNS.gather.CreateEventActivity;
-import com.WKNS.gather.LoginActivity;
-import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 public class CalendarFragment extends Fragment {
 

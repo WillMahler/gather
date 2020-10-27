@@ -11,7 +11,7 @@ public class CreateEventActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.create_event_activity);
+        setContentView(R.layout.activity_create_event);
 
         // setting title of action bar
         actionbar = findViewById(R.id.actionbar);

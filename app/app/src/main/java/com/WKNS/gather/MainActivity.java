@@ -1,7 +1,14 @@
 package com.WKNS.gather;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.core.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
@@ -13,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Toolbar actionBar;
     private BottomNavigationView navView;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +38,19 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+
+        if(!user.isEmailVerified()) {
+            Toast.makeText(this, "Please verify your email!", Toast.LENGTH_LONG).show();
+        }
     }
 
+    public void logout() {
+        FirebaseAuth.getInstance().signOut();
+        Toast.makeText(MainActivity.this, "Log Out Success.", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+        finish();
+    }
 }

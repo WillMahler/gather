@@ -1,0 +1,19 @@
+- Flushed out UI of mockups through Figma with Shaun
+- Planned out and held a team meeting where we went over a number of items, agenda
+  included:
+  - Commits to repo
+  - Documentation
+  - Figma Screens
+  - Logging in
+  - Logging out
+  - Image Setting and Storage
+  - Event Scheduling
+  - Task List (in the app)
+  - Budgeting (in the app)
+  - Forgot Your Password?
+  - App Notifications
+  - Notification Centre
+  - In-app Messaging
+  - User Profile / User Details
+- We did not get to discuss/address everything in the meeting this week, so a number
+  of items carried forward

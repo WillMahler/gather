@@ -1,0 +1,10 @@
+- Nick transferred the repo to my Github account so that I can implement the checks
+- Did hypothetical walkthroughs of the app via the Figma mockups to try to identify
+  every piece that needs to be implemented for D2
+- Delved into Firebase documentation and resources to try to help with data structuring
+- Created a ton of issues in Github in our repo (over 40) to track all of the items
+  that need to be completed for D2
+  - Where practical, filled out the issues with details/resources
+  - Where appropriate, linked issues and identified ones that would need to be
+    completed beforehand
+- Created issue labels and milestones on repo to help with tracking and progressing

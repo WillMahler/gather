@@ -1,0 +1,12 @@
+- Held a team meeting to go over items from last week's meeting that did not get
+  discussed
+- Planned and held the team meeting with new items that needed discussing, including:
+  - Database Structure Review
+  - Mockup Review
+  - Team Meeting Day/Time (to see if we could find another day/time)
+  - Deliverable #2
+  - Github Workflow
+- Decisions were made on many of these pieces and what we should start prioritizing for
+  D2. We decided to prioritize Authentication, Event Creation, Friend Requesting
+- We decided to do trunk-based development
+- Later on, I'll put in criteria for pull requests (reviewers/build success)

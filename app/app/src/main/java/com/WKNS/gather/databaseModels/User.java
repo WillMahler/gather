@@ -1,31 +1,38 @@
 package com.WKNS.gather.databaseModels;
 import android.net.Uri;
 
+import com.google.firebase.firestore.Exclude;
+
+import java.util.Map;
+
 // Represents a user in the Users collection
 public class User {
-    private String userID, firstName, lastName, email;
+    @Exclude private String userID;
+    private String firstName, lastName, email;
     private Uri photoURL;
 
     // Constructors
     public User() {}
 
-    public User(String userID, String firstName, String lastName, String email, Uri photoURL) {
-        this.userID = userID;
+    public User(String firstName, String lastName, String email, Uri photoURL) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.photoURL = photoURL;
     }
 
-    // Getters
-    public String getUserID() { return userID; }
+    // Getters + Setters
+    public String setUserID() { return userID; }
 
     public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
 
     public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
 
     public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
     public Uri getPhotoURL() { return photoURL; }
-
+    public void setPhotoURL(Uri photoURL) { this.photoURL = photoURL; }
 }

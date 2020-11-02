@@ -10,7 +10,12 @@ public class Event {
     @Exclude private String eventID;
     private String title;
     private String description;
+
+    private String ownerFirstName;
+    private String ownerLastName;
+
     private DateTime time;
+    private boolean published;
 
     //private Uri photo;
 
@@ -26,15 +31,19 @@ public class Event {
      * @param description   The description of the event
      * @param time          The time when the event happens
      */
-    public Event(String title, String description, DateTime time){
+    public Event(String title, String description, String ownerFirstName, String ownerLastName, DateTime time, boolean published){
         this.title = title;
         this.description = description;
+        this.ownerFirstName = ownerFirstName;
+        this.ownerLastName = ownerLastName;
         this.time = time;
+        this.published = published;
     }
 
-    public void addBudget(String key, Budget budget){
-
+    public void addBudget(String id, Budget budget){
+        budgetMap.put(id, budget);
     }
+
 
     //Setters
     public void setID(String eventID){
@@ -44,21 +53,27 @@ public class Event {
         this.title = title;
     }
     public void setDescription(String description) { this.description = description; }
+    public void setOwnerFirstName(String ownerFirstName){ this.ownerLastName = ownerFirstName; };
+    public void setOwnerLastName(String ownerLastName){ this.ownerLastName = ownerLastName; }
     public void setTime(DateTime time){
         this.time = time;
     }
+    public void setPublished(boolean published) { this.published = published; }
 
     //Getters
-    public String getID(){
+    public String getEventID(){
         return this.eventID;
     }
     public String getTitle(){
         return this.title;
     }
     public String getDescription() {
-        return description;
+        return this.description;
     }
-    public DateTime getTime() { return time; }
+    public String getOwnerFirstName(){ return this.ownerFirstName;}
+    public String getOwnerLastName(){ return this.ownerLastName;}
+    public DateTime getTime() { return this.time; }
+    public boolean isPublished() { return this.published;}
 
 
 }

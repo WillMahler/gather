@@ -1,4 +1,4 @@
-package com.WKNS.gather.databaseModels;
+package com.WKNS.gather.databaseModels.Events;
 
 import com.google.firebase.firestore.Exclude;
 
@@ -19,26 +19,28 @@ public class Budget {
         this.purchased = purchased;
     }
 
-    public void getID(String key){
-        this.budgetID = key;
+    //Setters
+    public void setBudgetID(String budgetID){
+        this.budgetID = budgetID;
     }
+    public void setName(String name) { this.name = name; }
+    public void setDescription(String description) { this.description = description; }
+    public void setCost(float cost) { this.cost = cost; }
+    public void setPurchased(boolean purchased) { this.purchased = purchased; }
 
-    public String getKey(){
+    //Getters
+    public String getBudgetIDID(){
         return this.budgetID;
     }
-
     public String getName() {
         return name;
     }
-
     public String getDescription() {
         return description;
     }
-
     public float getCost() {
         return cost;
     }
-
     public boolean getPurchased(){
         return purchased;
     }

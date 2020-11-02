@@ -1,4 +1,4 @@
-package com.WKNS.gather.databaseModels;
+package com.WKNS.gather.databaseModels.Users;
 
 import com.google.firebase.firestore.Exclude;
 

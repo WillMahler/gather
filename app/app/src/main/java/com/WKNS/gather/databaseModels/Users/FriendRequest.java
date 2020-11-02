@@ -1,15 +1,16 @@
-package com.WKNS.gather.databaseModels;
+package com.WKNS.gather.databaseModels.Users;
+
 import android.net.Uri;
 
-// Represents a friend in the User's Private sub-collection
-public class Friend {
-    private String firstName, lastName, userID;
+// Represents an outgoing/incoming friend request in User's Private sub-collection
+public class FriendRequest {
+    private String userID, firstName, lastName;
     private Uri photoURL;
 
     // Constructors
-    public Friend() {}
+    public FriendRequest() {}
 
-    public Friend(String userID, String firstName, String lastName, Uri photoURL) {
+    public FriendRequest(String userID, String firstName, String lastName, Uri photoURL) {
         this.userID = userID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -24,5 +25,4 @@ public class Friend {
     public String getLastName() { return lastName; }
 
     public Uri getPhotoURL() { return photoURL; }
-
 }

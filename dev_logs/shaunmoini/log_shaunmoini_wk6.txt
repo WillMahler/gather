@@ -1,0 +1,7 @@
+- Implemented user authentication with Firebase
+	- Users can sign in using their existing Google account
+	- Users can also register with email
+- Implemented 'forgot password' function that enables users to reset their password
+- Also put in place email verification method that requires users to supply a legitimate email during registration
+- Once a user is signed in they can not go back to log in screen unless they log out from profile page
+- Once a user is signed in, they will remain signed in even if app is closed and re-launched

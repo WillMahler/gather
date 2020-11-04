@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -85,12 +86,14 @@ public class LoginActivity extends AppCompatActivity {
                 String password = mPassword.getText().toString().trim();
 
                 // input validation
-                if (TextUtils.isEmpty(email)) {
+                if (email.isEmpty()) {
                     mEmail.setError("Email is Required.");
+                    mEmail.requestFocus();
                     return;
                 }
-                if (TextUtils.isEmpty(password)) {
+                if (password.isEmpty()) {
                     mPassword.setError("Password is Required.");
+                    mPassword.requestFocus();
                     return;
                 }
 
@@ -99,9 +102,14 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            //Toast.makeText(LoginActivity.this, "Log in Success.", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                            finish();
+                            if (mAuth.getCurrentUser().isEmailVerified()) {
+                                Toast.makeText(LoginActivity.this, "Log in Success.", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                finish();
+                            }
+                            else {
+                                Toast.makeText(getApplicationContext(), "Please verify your email!", Toast.LENGTH_SHORT).show();
+                            }
                         }
                         else {
                             Toast.makeText(LoginActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();

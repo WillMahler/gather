@@ -3,6 +3,7 @@ package com.WKNS.gather;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,7 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText mEmail, mPassword, mConfirm_password, mName;
+    private EditText mEmail, mPassword, mConfirm_password, mFirstName, mLastName;
     private Button mCancel_btn, mLogin_btn;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
@@ -34,7 +35,8 @@ public class RegisterActivity extends AppCompatActivity {
         mEmail               = findViewById(R.id.editText_emailAddress_register);
         mPassword            = findViewById(R.id.editText_password_register);
         mConfirm_password    = findViewById(R.id.editText_confirm_password);
-        mName                = findViewById(R.id.editText_name);
+        mFirstName           = findViewById(R.id.editText_firstName);
+        mLastName            = findViewById(R.id.editText_lastName);
         mCancel_btn          = findViewById(R.id.cancel_register);
         mLogin_btn           = findViewById(R.id.login_register);
         mAuth                = FirebaseAuth.getInstance();
@@ -52,27 +54,49 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = mEmail.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
                 String confirm_password = mConfirm_password.getText().toString().trim();
+                String first_name = mFirstName.getText().toString().trim();
+                String last_name = mLastName.getText().toString().trim();
 
                 // input validation
-                if (TextUtils.isEmpty(email)) {
+                if (email.isEmpty()) {
                     mEmail.setError("Email is required.");
+                    mEmail.requestFocus();
                     return;
                 }
-                if (TextUtils.isEmpty(password)) {
+                if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    mEmail.setError("Please provide valid email");
+                    mEmail.requestFocus();
+                    return;
+                }
+                if (password.isEmpty()) {
                     mPassword.setError("Password is required.");
+                    mPassword.requestFocus();
                     return;
                 }
                 if (password.length() < 6) {
                     mPassword.setError("Password must be at least 6 characters long.");
+                    mPassword.requestFocus();
                     return;
                 }
-                if (TextUtils.isEmpty(confirm_password)) {
+                if (confirm_password.isEmpty()) {
                     mConfirm_password.setError("Please confirm password.");
+                    mConfirm_password.requestFocus();
                     return;
                 }
                 if (!confirm_password.equals(password)) {
                     mPassword.setError("Passwords do not match.");
                     mConfirm_password.setError("Passwords do not match.");
+                    mConfirm_password.requestFocus();
+                    return;
+                }
+                if (first_name.isEmpty()) {
+                    mFirstName.setError("First name is required.");
+                    mFirstName.requestFocus();
+                    return;
+                }
+                if (last_name.isEmpty()) {
+                    mLastName.setError("Last name is required.");
+                    mLastName.requestFocus();
                     return;
                 }
 
@@ -86,12 +110,12 @@ public class RegisterActivity extends AppCompatActivity {
                             user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    //Toast.makeText(RegisterActivity.this, "Verification email has been sent.", Toast.LENGTH_SHORT).show();
+                                    // ...
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    //Toast.makeText(RegisterActivity.this, "Error: Verification email not sent, " +e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    // ...
                                 }
                             });
 

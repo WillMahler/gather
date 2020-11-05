@@ -1,4 +1,6 @@
 - Nick transferred the repo to my Github account so that I can implement the checks
+- Implemented the checks; pull requests require reviewer approval and must build
+  successfully in order to be able to merge into master
 - Did hypothetical walkthroughs of the app via the Figma mockups to try to identify
   every piece that needs to be implemented for D2
 - Delved into Firebase documentation and resources to try to help with data structuring
@@ -8,3 +10,4 @@
   - Where appropriate, linked issues and identified ones that would need to be
     completed beforehand
 - Created issue labels and milestones on repo to help with tracking and progressing
+- Started working on implementing RecyclerViews for the various pages that will have them

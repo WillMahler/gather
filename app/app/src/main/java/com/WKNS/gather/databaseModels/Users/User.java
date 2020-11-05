@@ -8,17 +8,14 @@ import java.util.Map;
 // Represents a user in the Users collection
 public class User {
     @Exclude private String userID;
-    private String firstName, lastName, email;
-    private Uri photoURL;
+    private String firstName, lastName;
 
     // Constructors
     public User() {}
 
-    public User(String firstName, String lastName, String email, Uri photoURL) {
+    public User(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
-        this.photoURL = photoURL;
     }
 
     // Getters + Setters
@@ -29,10 +26,4 @@ public class User {
 
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public Uri getPhotoURL() { return photoURL; }
-    public void setPhotoURL(Uri photoURL) { this.photoURL = photoURL; }
 }

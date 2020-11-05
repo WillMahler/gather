@@ -19,7 +19,8 @@ public class User {
     }
 
     // Getters + Setters
-    public String setUserID() { return userID; }
+    public String getUserID() { return this.userID; }
+    public void setUserID(String userID) { this.userID = userID; }
 
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }

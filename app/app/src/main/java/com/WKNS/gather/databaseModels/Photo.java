@@ -11,11 +11,11 @@ public class Photo {
         this.remoteUri = remoteUri;
     }
 
-    public String getLocalUri() {
-        return localUri;
-    }
-
-    public String getRemoteUri() {
-        return remoteUri;
-    }
+    //Setters
+    public void setLocalUri(String localUri){ this.localUri = localUri; }
+    public void setRemoteUri(String remoteUriUri){ this.remoteUri = remoteUri; }
+    
+    //Getters
+    public String getLocalUri() { return localUri; }
+    public String getRemoteUri() { return remoteUri; }
 }

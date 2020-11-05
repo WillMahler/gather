@@ -47,9 +47,10 @@ public class MainActivity extends AppCompatActivity {
         user = mAuth.getCurrentUser();
 
         assert user != null;
-        if (user.isEmailVerified()) return;
-        Toast.makeText(this, "Please verify your email!", Toast.LENGTH_SHORT).show();
-        logout();
+        if (!user.isEmailVerified()) {
+            Toast.makeText(this, "Please verify your email!", Toast.LENGTH_SHORT).show();
+            logout();
+        }
     }
 
     public void logout() {

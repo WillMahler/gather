@@ -7,7 +7,7 @@ import java.util.Map;
 
 // Represents a user in the Users collection
 public class User {
-    @Exclude private String userID;
+    @Exclude private String userID; // Matches UserID from Firebase Auth
     private String firstName, lastName;
 
     // Constructors

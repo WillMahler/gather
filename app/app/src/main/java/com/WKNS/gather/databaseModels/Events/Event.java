@@ -11,6 +11,7 @@ public class Event {
     private String title;
     private String description;
 
+    private String ownerID;
     private String ownerFirstName;
     private String ownerLastName;
 

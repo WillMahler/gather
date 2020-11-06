@@ -9,6 +9,7 @@ import com.google.type.DateTime;
 public class UserEvent {
     private String eventID;
     private DateTime date;
+    private String title;
     private String description;
     private Uri photoURL;
     private short status; // User's invite status; 0 if invited, -1 if denied, 1 if accepted

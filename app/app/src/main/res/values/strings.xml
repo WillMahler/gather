@@ -39,4 +39,12 @@
     <string name="label_last_name">Last</string>
     <string name="label_user_email">email</string>
     <string name="label_choose_img">Choose Image</string>
+
+    <!--notification fragment-->
+    <string name="notification_title_event">You\'ve Been Invited To:</string>
+    <string name="notification_title_friend">Friend Request From:</string>
+
+    <!--button text-->
+    <string name="button_accept">Accept</string>
+    <string name="button_decline">Decline</string>
 </resources>

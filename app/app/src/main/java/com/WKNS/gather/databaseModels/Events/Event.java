@@ -3,6 +3,7 @@ package com.WKNS.gather.databaseModels.Events;
 import com.google.firebase.firestore.Exclude;
 import com.google.type.DateTime;
 
+import java.util.Date;
 import java.util.Map;
 
 
@@ -16,7 +17,7 @@ public class Event {
     private String ownerLastName;
 
     //private String photo; TODO: find out how photos encoded/stored, can't be URI in firestore
-    private DateTime time;
+    private Date time;
     //private boolean published; TODO: discuss it more
 
     //private Uri photo;
@@ -33,7 +34,7 @@ public class Event {
      * @param description   The description of the event
      * @param time          The time when the event happens
      */
-    public Event(String title, String description, String ownerFirstName, String ownerLastName, DateTime time){
+    public Event(String title, String description, String ownerFirstName, String ownerLastName, Date time){
         this.title = title;
         this.description = description;
         this.ownerFirstName = ownerFirstName;
@@ -51,7 +52,7 @@ public class Event {
     public void setDescription(String description) { this.description = description; }
     public void setOwnerFirstName(String ownerFirstName){ this.ownerLastName = ownerFirstName; };
     public void setOwnerLastName(String ownerLastName){ this.ownerLastName = ownerLastName; }
-    public void setTime(DateTime time){
+    public void setTime(Date time){
         this.time = time;
     }
     //public void setPublished(boolean published) { this.published = published; }
@@ -68,7 +69,7 @@ public class Event {
     }
     public String getOwnerFirstName(){ return this.ownerFirstName;}
     public String getOwnerLastName(){ return this.ownerLastName;}
-    public DateTime getTime() { return this.time; }
+    public Date getTime() { return this.time; }
     //public boolean isPublished() { return this.published;}
 
 

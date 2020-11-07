@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.WKNS.gather.R;
+import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.testData.Event;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.HomeViewHolder> {
 
+    private ArrayList<UserEvent> mUserEvents;
     private ArrayList<Event> mEvents;
     private OnItemClickListener mOnItemClickListener;
 
@@ -53,8 +55,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         }
     }
 
-    public HomeRecyclerViewAdapter(ArrayList<Event> events) {
-        mEvents = events;
+    public HomeRecyclerViewAdapter(ArrayList<UserEvent> mUserEvents) {
+        this.mUserEvents= mUserEvents;
     }
 
     @NonNull
@@ -66,7 +68,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
     @Override
     public void onBindViewHolder(@NonNull HomeViewHolder holder, int position) {
-        Event e = mEvents.get(position);
+        UserEvent e = mUserEvents.get(position);
 
         holder.mImageView.setImageResource(R.drawable.ic_testimg_6_ft_apart_24);
         holder.mTextViewTitle.setText(e.getTitle());
@@ -76,6 +78,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
     @Override
     public int getItemCount() {
-        return mEvents.size();
+        return mUserEvents.size();
     }
 }

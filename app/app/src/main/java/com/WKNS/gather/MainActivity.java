@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.WKNS.gather.databaseModels.Users.User;
+import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -18,6 +19,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.type.DateTime;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +29,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -72,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
     public User getUserObject() {
         return userObject;
     }
+    public FirebaseUser getUserFireBase() { return currentUser; }
+    public FirebaseFirestore getFireStoreDB() {return db; }
 
     public void logout() {
         FirebaseAuth.getInstance().signOut();

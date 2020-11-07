@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    public static final String TAG = "TAG";
+        public static final String TAG = RegisterActivity.class.getSimpleName();
 
     private EditText mEmail, mPassword, mConfirm_password, mFirstName, mLastName;
     private Button mCancel_btn, mLogin_btn;

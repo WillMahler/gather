@@ -1,0 +1,5 @@
+- Created a test data module for testing the RecyclerViews
+- Thought about and worked on some design structures; one of which is
+  implementing a separate utility module for the database functions,
+  in order to keep them abstracted out of the activities & fragments
+- Implemented the home page's RecyclerView

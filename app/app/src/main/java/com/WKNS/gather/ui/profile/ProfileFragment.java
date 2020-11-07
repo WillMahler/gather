@@ -19,7 +19,7 @@ public class ProfileFragment extends Fragment {
 
     private com.WKNS.gather.ui.profile.ProfileViewModel profileViewModel;
     private ImageView mProfileImage;
-    private TextView firstName, lastName;
+    private TextView firstName, lastName, email;
     private Button mChooseImage, mLogout;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -29,11 +29,13 @@ public class ProfileFragment extends Fragment {
         mProfileImage = root.findViewById(R.id.profileImage);
         firstName = root.findViewById(R.id.firstName);
         lastName = root.findViewById(R.id.lastName);
+        email = root.findViewById(R.id.email);
         mChooseImage = root.findViewById(R.id.chooseImage);
         mLogout = root.findViewById(R.id.logout);
 
         firstName.setText(((MainActivity)getActivity()).getUserObject().getFirstName());
         lastName.setText(((MainActivity)getActivity()).getUserObject().getLastName());
+        email.setText(((MainActivity)getActivity()).getUserObject().getEmail());
 
         mChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -37,5 +37,6 @@
     <string name="label_logout">Log Out</string>
     <string name="label_first_name">First</string>
     <string name="label_last_name">Last</string>
+    <string name="label_user_email">email</string>
     <string name="label_choose_img">Choose Image</string>
 </resources>

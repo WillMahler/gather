@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.WKNS.gather.databaseModels.Users.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -61,7 +62,9 @@ public class MainActivity extends AppCompatActivity {
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                userObject = new User(value.getString("email"), value.getString("firstName"), value.getString("lastName"));
+                if(value != null) {
+                    userObject = new User(value.getString("email"), value.getString("firstName"), value.getString("lastName"));
+                }
             }
         });
     }

@@ -11,6 +11,7 @@ import android.nfc.Tag;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,16 +32,24 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
     public static final int GOOGLE_SIGN_IN_CODE = 10005;
+    public static final String TAG = "TAG";
+
     private EditText mEmail, mPassword;
     private Button mLogin_btn, mRegister_btn, mForgotPassword_btn;
     private SignInButton mSignInGoogle;
     private FirebaseAuth mAuth;
     private GoogleSignInOptions gso;
     private GoogleSignInClient gsc;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
         gsc     = GoogleSignIn.getClient(this, gso);
+        db      = FirebaseFirestore.getInstance();
 
         GoogleSignInAccount gsa = GoogleSignIn.getLastSignedInAccount(this);
 
@@ -192,15 +202,35 @@ public class LoginActivity extends AppCompatActivity {
         if(requestCode == GOOGLE_SIGN_IN_CODE) {
             Task<GoogleSignInAccount> signInTask = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                GoogleSignInAccount signInAccount = signInTask.getResult(ApiException.class);
+                final GoogleSignInAccount signInAccount = signInTask.getResult(ApiException.class);
                 final AuthCredential authCredential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(), null);
 
                 mAuth.signInWithCredential(authCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        //Toast.makeText(getApplicationContext(), "Google account connected!", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        finish();
+                        Toast.makeText(LoginActivity.this, "Log in Success.", Toast.LENGTH_SHORT).show();
+
+                        // storing user data in FireStore
+                        DocumentReference documentReference = db.collection("users").document(mAuth.getUid());
+                        final Map<String, Object> newUser = new HashMap<>();
+                        newUser.put("email", signInAccount.getEmail());
+                        newUser.put("firstName", signInAccount.getGivenName());
+                        newUser.put("lastName", signInAccount.getFamilyName());
+
+                        documentReference.set(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "user registered in db successfully");
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                finish();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, e.toString());
+                                finish();
+                            }
+                        });
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override

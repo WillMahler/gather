@@ -15,8 +15,9 @@ public class Event {
     private String ownerFirstName;
     private String ownerLastName;
 
+    //private String photo; TODO: find out how photos encoded/stored, can't be URI in firestore
     private DateTime time;
-    private boolean published;
+    //private boolean published; TODO: discuss it more
 
     //private Uri photo;
 
@@ -32,19 +33,13 @@ public class Event {
      * @param description   The description of the event
      * @param time          The time when the event happens
      */
-    public Event(String title, String description, String ownerFirstName, String ownerLastName, DateTime time, boolean published){
+    public Event(String title, String description, String ownerFirstName, String ownerLastName, DateTime time){
         this.title = title;
         this.description = description;
         this.ownerFirstName = ownerFirstName;
         this.ownerLastName = ownerLastName;
         this.time = time;
-        this.published = published;
     }
-
-    public void addBudget(String id, Budget budget){
-        budgetMap.put(id, budget);
-    }
-
 
     //Setters
     public void setID(String eventID){
@@ -59,7 +54,7 @@ public class Event {
     public void setTime(DateTime time){
         this.time = time;
     }
-    public void setPublished(boolean published) { this.published = published; }
+    //public void setPublished(boolean published) { this.published = published; }
 
     //Getters
     public String getEventID(){
@@ -74,7 +69,7 @@ public class Event {
     public String getOwnerFirstName(){ return this.ownerFirstName;}
     public String getOwnerLastName(){ return this.ownerLastName;}
     public DateTime getTime() { return this.time; }
-    public boolean isPublished() { return this.published;}
+    //public boolean isPublished() { return this.published;}
 
 
 }

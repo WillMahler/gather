@@ -1,26 +1,21 @@
 package com.WKNS.gather.databaseModels.Users;
-import android.net.Uri;
-
-import com.google.firebase.firestore.Exclude;
-
-import java.util.Map;
 
 // Represents a user in the Users collection
 public class User {
-    @Exclude private String userID; // Matches UserID from Firebase Auth
-    private String firstName, lastName;
+    private String email, firstName, lastName;
 
     // Constructors
     public User() {}
 
-    public User(String firstName, String lastName) {
+    public User(String email, String firstName, String lastName) {
+        this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
     // Getters + Setters
-    public String getUserID() { return this.userID; }
-    public void setUserID(String userID) { this.userID = userID; }
+    public String getEmail() { return this.email; }
+    public void setEmail(String email) { this.email = email; }
 
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }

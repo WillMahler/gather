@@ -16,8 +16,11 @@ import com.WKNS.gather.EventDetailsActivity;
 import com.WKNS.gather.R;
 import com.WKNS.gather.testData.Event;
 
+import java.util.ArrayList;
+
 public class HomeFragment extends Fragment {
 
+    private ArrayList<Event> mDataList;
     private HomeViewModel mHomeViewModel;
     private RecyclerView mRecyclerView;
     private HomeRecyclerViewAdapter mAdapter;
@@ -28,13 +31,15 @@ public class HomeFragment extends Fragment {
         mHomeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         mRoot = inflater.inflate(R.layout.fragment_home, container, false);
 
+        mDataList = Event.testEvents();
+
         mRecyclerView = mRoot.findViewById(R.id.recyclerView_Home);
         mRecyclerView.setHasFixedSize(true);
 
         mLayoutManager = new LinearLayoutManager(mRoot.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new HomeRecyclerViewAdapter(Event.testEvents());
+        mAdapter = new HomeRecyclerViewAdapter(mDataList);
         mRecyclerView.setAdapter(mAdapter);
 
         mAdapter.setOnItemClickListener(new HomeRecyclerViewAdapter.OnItemClickListener() {

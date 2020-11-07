@@ -24,7 +24,7 @@
         android:id="@+id/textView_email_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="54dp"
+        android:layout_marginStart="48dp"
         android:layout_marginTop="45dp"
         android:labelFor="@id/editText_emailAddress_register"
         android:text="@string/label_email"
@@ -35,11 +35,11 @@
         android:id="@+id/editText_emailAddress_register"
         android:layout_width="0dp"
         android:layout_height="45dp"
-        android:layout_marginStart="54dp"
-        android:layout_marginEnd="54dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginEnd="48dp"
+        android:drawableStart="@drawable/ic_round_email_24"
         android:ems="10"
         android:inputType="textEmailAddress"
-        android:drawableStart="@drawable/ic_round_email_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_email_register" />
@@ -48,7 +48,7 @@
         android:id="@+id/textView_password_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="54dp"
+        android:layout_marginStart="48dp"
         android:layout_marginTop="32dp"
         android:labelFor="@id/editText_password_register"
         android:text="@string/label_password"
@@ -59,11 +59,11 @@
         android:id="@+id/editText_password_register"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginStart="54dp"
-        android:layout_marginEnd="54dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginEnd="48dp"
+        android:drawableStart="@drawable/ic_round_lock_24"
         android:ems="10"
         android:inputType="textPassword"
-        android:drawableStart="@drawable/ic_round_lock_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_password_register" />
@@ -72,7 +72,7 @@
         android:id="@+id/textView_confirm_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="54dp"
+        android:layout_marginStart="48dp"
         android:layout_marginTop="32dp"
         android:labelFor="@id/editText_confirm_password"
         android:text="@string/label_confirm_password"
@@ -83,11 +83,11 @@
         android:id="@+id/editText_confirm_password"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginStart="54dp"
-        android:layout_marginEnd="54dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginEnd="48dp"
+        android:drawableStart="@drawable/ic_round_lock_24"
         android:ems="10"
         android:inputType="textPassword"
-        android:drawableStart="@drawable/ic_round_lock_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_confirm_password" />
@@ -96,25 +96,36 @@
         android:id="@+id/textView_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="54dp"
+        android:layout_marginStart="48dp"
         android:layout_marginTop="32dp"
-        android:labelFor="@id/editText_name"
-        android:text="@string/label_name"
+        android:labelFor="@id/editText_firstName"
+        android:text="@string/label_firstName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText_confirm_password" />
 
     <EditText
-        android:id="@+id/editText_name"
+        android:id="@+id/editText_firstName"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginStart="54dp"
-        android:layout_marginEnd="54dp"
-        android:ems="10"
-        android:inputType="textPassword"
+        android:layout_marginStart="48dp"
+        android:layout_marginEnd="10dp"
         android:drawableStart="@drawable/ic_round_person_24"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toStartOf="@+id/editText_lastName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_name" />
+
+    <EditText
+        android:id="@+id/editText_lastName"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="48dp"
+        android:drawableStart="@drawable/ic_round_person_24"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editText_firstName"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <Button
         android:id="@+id/cancel_register"
@@ -139,5 +150,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.65"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/label_lastName"
+        app:layout_constraintStart_toEndOf="@+id/editText_firstName"
+        app:layout_constraintTop_toBottomOf="@+id/editText_confirm_password" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

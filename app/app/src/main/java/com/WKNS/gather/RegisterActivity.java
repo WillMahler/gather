@@ -14,7 +14,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import androidx.annotation.NonNull;
@@ -24,13 +23,12 @@ import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    public static final String TAG = RegisterActivity.class.getSimpleName();
+    public static final String TAG = "TAG";
 
     private EditText mEmail, mPassword, mConfirm_password, mFirstName, mLastName;
-    private Button mCancel_btn, mLogin_btn;
+    private Button mCancel_btn, mRegister_btn;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,18 +41,21 @@ public class RegisterActivity extends AppCompatActivity {
         mFirstName           = findViewById(R.id.editText_firstName);
         mLastName            = findViewById(R.id.editText_lastName);
         mCancel_btn          = findViewById(R.id.cancel_register);
-        mLogin_btn           = findViewById(R.id.login_register);
+        mRegister_btn        = findViewById(R.id.login_register);
         mAuth                = FirebaseAuth.getInstance();
         db                   = FirebaseFirestore.getInstance();
 
+        // cancel button handler
         mCancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                 finish();
             }
         });
 
-        mLogin_btn.setOnClickListener(new View.OnClickListener() {
+        // register button handler
+        mRegister_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String email = mEmail.getText().toString().trim();
@@ -111,50 +112,54 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            currentUser = mAuth.getCurrentUser();
-                            // sending verification email
-                            currentUser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "Email verification sent!");
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d(TAG, "Email verification failed: " + e.toString());
-                                }
-                            });
-
-                            // storing user data in FireStore
-                            DocumentReference documentReference = db.collection("users").document(currentUser.getUid());
-                            final Map<String, Object> newUser = new HashMap<>();
-                            newUser.put("email", email);
-                            newUser.put("firstName", first_name);
-                            newUser.put("lastName", last_name);
-                            newUser.put("profileImage", "");
-
-                            documentReference.set(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "user registered in db successfully");
-                                    Toast.makeText(RegisterActivity.this, "Registration Successful.", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                                    finish();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d(TAG, e.toString());
-                                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                                    finish();
-                                }
-                            });
+                            sendVerificationEmail();
+                            storeUser(email, first_name, last_name, "");
                         }
                         else {
                             Toast.makeText(RegisterActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+            }
+        });
+    }
+
+    private void sendVerificationEmail() {
+        mAuth.getCurrentUser().sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "Email verification sent!");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Email verification failed: " + e.toString());
+            }
+        });
+    }
+
+    // creates user document in users collection in Firebase
+    private void storeUser(String email, String firstName, String lastName, String profileImg) {
+        DocumentReference documentReference = db.collection("users").document(mAuth.getCurrentUser().getUid());
+        final Map<String, Object> newUser = new HashMap<>();
+        newUser.put("email", email);
+        newUser.put("firstName", firstName);
+        newUser.put("lastName", lastName);
+        newUser.put("profileImg", profileImg);
+
+        documentReference.set(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "user stored in db successfully");
+                Toast.makeText(RegisterActivity.this, "Registration Successful.", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "user storage in db failed: " + e.toString());
+                finish();
             }
         });
     }

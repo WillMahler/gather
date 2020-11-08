@@ -30,7 +30,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,9 +42,9 @@ public class LoginActivity extends AppCompatActivity {
     private Button mLogin_btn, mRegister_btn, mForgotPassword_btn;
     private SignInButton mSignInGoogle;
     private FirebaseAuth mAuth;
-    private GoogleSignInOptions gso;
-    private GoogleSignInClient gsc;
-    private GoogleSignInAccount gsa;
+    private GoogleSignInOptions googleSignInOptions;
+    private GoogleSignInClient googleSignInClient;
+    private GoogleSignInAccount googleSignInAccount;
     private FirebaseFirestore db;
 
     @Override
@@ -53,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // ui elements
         mEmail              = findViewById(R.id.editText_emailAddress);
         mPassword           = findViewById(R.id.editText_password);
         mLogin_btn          = findViewById(R.id.login_btn);
@@ -60,14 +60,15 @@ public class LoginActivity extends AppCompatActivity {
         mRegister_btn       = findViewById(R.id.register_with_email);
         mForgotPassword_btn = findViewById(R.id.forgot_password);
 
-        mAuth   = FirebaseAuth.getInstance();
-        gso     = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("8447612036-rb3c55vtu67pnd073efocp9008c0ii78.apps.googleusercontent.com")
-                .requestEmail()
-                .build();
-        gsc     = GoogleSignIn.getClient(this, gso);
-        gsa     = GoogleSignIn.getLastSignedInAccount(this);
-        db      = FirebaseFirestore.getInstance();
+        // Firebase and Google api
+        mAuth                   = FirebaseAuth.getInstance();
+        googleSignInOptions     = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                .requestIdToken("8447612036-rb3c55vtu67pnd073efocp9008c0ii78.apps.googleusercontent.com")
+                                .requestEmail()
+                                .build();
+        googleSignInClient      = GoogleSignIn.getClient(this, googleSignInOptions);
+        googleSignInAccount     = GoogleSignIn.getLastSignedInAccount(this);
+        db                      = FirebaseFirestore.getInstance();
 
         // checking to see if user is already logged in
         if (mAuth.getCurrentUser() != null) {
@@ -80,11 +81,12 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         }
-        else if (gsa != null) {
+        else if (googleSignInAccount != null) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }
 
+        // log in button handler
         mLogin_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,36 +105,21 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                // authenticating user
-                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            if (mAuth.getCurrentUser().isEmailVerified()) {
-                                Toast.makeText(LoginActivity.this, "Log in Success.", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                finish();
-                            }
-                            else {
-                                Toast.makeText(getApplicationContext(), "Please verify your email!", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                        else {
-                            Toast.makeText(LoginActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                // authenticating user with Firebase
+                signInWithEmail(email, password);
             }
         });
 
+        // sign in with Google button handler
         mSignInGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = gsc.getSignInIntent();
+                Intent intent = googleSignInClient.getSignInIntent();
                 startActivityForResult(intent, GOOGLE_SIGN_IN_CODE);
             }
         });
 
+        // register button handler
         mRegister_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,6 +127,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // forgot password button handler
         mForgotPassword_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,17 +154,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String email = user_email.getText().toString();
-                        mAuth.sendPasswordResetEmail(email).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(LoginActivity.this, "Reset link sent to provided email.", Toast.LENGTH_SHORT).show();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(LoginActivity.this, "Error: Reset link not sent, " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        sendResetPasswordLink(email);
                     }
                 });
 
@@ -205,39 +183,79 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Toast.makeText(LoginActivity.this, "Log in Success.", Toast.LENGTH_SHORT).show();
-
-                        // storing user data in FireStore
-                        DocumentReference documentReference = db.collection("users").document(mAuth.getCurrentUser().getUid());
-                        final Map<String, Object> newUser = new HashMap<>();
-                        newUser.put("email", signInAccount.getEmail());
-                        newUser.put("firstName", signInAccount.getGivenName());
-                        newUser.put("lastName", signInAccount.getFamilyName());
-                        newUser.put("profileImage", signInAccount.getPhotoUrl().toString());
-
-                        documentReference.set(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "user registered in db successfully");
-                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                finish();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, e.toString());
-                                finish();
-                            }
-                        });
+                        storeUser(signInAccount.getEmail(), signInAccount.getGivenName(), signInAccount.getFamilyName(), signInAccount.getPhotoUrl().toString());
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        // do something...
+                        Log.d(TAG, "sign in with google failed: " + e.toString());
                     }
                 });
-            } catch (ApiException e) {
+            }
+
+            catch (ApiException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void signInWithEmail(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    if (mAuth.getCurrentUser().isEmailVerified()) {
+                        Toast.makeText(LoginActivity.this, "Log in Success.", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        finish();
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Please verify your email!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(LoginActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void sendResetPasswordLink(String email) {
+        mAuth.sendPasswordResetEmail(email).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(LoginActivity.this, "Reset link sent to provided email.", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(LoginActivity.this, "Error: Reset link not sent, " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // creates user document in users collection in Firebase
+    private void storeUser(String email, String firstName, String lastName, String profileImg) {
+        DocumentReference documentReference = db.collection("users").document(mAuth.getCurrentUser().getUid());
+        final Map<String, Object> newUser = new HashMap<>();
+        newUser.put("email", email);
+        newUser.put("firstName", firstName);
+        newUser.put("lastName", lastName);
+        newUser.put("profileImg", profileImg);
+
+        documentReference.set(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "user stored in db successfully");
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "user storage in db failed: " + e.toString());
+                finish();
+            }
+        });
     }
 }

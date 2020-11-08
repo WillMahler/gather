@@ -2,17 +2,17 @@ package com.WKNS.gather.databaseModels.Users;
 
 // Represents a user in the Users collection
 public class User {
-    private String userID, email, firstName, lastName, profileImage;
+    private String userID, email, firstName, lastName, profileImg;
 
     // Constructors
     public User() {}
 
-    public User(String userID, String email, String firstName, String lastName, String profileImage) {
+    public User(String userID, String email, String firstName, String lastName, String profileImg) {
         this.userID = userID;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.profileImage = profileImage;
+        this.profileImg = profileImg;
     }
 
     // Getters + Setters
@@ -28,6 +28,6 @@ public class User {
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
 
-    public String getProfileImage() { return profileImage; }
-    public void setProfileImage(String profileImage) { this.profileImage = profileImage; }
+    public String getProfileImage() { return profileImg; }
+    public void setProfileImage(String profileImage) { this.profileImg = profileImage; }
 }

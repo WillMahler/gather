@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,20 +37,21 @@ import static android.app.Activity.RESULT_OK;
 
 public class ProfileFragment extends Fragment {
 
-    private com.WKNS.gather.ui.profile.ProfileViewModel profileViewModel;
+    public static final String TAG = "TAG";
+
+    //private com.WKNS.gather.ui.profile.ProfileViewModel profileViewModel;
     private ImageView mProfileImage;
     private TextView firstName, lastName, email;
     private Button mChooseImage, mLogout;
-    private Uri imageUri;
-    private String downloadUrl;
+
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private StorageReference mStorageRef;
     private GoogleSignInAccount signInAccount;
-    private User currentUserObject;
+    private User userObject;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        profileViewModel = ViewModelProviders.of(this).get(com.WKNS.gather.ui.profile.ProfileViewModel.class);
+        //profileViewModel = ViewModelProviders.of(this).get(com.WKNS.gather.ui.profile.ProfileViewModel.class);
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
 
         mProfileImage = root.findViewById(R.id.profileImage);
@@ -63,19 +65,21 @@ public class ProfileFragment extends Fragment {
         storage = FirebaseStorage.getInstance();
         mStorageRef = storage.getReference();
         signInAccount = GoogleSignIn.getLastSignedInAccount(getContext());
-        currentUserObject = ((MainActivity)getActivity()).getUserObject();
+        userObject = ((MainActivity)getActivity()).getUserObject();
 
-        if(!currentUserObject.getProfileImage().isEmpty()) {
-            Picasso.get().load(currentUserObject.getProfileImage()).into(mProfileImage);
+        // populating fragment with user data
+        if(!userObject.getProfileImage().isEmpty()) {
+            Picasso.get().load(userObject.getProfileImage()).into(mProfileImage);
         }
-        firstName.setText(currentUserObject.getFirstName());
-        lastName.setText(currentUserObject.getLastName());
-        email.setText(currentUserObject.getEmail());
+        firstName.setText(userObject.getFirstName());
+        lastName.setText(userObject.getLastName());
+        email.setText(userObject.getEmail());
 
         if(signInAccount!= null) {
             mChooseImage.setVisibility(View.GONE);
         }
 
+        // choose image button handler
         mChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,6 +87,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        // log out button handler
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View root) {
@@ -114,9 +119,9 @@ public class ProfileFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == 1 && resultCode==RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            mProfileImage.setImageURI(imageUri);
-            uploadPicture();
+            Uri imageURI = data.getData();
+            mProfileImage.setImageURI(imageURI);
+            uploadPictureToDB(imageURI);
         }
     }
 
@@ -127,10 +132,10 @@ public class ProfileFragment extends Fragment {
         startActivityForResult(intent, 1);
     }
 
-    private void uploadPicture() {
+    private void uploadPictureToDB(Uri file) {
         final String randomKey = UUID.randomUUID().toString();
         final StorageReference ref = mStorageRef.child("profile_images/" + randomKey);
-        UploadTask uploadTask = ref.putFile(imageUri);
+        UploadTask uploadTask = ref.putFile(file);
 
         Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
@@ -146,29 +151,27 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
-                    downloadUrl = task.getResult().toString();
-                    updateUserProfilePhoto();
+                    updateUserProfilePhoto(task.getResult().toString());
                 }
                 else {
                     // Handle failures
                 }
             }
         });
-
     }
 
-    private void updateUserProfilePhoto() {
-        currentUserObject.setProfileImage(downloadUrl);
-        DocumentReference documentReference = db.collection("users").document(currentUserObject.getUserID());
-        documentReference.update("profileImage", downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+    private void updateUserProfilePhoto(String downloadUrl) {
+        userObject.setProfileImage(downloadUrl);
+        DocumentReference documentReference = db.collection("users").document(userObject.getUserID());
+        documentReference.update("profileImg", downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-
+                Log.d(TAG, "user document update success");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
+                Log.d(TAG, "user document update failed: " + e.toString());
             }
         });
     }

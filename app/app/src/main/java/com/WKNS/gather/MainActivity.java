@@ -3,22 +3,18 @@ package com.WKNS.gather;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
-
 import com.WKNS.gather.databaseModels.Users.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView navView;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private FirebaseUser currentUser;
     private User userObject;
 
     @Override
@@ -55,22 +50,17 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        currentUser = mAuth.getCurrentUser();
 
         // retrieving user data from database
-        DocumentReference documentReference = db.collection("users").document(currentUser.getUid());
+        DocumentReference documentReference = db.collection("users").document(mAuth.getCurrentUser().getUid());
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if(value != null) {
-                    userObject = new User(value.getString("email"), value.getString("firstName"), value.getString("lastName"));
+                    userObject = new User(mAuth.getCurrentUser().getUid(), value.getString("email"), value.getString("firstName"), value.getString("lastName"), value.getString("profileImage"));
                 }
             }
         });
-    }
-
-    public User getUserObject() {
-        return userObject;
     }
 
     public void logout() {
@@ -89,5 +79,9 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Log Out Failed.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public User getUserObject() {
+        return userObject;
     }
 }

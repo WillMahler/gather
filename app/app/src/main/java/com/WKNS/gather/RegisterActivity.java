@@ -1,5 +1,6 @@
 package com.WKNS.gather;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -16,16 +17,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
-        public static final String TAG = RegisterActivity.class.getSimpleName();
+    public static final String TAG = RegisterActivity.class.getSimpleName();
 
     private EditText mEmail, mPassword, mConfirm_password, mFirstName, mLastName;
     private Button mCancel_btn, mLogin_btn;
@@ -132,18 +131,21 @@ public class RegisterActivity extends AppCompatActivity {
                             newUser.put("email", email);
                             newUser.put("firstName", first_name);
                             newUser.put("lastName", last_name);
+                            newUser.put("profileImage", "");
 
                             documentReference.set(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Log.d(TAG, "user registered in db successfully");
                                     Toast.makeText(RegisterActivity.this, "Registration Successful.", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                                     finish();
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     Log.d(TAG, e.toString());
+                                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                                     finish();
                                 }
                             });

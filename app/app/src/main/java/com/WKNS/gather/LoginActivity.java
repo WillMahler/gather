@@ -4,19 +4,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -48,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private GoogleSignInOptions gso;
     private GoogleSignInClient gsc;
+    private GoogleSignInAccount gsa;
     private FirebaseFirestore db;
 
     @Override
@@ -68,9 +66,8 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
         gsc     = GoogleSignIn.getClient(this, gso);
+        gsa     = GoogleSignIn.getLastSignedInAccount(this);
         db      = FirebaseFirestore.getInstance();
-
-        GoogleSignInAccount gsa = GoogleSignIn.getLastSignedInAccount(this);
 
         // checking to see if user is already logged in
         if (mAuth.getCurrentUser() != null) {
@@ -210,11 +207,12 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "Log in Success.", Toast.LENGTH_SHORT).show();
 
                         // storing user data in FireStore
-                        DocumentReference documentReference = db.collection("users").document(mAuth.getUid());
+                        DocumentReference documentReference = db.collection("users").document(mAuth.getCurrentUser().getUid());
                         final Map<String, Object> newUser = new HashMap<>();
                         newUser.put("email", signInAccount.getEmail());
                         newUser.put("firstName", signInAccount.getGivenName());
                         newUser.put("lastName", signInAccount.getFamilyName());
+                        newUser.put("profileImage", signInAccount.getPhotoUrl().toString());
 
                         documentReference.set(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override

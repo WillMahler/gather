@@ -3,3 +3,5 @@
   implementing a separate utility module for the database functions,
   in order to keep them abstracted out of the activities & fragments
 - Implemented the home page's RecyclerView
+- Implemented the notification page's RecyclerView
+- Implemented the calendar page's RecyclerView

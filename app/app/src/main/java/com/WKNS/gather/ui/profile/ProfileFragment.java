@@ -33,6 +33,7 @@ public class ProfileFragment extends Fragment {
         mChooseImage = root.findViewById(R.id.chooseImage);
         mLogout = root.findViewById(R.id.logout);
 
+        mProfileImage.setImageResource(R.drawable.ic_baseline_person_24);
         firstName.setText(((MainActivity)getActivity()).getUserObject().getFirstName());
         lastName.setText(((MainActivity)getActivity()).getUserObject().getLastName());
         email.setText(((MainActivity)getActivity()).getUserObject().getEmail());

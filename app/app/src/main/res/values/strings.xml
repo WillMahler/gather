@@ -47,4 +47,6 @@
     <!--button text-->
     <string name="button_accept">Accept</string>
     <string name="button_decline">Decline</string>
+    <string name="gatherings">Gatherings</string>
+    <string name="people">People</string>
 </resources>

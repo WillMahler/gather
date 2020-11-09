@@ -1,0 +1,12 @@
+- Implemented the search page's RecyclerView
+- Wrote out everything we still have left to do to get the base
+  functionality down
+- Went through our D1 submission and identified pieces we haven't done
+- Discussed with group during meeting and decided which of these items were
+  realistic to complete for the end of the project timeline
+- Held a few meetings to put together the D2 demo report and run through
+  the prototype demo
+- Suggested we do standup meetings every 2-3 days to keep better on track,
+  group agreed; scheduled these and sent calendar invites
+- Holding a meeting to get all our items into GitHub as issues and figure
+  out triaging them to try to ensure we complete our app

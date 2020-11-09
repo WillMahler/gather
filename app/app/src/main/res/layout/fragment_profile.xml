@@ -21,8 +21,7 @@
         <ImageView
             android:id="@+id/profileImage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/default_profile_img" />
+            android:layout_height="match_parent" />
 
     </androidx.cardview.widget.CardView>
 

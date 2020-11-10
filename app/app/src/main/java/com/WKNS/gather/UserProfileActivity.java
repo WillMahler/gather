@@ -4,10 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class UserProfileActivity extends AppCompatActivity {
 
+    private ImageView mImageView;
     private Toolbar actionbar;
     private TextView firstName, lastName, email;
 
@@ -19,6 +21,12 @@ public class UserProfileActivity extends AppCompatActivity {
         firstName = findViewById(R.id.firstName_external);
         lastName = findViewById(R.id.lastName_external);
         email = findViewById(R.id.email_external);
+        mImageView = findViewById(R.id.profileImage);
+
+        // TODO Remove these later, this is just for display for the D2 demo
+        firstName.setText("Gordon");
+        lastName.setText("Ramsay");
+        mImageView.setImageResource(R.drawable.ic_baseline_person_24);
 
         // setting title of action bar
         actionbar = findViewById(R.id.actionbar);

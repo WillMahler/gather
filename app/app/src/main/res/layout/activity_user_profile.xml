@@ -22,8 +22,7 @@
         <ImageView
             android:id="@+id/profileImage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/default_profile_img" />
+            android:layout_height="match_parent" />
 
     </androidx.cardview.widget.CardView>
 
@@ -46,6 +45,7 @@
         android:id="@+id/lastName_external"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="@string/label_last_name"
         android:textAlignment="center"
         android:textColor="#434343"
@@ -53,7 +53,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/firstName" />
+        app:layout_constraintTop_toBottomOf="@+id/firstName_external" />
 
     <TextView
         android:id="@+id/email_external"

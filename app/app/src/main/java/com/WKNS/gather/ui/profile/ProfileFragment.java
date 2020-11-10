@@ -68,9 +68,10 @@ public class ProfileFragment extends Fragment {
         userObject = ((MainActivity)getActivity()).getUserObject();
 
         // populating fragment with user data
-        if(!userObject.getProfileImage().isEmpty()) {
+        /*if(!userObject.getProfileImage().isEmpty()) {
             Picasso.get().load(userObject.getProfileImage()).into(mProfileImage);
-        }
+        }*/
+        mProfileImage.setImageResource(R.drawable.ic_baseline_person_24);
         firstName.setText(userObject.getFirstName());
         lastName.setText(userObject.getLastName());
         email.setText(userObject.getEmail());

@@ -19,8 +19,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.type.DateTime;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,7 +27,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
@@ -73,9 +70,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public User getUserObject() {
-        return userObject;
-    }
+
+    public User getUserObject() { return userObject; }
     public FirebaseUser getUserFireBase() { return currentUser; }
     public FirebaseFirestore getFireStoreDB() {return db; }
 

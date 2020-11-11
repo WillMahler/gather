@@ -26,7 +26,7 @@ import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String TAG = "TAG";
+    public static final String TAG = MainActivity.class.getSimpleName();
 
     private Toolbar actionBar;
     private BottomNavigationView navView;

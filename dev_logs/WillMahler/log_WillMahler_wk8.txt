@@ -10,3 +10,6 @@
   group agreed; scheduled these and sent calendar invites
 - Holding a meeting to get all our items into GitHub as issues and figure
   out triaging them to try to ensure we complete our app
+- Worked with Shaun on the Event pages; implemented a base layout for the
+  Overview tab of the Event page (when you view an existing event),
+  while he did one for the create Event page

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,8 +20,14 @@ import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.testData.Event;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -35,6 +42,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private View mRoot;
     private FirebaseFirestore db;
+    private CollectionReference userCollections;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mHomeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
@@ -66,9 +74,16 @@ public class HomeFragment extends Fragment {
         });
 
         //TODO: BATCH the requests for events, limit it to 15 most recent events??
-        db.collection("users").document(((MainActivity)getActivity()).getUserFireBase().getUid())
-                .collection("userEvents")
-                .get()
+        userCollections = db.collection("users").document(((MainActivity)getActivity()).getUserFireBase().getUid())
+                .collection("userEvents");
+
+        getUserEvents();
+
+        return mRoot;
+    }
+
+    public void getUserEvents(){
+        userCollections.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -86,8 +101,5 @@ public class HomeFragment extends Fragment {
                         }
                     }
                 });
-
-
-        return mRoot;
     }
 }

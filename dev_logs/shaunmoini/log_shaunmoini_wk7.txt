@@ -1,0 +1,6 @@
+- Completed user profile page by adding missing UI elements from Figma mockups
+- User profiles now stored in Firebase upon registration
+	- User profiles hold an email, first and last name, and a profile photo
+	- When signing in with Google, user information is pulled from their google account
+- User profile fragment is populated with information queried from Firebase upon sign in
+- User profile photo can now be changed in the profile fragment

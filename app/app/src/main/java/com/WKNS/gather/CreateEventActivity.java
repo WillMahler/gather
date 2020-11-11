@@ -7,13 +7,19 @@ import androidx.viewpager.widget.ViewPager;
 import android.os.Bundle;
 import android.view.View;
 
-import com.WKNS.gather.ui.tabbedView.SectionsPagerAdapter;
+import com.WKNS.gather.ui.tabbedViewFragments.CreateEventBudget;
+import com.WKNS.gather.ui.tabbedViewFragments.CreateEventSummary;
+import com.WKNS.gather.ui.tabbedViewFragments.CreateEventTasks;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 public class CreateEventActivity extends AppCompatActivity {
 
     private Toolbar actionbar;
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+    private SectionsPagerAdapter mAdapter;
+
     private FloatingActionButton mFab;
 
     @Override
@@ -21,11 +27,23 @@ public class CreateEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
+        // Tab layout
+        mTabLayout = (TabLayout) findViewById(R.id.tabs);
+
+        // View pager
+        mViewPager  = (ViewPager) findViewById(R.id.view_pager);
+
+        // Adapter
+        mAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        // 2 Tabs
+        mAdapter.addFrag(new CreateEventSummary(), getString(R.string.tab_text_1));
+        mAdapter.addFrag(new CreateEventTasks(), getString(R.string.tab_text_2));
+        mAdapter.addFrag(new CreateEventBudget(), getString(R.string.tab_text_3));
+
+        mViewPager.setAdapter(mAdapter);
+
+        mTabLayout.setupWithViewPager(mViewPager);
 
         // setting title of action bar
         actionbar = findViewById(R.id.actionbar);

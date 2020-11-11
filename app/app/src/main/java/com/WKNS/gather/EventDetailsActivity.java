@@ -6,23 +6,40 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
 
-import com.WKNS.gather.ui.tabbedView.SectionsPagerAdapter;
+import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsBudget;
+import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsSummary;
+import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsTasks;
 import com.google.android.material.tabs.TabLayout;
 
 public class EventDetailsActivity extends AppCompatActivity {
 
     private Toolbar actionbar;
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+    private SectionsPagerAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
+        // Tab layout
+        mTabLayout = (TabLayout) findViewById(R.id.tabs);
+
+        // View pager
+        mViewPager  = (ViewPager) findViewById(R.id.view_pager);
+
+        // Adapter
+        mAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        // 2 Tabs
+        mAdapter.addFrag(new EventDetailsSummary(), getString(R.string.tab_text_1));
+        mAdapter.addFrag(new EventDetailsTasks(), getString(R.string.tab_text_2));
+        mAdapter.addFrag(new EventDetailsBudget(), getString(R.string.tab_text_3));
+
+        mViewPager.setAdapter(mAdapter);
+
+        mTabLayout.setupWithViewPager(mViewPager);
 
         // setting title of action bar
         actionbar = findViewById(R.id.actionbar);

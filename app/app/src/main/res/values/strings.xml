@@ -18,10 +18,16 @@
     <string name="label_cancel">Cancel</string>
     <string name="label_register">Register</string>
 
-    <!--event details activity-->
+    <!--event create/details activity-->
     <string name="tab_text_1">Overview</string>
     <string name="tab_text_2">Tasks</string>
     <string name="tab_text_3">Budget</string>
+
+    <!--create event activity-->
+    <string name="label_event_title">Title</string>
+    <string name="label_event_date">Date</string>
+    <string name="label_event_location">Location</string>
+    <string name="label_event_description">Description</string>
 
     <!--nav bar-->
     <string name="title_home">Home</string>

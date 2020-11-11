@@ -77,29 +77,30 @@ public class HomeFragment extends Fragment {
         userCollections = db.collection("users").document(((MainActivity)getActivity()).getUserFireBase().getUid())
                 .collection("userEvents");
 
-        getUserEvents();
-
-        return mRoot;
-    }
-
-    public void getUserEvents(){
-        userCollections.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            int itemsAdded = 0;
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                itemsAdded++;
-                                mUserEvents.add(document.toObject(UserEvent.class));
-                            }
-
-                            mAdapter.notifyItemRangeInserted(0, mUserEvents.size());
-
-                        } else {
-                            //Add an box saying the user has no events
-                        }
+        userCollections.addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot querySnapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    return;
+                }
+                int sizeMUserevents = mUserEvents.size();
+                int addedDocuments = 0;
+                for (DocumentChange change : querySnapshot.getDocumentChanges()) {
+                    if (change.getType() == DocumentChange.Type.ADDED) {
+                        //Log.d(TAG, "New city:" + change.getDocument().getData());
                     }
-                });
+
+                    mUserEvents.add(change.getDocument().toObject(UserEvent.class));
+                    addedDocuments++;
+                    String source = querySnapshot.getMetadata().isFromCache() ?
+                            "local cache" : "server";
+
+                    Log.d("FETCH ", "Data fetched from " + source);
+                }
+                mAdapter.notifyItemRangeInserted(sizeMUserevents, addedDocuments);
+            }
+        });;
+        return mRoot;
     }
 }

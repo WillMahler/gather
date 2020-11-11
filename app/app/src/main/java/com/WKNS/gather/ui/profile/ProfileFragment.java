@@ -37,7 +37,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class ProfileFragment extends Fragment {
 
-    public static final String TAG = "TAG";
+    public static final String TAG = ProfileFragment.class.getSimpleName();
 
     //private com.WKNS.gather.ui.profile.ProfileViewModel profileViewModel;
     private ImageView mProfileImage;

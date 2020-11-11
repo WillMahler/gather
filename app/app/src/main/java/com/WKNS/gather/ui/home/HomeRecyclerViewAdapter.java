@@ -16,9 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.HomeViewHolder> {
-
     private ArrayList<UserEvent> mUserEvents;
-    private ArrayList<Event> mEvents;
     private OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {

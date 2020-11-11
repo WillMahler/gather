@@ -30,7 +30,7 @@ public class UserEvent {
         this.status = status;
     }
     //Setters
-    public void eventID(String eventID) { this.eventID = eventID; }
+    public void eventID(String eventID) { this.eventID = eventID; } //This can't be named setEventID otherwise value is added to firebase
     public void setTitle(String title) { this.title = title; }
     public void setDescription(String description) { this.description = description; }
     public void setOwnerFirstName(String ownerFirstName) { this.ownerFirstName = ownerFirstName; }

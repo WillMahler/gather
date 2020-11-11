@@ -10,13 +10,15 @@ import com.WKNS.gather.ui.tabbedView.SectionsPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 
 public class EventDetailsActivity extends AppCompatActivity {
-
+    private String eventID;
     private Toolbar actionbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
+
+        eventID = getIntent().getStringExtra("EXTRA_SESSION_ID"); // Passed on from home fragment
 
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);

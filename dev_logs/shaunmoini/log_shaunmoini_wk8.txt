@@ -2,7 +2,7 @@
 - Implemented logs on key points in authentication process & user profile create in database 
   allowing for easier debugging
 - Added UI elements to the 'CreateEvent' activity:
-	- UI design for this activity follows the same idea for the 'SpecificEvent' activity
-	- Holds a TabbedView with 3 tabs for the different sections of an event: summary, tasks,
+	- Holds a TabbedView with 3 tabs for the different sections of an event: overview, tasks,
 	  and budget
-- Must discuss details with Will as he will be completing the 'SpecificEvent' activity UI
+	- Overview tab allows user to add a photo, title, date, location, and description
+	- Tasks and budgeting to be determined

@@ -75,7 +75,7 @@ public class HomeFragment extends Fragment {
         });
 
         //TODO: BATCH the requests for events, limit it to 15 most recent events??
-        userCollections = db.collection("users").document(((MainActivity)getActivity()).getUserObject().getUserID())
+        userCollections = db.collection("users").document(((MainActivity)getActivity()).getUserID())
                 .collection("userEvents");
 
         userCollections.addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
@@ -93,7 +93,7 @@ public class HomeFragment extends Fragment {
                     }
                     UserEvent retrieved = change.getDocument().toObject(UserEvent.class);
                     retrieved.eventID(change.getDocument().getReference().getId());
-                    Log.d("nick scott", retrieved.eventID());
+
                     mUserEvents.add(retrieved);
                     addedDocuments++;
                     String source = querySnapshot.getMetadata().isFromCache() ?
@@ -101,9 +101,12 @@ public class HomeFragment extends Fragment {
 
                     Log.d("FETCH ", "Data fetched from " + source);
                 }
+
                 mAdapter.notifyItemRangeInserted(sizeMUserevents, addedDocuments);
             }
         });;
         return mRoot;
     }
+
+    public FirebaseFirestore getFireStoreDB() {return db; }
 }

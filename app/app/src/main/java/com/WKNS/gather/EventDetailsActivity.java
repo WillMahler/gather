@@ -10,6 +10,7 @@ import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsBudget;
 import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsSummary;
 import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsTasks;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EventDetailsActivity extends AppCompatActivity {
     private String eventID;
@@ -17,6 +18,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private SectionsPagerAdapter mAdapter;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

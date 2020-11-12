@@ -88,5 +88,6 @@ public class MainActivity extends AppCompatActivity {
     public User getUserObject() {
         return userObject;
     }
+    public String getUserID(){return mAuth.getUid(); }
     public FirebaseFirestore getFireStoreDB() {return db; }
 }

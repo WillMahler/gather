@@ -75,7 +75,7 @@ public class HomeFragment extends Fragment {
         });
 
         //TODO: BATCH the requests for events, limit it to 15 most recent events??
-        userCollections = db.collection("users").document(((MainActivity)getActivity()).getUserFireBase().getUid())
+        userCollections = db.collection("users").document(((MainActivity)getActivity()).getUserObject().getUserID())
                 .collection("userEvents");
 
         userCollections.addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {

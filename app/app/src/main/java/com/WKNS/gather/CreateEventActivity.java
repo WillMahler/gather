@@ -6,24 +6,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.ContextThemeWrapper;
 import android.view.View;
-import android.widget.DatePicker;
-import android.widget.EditText;
 
 import com.WKNS.gather.ui.tabbedViewFragments.CreateEventBudget;
 import com.WKNS.gather.ui.tabbedViewFragments.CreateEventSummary;
 import com.WKNS.gather.ui.tabbedViewFragments.CreateEventTasks;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-
-import java.util.Calendar;
 
 public class CreateEventActivity extends AppCompatActivity {
 
@@ -36,7 +28,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
     private Fragment summaryFragment, taskFragment, budgetFragment;
 
-    private FloatingActionButton mFabCancel, mFabDone;
+    public FloatingActionButton mFabCancel, mFabDone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,13 +91,17 @@ public class CreateEventActivity extends AppCompatActivity {
                         .setPositiveButton("Publish", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // publish event here
+                                if(((CreateEventSummary)summaryFragment).validateData()) {
+                                    // call publish function in 'CreateEventSummary here
+                                    finish();
+                                }
                             }
                         })
                         .setNegativeButton("Draft", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // draft event here
+                                // call draft function in 'CreateEventSummary here
+                                finish();
                             }
                         });
                 AlertDialog alertDialog = builder.create();

@@ -11,3 +11,4 @@
 	- Character limit set on the fields
 	- Date formatted properly
 	- Added buttons and dialog that allow for saving, drafting, or deletion of an event
+	- Data validation

@@ -31,6 +31,7 @@ import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
@@ -43,11 +44,24 @@ public class HomeFragment extends Fragment {
     private FirebaseFirestore db;
     private CollectionReference userEventsCollection;
 
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mUserEvents = ((MainActivity)getActivity()).getmUserEvents();
+
+        ((MainActivity)getActivity()).setFragmentRefreshListener(new MainActivity.FragmentRefreshListener() {
+            @Override
+            public void onRefresh(ArrayList<UserEvent> userEvents) {
+                mUserEvents.clear();
+                mUserEvents.addAll(userEvents);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mHomeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         mRoot = inflater.inflate(R.layout.fragment_home, container, false);
-
-        db = ((MainActivity)getActivity()).getFireStoreDB();
 
         mRecyclerView = mRoot.findViewById(R.id.recyclerView_Home);
         mRecyclerView.setHasFixedSize(true);
@@ -55,10 +69,9 @@ public class HomeFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(mRoot.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mUserEvents = new ArrayList<UserEvent>();
         mAdapter = new HomeRecyclerViewAdapter(mUserEvents);
         mRecyclerView.setAdapter(mAdapter);
-
+        Log.d("Nick ", "adapter setup " + mUserEvents.size());
         mAdapter.setOnItemClickListener(new HomeRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -74,39 +87,15 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-        //TODO: BATCH the requests for events, limit it to 15 most recent events??
-        userEventsCollection = db.collection("users").document(((MainActivity)getActivity()).getUserID())
-                .collection("userEvents");
-
-        userEventsCollection.addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot querySnapshot,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    return;
-                }
-                int sizeMUserevents = mUserEvents.size();
-                int addedDocuments = 0;
-                for (DocumentChange change : querySnapshot.getDocumentChanges()) {
-                    if (change.getType() == DocumentChange.Type.ADDED) {
-                        //Log.d(TAG, "New city:" + change.getDocument().getData());
-                    }
-                    UserEvent retrieved = change.getDocument().toObject(UserEvent.class);
-                    retrieved.eventID(change.getDocument().getReference().getId());
-
-                    mUserEvents.add(retrieved);
-                    addedDocuments++;
-                    String source = querySnapshot.getMetadata().isFromCache() ?
-                            "local cache" : "server";
-
-                    Log.d("FETCH ", "Data fetched from " + source);
-                }
-
-                mAdapter.notifyItemRangeInserted(sizeMUserevents, addedDocuments);
-            }
-        });;
         return mRoot;
+    }
+
+    public void notifyChange(ArrayList<UserEvent> userEvents) {
+        Log.d("Nick ", "adding " + userEvents.size() + " events");
+        mUserEvents.clear();
+        mUserEvents.addAll(userEvents);
+        mAdapter.notifyDataSetChanged();
+        //mAdapter.notifyItemRangeInserted(0, userEvents.size());
     }
 
     public FirebaseFirestore getFireStoreDB() {return db; }

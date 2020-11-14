@@ -28,9 +28,6 @@ public class EventDetailsSummary extends Fragment {
         return inflater.inflate(R.layout.fragment_event_details_summary, container, false);
     }
 
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState, String eventID) {
-        return inflater.inflate(R.layout.fragment_event_details_summary, container, false);
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

@@ -2,6 +2,7 @@ package com.WKNS.gather;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 import com.WKNS.gather.databaseModels.Users.User;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
@@ -12,11 +13,16 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +31,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
+import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private User userObject;
+    private ArrayList<UserEvent> mUserEvents;
+    //private CollectionReference userEventsCollection;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        CollectionReference userEventsCollection = db.collection("users").document(mAuth.getUid())
+                .collection("userEvents");
     }
 
     public void logout() {
@@ -83,6 +97,39 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Log Out Failed.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void listenUserEvents(){
+        //TODO: BATCH the requests for events, limit it to 15 most recent events??
+
+
+        userEventsCollection.addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot querySnapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if(mUserEvents == null) { mUserEvents = new ArrayList<UserEvent>(); }
+                if (e != null) {
+                    return;
+                }
+                int sizeMUserevents = mUserEvents.size();
+                int addedDocuments = 0;
+                for (DocumentChange change : querySnapshot.getDocumentChanges()) {
+                    if (change.getType() == DocumentChange.Type.ADDED) {
+                        //Log.d(TAG, "New city:" + change.getDocument().getData());
+                    }
+                    UserEvent retrieved = change.getDocument().toObject(UserEvent.class);
+                    retrieved.eventID(change.getDocument().getReference().getId());
+
+                    mUserEvents.add(retrieved);
+                    addedDocuments++;
+                    String source = querySnapshot.getMetadata().isFromCache() ?
+                            "local cache" : "server";
+
+                    Log.d("FETCH ", "Data fetched from " + source);
+                }
+            }
+        });;
+
     }
 
     public User getUserObject() {

@@ -1,5 +1,7 @@
 package com.WKNS.gather.databaseModels.Events;
 
+import android.util.Log;
+
 import com.google.firebase.firestore.Exclude;
 import com.google.type.DateTime;
 
@@ -34,9 +36,10 @@ public class Event {
      * @param description   The description of the event
      * @param time          The time when the event happens
      */
-    public Event(String title, String description, String ownerFirstName, String ownerLastName, Date time){
+    public Event(String title, String description, String ownerID, String ownerFirstName, String ownerLastName, Date time){
         this.title = title;
         this.description = description;
+        this.ownerID = ownerID;
         this.ownerFirstName = ownerFirstName;
         this.ownerLastName = ownerLastName;
         this.time = time;
@@ -50,7 +53,8 @@ public class Event {
         this.title = title;
     }
     public void setDescription(String description) { this.description = description; }
-    public void setOwnerFirstName(String ownerFirstName){ this.ownerLastName = ownerFirstName; };
+    public void setOwnerID(String ownerID) { this.ownerID = ownerID; }
+    public void setOwnerFirstName(String ownerFirstName){ this.ownerFirstName = ownerFirstName; };
     public void setOwnerLastName(String ownerLastName){ this.ownerLastName = ownerLastName; }
     public void setTime(Date time){
         this.time = time;
@@ -58,17 +62,16 @@ public class Event {
     //public void setPublished(boolean published) { this.published = published; }
 
     //Getters
-    public String getEventID(){
-        return this.eventID;
-    }
+    public String eventID(){ return this.eventID; } // This can't be called get because of firebase
     public String getTitle(){
         return this.title;
     }
     public String getDescription() {
         return this.description;
     }
-    public String getOwnerFirstName(){ return this.ownerFirstName;}
-    public String getOwnerLastName(){ return this.ownerLastName;}
+    public String getOwnerID() { return ownerID; }
+    public String getOwnerFirstName(){ return ownerFirstName;}
+    public String getOwnerLastName(){ return ownerLastName;}
     public Date getTime() { return this.time; }
     //public boolean isPublished() { return this.published;}
 

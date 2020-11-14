@@ -41,7 +41,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private View mRoot;
     private FirebaseFirestore db;
-    private CollectionReference userCollections;
+    private CollectionReference userEventsCollection;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mHomeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
@@ -68,6 +68,7 @@ public class HomeFragment extends Fragment {
                     to the specific event page, so that it gets the info to display from
                     the Event instance. This setup just opens it generically.
                  */
+                Bundle b = new Bundle();
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
                 intent.putExtra("EXTRA_SESSION_ID", mUserEvents.get(position).eventID());
                 startActivity(intent);
@@ -75,10 +76,10 @@ public class HomeFragment extends Fragment {
         });
 
         //TODO: BATCH the requests for events, limit it to 15 most recent events??
-        userCollections = db.collection("users").document(((MainActivity)getActivity()).getUserID())
+        userEventsCollection = db.collection("users").document(((MainActivity)getActivity()).getUserID())
                 .collection("userEvents");
 
-        userCollections.addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
+        userEventsCollection.addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot querySnapshot,
                                 @Nullable FirebaseFirestoreException e) {

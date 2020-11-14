@@ -11,7 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.WKNS.gather.EventDetailsActivity;
 import com.WKNS.gather.R;
+import com.WKNS.gather.databaseModels.Events.Event;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EventDetailsSummary extends Fragment {
 
@@ -21,6 +25,10 @@ public class EventDetailsSummary extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_event_details_summary, container, false);
+    }
+
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState, String eventID) {
         return inflater.inflate(R.layout.fragment_event_details_summary, container, false);
     }
 
@@ -35,12 +43,15 @@ public class EventDetailsSummary extends Fragment {
         mDescription = view.findViewById(R.id.textView_eventDetails_description);
 
         mDisplayPic.setImageResource(R.drawable.ic_baseline_video_library_24);
-        mTitle.setText("Borat Watchparty");
-        mDate.setText("November 13, 2020");
-        mLocation.setText("Great Nation of Kazakhstan");
-        mHost.setText("Hosted by: Azamat Bagatov");
-        mDescription.setText("Borat Subsequent Moviefilm: Delivery of Prodigious Bribe to American Regime for Make Benefit Once Glorious Nation of Kazakhstan");
-
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    public void setEventDetails(Event event){
+        if(event == null) return;
+        mTitle.setText(event.getTitle());
+        mDate.setText(event.getTime().toString()); //TODO: Maybe have this not be toString()?
+        mLocation.setText("123 Placeholder Street."); //TODO: Hard code these as string in Event and UserEvent or use api
+        mHost.setText(event.getOwnerFirstName() + " " + event.getOwnerLastName());
+        mDescription.setText(event.getDescription());
     }
 }

@@ -103,32 +103,32 @@ public class MainActivity extends AppCompatActivity {
         //TODO: BATCH the requests for events, limit it to 15 most recent events??
 
 
-        userEventsCollection.addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot querySnapshot,
-                                @Nullable FirebaseFirestoreException e) {
-                if(mUserEvents == null) { mUserEvents = new ArrayList<UserEvent>(); }
-                if (e != null) {
-                    return;
-                }
-                int sizeMUserevents = mUserEvents.size();
-                int addedDocuments = 0;
-                for (DocumentChange change : querySnapshot.getDocumentChanges()) {
-                    if (change.getType() == DocumentChange.Type.ADDED) {
-                        //Log.d(TAG, "New city:" + change.getDocument().getData());
-                    }
-                    UserEvent retrieved = change.getDocument().toObject(UserEvent.class);
-                    retrieved.eventID(change.getDocument().getReference().getId());
-
-                    mUserEvents.add(retrieved);
-                    addedDocuments++;
-                    String source = querySnapshot.getMetadata().isFromCache() ?
-                            "local cache" : "server";
-
-                    Log.d("FETCH ", "Data fetched from " + source);
-                }
-            }
-        });;
+//        userEventsCollection.addSnapshotListener(MetadataChanges.INCLUDE, new EventListener<QuerySnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable QuerySnapshot querySnapshot,
+//                                @Nullable FirebaseFirestoreException e) {
+//                if(mUserEvents == null) { mUserEvents = new ArrayList<UserEvent>(); }
+//                if (e != null) {
+//                    return;
+//                }
+//                int sizeMUserevents = mUserEvents.size();
+//                int addedDocuments = 0;
+//                for (DocumentChange change : querySnapshot.getDocumentChanges()) {
+//                    if (change.getType() == DocumentChange.Type.ADDED) {
+//                        //Log.d(TAG, "New city:" + change.getDocument().getData());
+//                    }
+//                    UserEvent retrieved = change.getDocument().toObject(UserEvent.class);
+//                    retrieved.eventID(change.getDocument().getReference().getId());
+//
+//                    mUserEvents.add(retrieved);
+//                    addedDocuments++;
+//                    String source = querySnapshot.getMetadata().isFromCache() ?
+//                            "local cache" : "server";
+//
+//                    Log.d("FETCH ", "Data fetched from " + source);
+//                }
+//            }
+//        });;
 
     }
 

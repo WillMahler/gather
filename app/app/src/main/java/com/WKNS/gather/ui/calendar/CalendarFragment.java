@@ -14,17 +14,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.WKNS.gather.CreateEventActivity;
 import com.WKNS.gather.EventDetailsActivity;
+import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
 
+import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.testData.Event;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class CalendarFragment extends Fragment {
-
-    private ArrayList<Event> mDataList;
+    private ArrayList<UserEvent> mUserEvents;
+    private ArrayList<UserEvent> mUserEventsThisMonth;
     private CalendarViewModel mCalendarViewModel;
     private RecyclerView mRecyclerView;
     private CalendarRecyclerViewAdapter mAdapter;
@@ -32,11 +35,26 @@ public class CalendarFragment extends Fragment {
     private View mRoot;
     private FloatingActionButton mFAB;
 
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mUserEvents = ((MainActivity)getActivity()).getmUserEvents();
+        mUserEventsThisMonth = getEventsThisMonth(mUserEvents);
+
+        ((MainActivity)getActivity()).setHomeFragmentRefreshListener(new MainActivity.HomeFragmentRefreshListener() {
+            @Override
+            public void onRefresh(ArrayList<UserEvent> userEvents) {
+                mUserEvents  = userEvents;
+                mUserEventsThisMonth.clear();
+                mUserEventsThisMonth.addAll(getEventsThisMonth(userEvents));
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mCalendarViewModel = ViewModelProviders.of(this).get(CalendarViewModel.class);
         mRoot = inflater.inflate(R.layout.fragment_calendar, container, false);
-
-        mDataList = Event.testEvents();
 
         mRecyclerView = mRoot.findViewById(R.id.recyclerView_Calendar);
         mRecyclerView.setHasFixedSize(true);
@@ -44,18 +62,14 @@ public class CalendarFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(mRoot.getContext(), LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new CalendarRecyclerViewAdapter(mDataList);
+        mAdapter = new CalendarRecyclerViewAdapter(mUserEventsThisMonth);
         mRecyclerView.setAdapter(mAdapter);
 
         mAdapter.setOnItemClickListener(new CalendarRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                /* TODO:
-                    This is where we would want to pass the Event at `position` in the dataset
-                    to the specific event page, so that it gets the info to display from
-                    the Event instance. This setup just opens it generically.
-                 */
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                intent.putExtra("EXTRA_SESSION_ID", mUserEventsThisMonth.get(position).eventID());
                 startActivity(intent);
             }
         });
@@ -70,5 +84,16 @@ public class CalendarFragment extends Fragment {
         });
 
         return mRoot;
+    }
+
+    private ArrayList<UserEvent> getEventsThisMonth(ArrayList<UserEvent> userEvents){
+        Date currentDate = new Date();
+        ArrayList<UserEvent> eventsThisMonth = new ArrayList<UserEvent>();
+        for(UserEvent e : userEvents){
+            if(e.getTime().getMonth() == currentDate.getMonth()){
+                eventsThisMonth.add(e);
+            }
+        }
+        return eventsThisMonth;
     }
 }

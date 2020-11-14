@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private CollectionReference userEventsCollection;
 
     //Listeners for fragments to be updated on userEvents
-    private FragmentRefreshListener fragmentRefreshListener;
+    private HomeFragmentRefreshListener homeFragRefreshListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,16 +141,17 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public FragmentRefreshListener getFragmentRefreshListener() {
-        return fragmentRefreshListener;
-    }
-
-    public void setFragmentRefreshListener(FragmentRefreshListener fragmentRefreshListener) {
-        this.fragmentRefreshListener = fragmentRefreshListener;
-    }
-
-    public interface FragmentRefreshListener{
+    //Listener setup for home fragment to recieve updates for when userEvents are downloaded properly
+    public interface HomeFragmentRefreshListener{
         void onRefresh(ArrayList<UserEvent> userEvents);
+    }
+
+    public HomeFragmentRefreshListener getFragmentRefreshListener() {
+        return homeFragRefreshListener;
+    }
+
+    public void setHomeFragmentRefreshListener(HomeFragmentRefreshListener fragmentRefreshListener) {
+        this.homeFragRefreshListener = fragmentRefreshListener;
     }
 
     public User getUserObject() {

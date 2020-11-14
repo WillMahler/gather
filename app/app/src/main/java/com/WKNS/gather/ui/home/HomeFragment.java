@@ -49,7 +49,7 @@ public class HomeFragment extends Fragment {
 
         mUserEvents = ((MainActivity)getActivity()).getmUserEvents();
 
-        ((MainActivity)getActivity()).setFragmentRefreshListener(new MainActivity.FragmentRefreshListener() {
+        ((MainActivity)getActivity()).setHomeFragmentRefreshListener(new MainActivity.HomeFragmentRefreshListener() {
             @Override
             public void onRefresh(ArrayList<UserEvent> userEvents) {
                 mUserEvents.clear();
@@ -71,17 +71,10 @@ public class HomeFragment extends Fragment {
 
         mAdapter = new HomeRecyclerViewAdapter(mUserEvents);
         mRecyclerView.setAdapter(mAdapter);
-        Log.d("Nick ", "adapter setup " + mUserEvents.size());
+
         mAdapter.setOnItemClickListener(new HomeRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-
-                /* TODO:
-                    This is where we would want to pass the Event at `position` in the dataset
-                    to the specific event page, so that it gets the info to display from
-                    the Event instance. This setup just opens it generically.
-                 */
-                Bundle b = new Bundle();
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
                 intent.putExtra("EXTRA_SESSION_ID", mUserEvents.get(position).eventID());
                 startActivity(intent);
@@ -89,14 +82,4 @@ public class HomeFragment extends Fragment {
         });
         return mRoot;
     }
-
-    public void notifyChange(ArrayList<UserEvent> userEvents) {
-        Log.d("Nick ", "adding " + userEvents.size() + " events");
-        mUserEvents.clear();
-        mUserEvents.addAll(userEvents);
-        mAdapter.notifyDataSetChanged();
-        //mAdapter.notifyItemRangeInserted(0, userEvents.size());
-    }
-
-    public FirebaseFirestore getFireStoreDB() {return db; }
 }

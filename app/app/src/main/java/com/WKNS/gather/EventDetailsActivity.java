@@ -57,7 +57,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         mAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // 2 Tabs
-        mAdapter.addFrag(new EventDetailsSummary(), getString(R.string.tab_text_1));
+        mAdapter.addFrag(new EventDetailsSummary(mEventObj), getString(R.string.tab_text_1));
         mAdapter.addFrag(new EventDetailsTasks(), getString(R.string.tab_text_2));
         mAdapter.addFrag(new EventDetailsBudget(), getString(R.string.tab_text_3));
 
@@ -72,7 +72,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_round_arrow_back_ios_24));
 
-        getEventDetails();
+        getEventSummary();
     }
 
     @Override
@@ -81,7 +81,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         return true;
     }
 
-    private void getEventDetails(){
+    //Queries event details from db.
+    private void getEventSummary(){
         mEventDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -90,7 +91,6 @@ public class EventDetailsActivity extends AppCompatActivity {
                     if (document.exists()) {
                         mEventObj = document.toObject(Event.class);
                         ((EventDetailsSummary) mAdapter.getItem(0)).setEventDetails(mEventObj);
-
                     } else {
 
                     }
@@ -99,5 +99,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 }
             }});
     }
+
+    public Event getmEventObj(){ return mEventObj; };
 
 }

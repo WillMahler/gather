@@ -6,3 +6,10 @@
 	  and budget
 	- Overview tab allows user to add a photo, title, date, location, and description
 	- Tasks and budgeting to be determined
+- Finalized Overview tab of the 'CreateEvent' activity:
+	- Now scrollable to accomodate smaller screens
+	- Character limit set on the fields
+	- Date formatted properly and does not allow past dates
+	- Field for adding guests implemeted
+	- Added buttons and dialog that allow for saving, drafting, or deletion of an event
+	- Data validation

@@ -1,9 +1,13 @@
 package com.WKNS.gather;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 
@@ -15,56 +19,94 @@ import com.google.android.material.tabs.TabLayout;
 
 public class CreateEventActivity extends AppCompatActivity {
 
+    private Context context;
+
     private Toolbar actionbar;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private SectionsPagerAdapter mAdapter;
 
-    private FloatingActionButton mFab;
+    private Fragment summaryFragment, taskFragment, budgetFragment;
+
+    public FloatingActionButton mFabCancel, mFabDone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
+        context = this;
 
-        // Tab layout
-        mTabLayout = (TabLayout) findViewById(R.id.tabs);
-
-        // View pager
-        mViewPager  = (ViewPager) findViewById(R.id.view_pager);
-
-        // Adapter
+        mTabLayout = findViewById(R.id.tabs);
+        mViewPager  = findViewById(R.id.view_pager);
         mAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        // 2 Tabs
-        mAdapter.addFrag(new CreateEventSummary(), getString(R.string.tab_text_1));
-        mAdapter.addFrag(new CreateEventTasks(), getString(R.string.tab_text_2));
-        mAdapter.addFrag(new CreateEventBudget(), getString(R.string.tab_text_3));
+        summaryFragment = new CreateEventSummary();
+        taskFragment = new CreateEventTasks();
+        budgetFragment = new CreateEventBudget();
+
+        mAdapter.addFrag(summaryFragment, getString(R.string.tab_text_1));
+        mAdapter.addFrag(taskFragment, getString(R.string.tab_text_2));
+        mAdapter.addFrag(budgetFragment, getString(R.string.tab_text_3));
 
         mViewPager.setAdapter(mAdapter);
-
         mTabLayout.setupWithViewPager(mViewPager);
 
         // setting title of action bar
         actionbar = findViewById(R.id.actionbar);
         setSupportActionBar(actionbar);
         getSupportActionBar().setTitle("New Gathering");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_round_arrow_back_ios_24));
 
-        mFab = findViewById(R.id.fab2);
-        mFab.setOnClickListener(new View.OnClickListener() {
+        mFabCancel = findViewById(R.id.fab_cancel);
+        mFabDone = findViewById(R.id.fab_done);
+
+        mFabCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View root) {
-                finish();
+                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Are you sure you want to abandon this event?")
+                        .setCancelable(true)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
         });
-    }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
+        mFabDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Would you like to draft or publish this event?")
+                        .setCancelable(true)
+                        .setPositiveButton("Publish", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(((CreateEventSummary)summaryFragment).validateData()) {
+                                    // call publish function in 'CreateEventSummary here
+                                    finish();
+                                }
+                            }
+                        })
+                        .setNegativeButton("Draft", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // call draft function in 'CreateEventSummary here
+                                finish();
+                            }
+                        });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
     }
 }

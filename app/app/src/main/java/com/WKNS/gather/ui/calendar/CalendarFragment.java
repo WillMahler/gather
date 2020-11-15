@@ -31,7 +31,6 @@ public class CalendarFragment extends Fragment {
     private ArrayList<UserEvent> mUserEvents;
     private ArrayList<UserEvent> mUserEventsThisMonth;
     private CalendarViewModel mCalendarViewModel;
-    private BetterCalenderView mCalendarView;
     private RecyclerView mRecyclerView;
     private CalendarRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -58,16 +57,6 @@ public class CalendarFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mCalendarViewModel = ViewModelProviders.of(this).get(CalendarViewModel.class);
         mRoot = inflater.inflate(R.layout.fragment_calendar, container, false);
-
-        mCalendarView = mRoot.findViewById(R.id.BetterCalendarView);
-        mCalendarView.setDate((new Date()).getTime());
-
-        mCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-
-            }
-        });
 
         mRecyclerView = mRoot.findViewById(R.id.recyclerView_Calendar);
         mRecyclerView.setHasFixedSize(true);

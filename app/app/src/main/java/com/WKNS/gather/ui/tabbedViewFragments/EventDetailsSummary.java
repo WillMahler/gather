@@ -49,11 +49,12 @@ public class EventDetailsSummary extends Fragment {
     }
 
     public void setEventDetails(Event event){
-        mEventObj = event;
-        mTitle.setText(event.getTitle());
-        mDate.setText(event.getDate().toString()); //TODO: Maybe have this not be toString()?
-        mLocation.setText("123 Placeholder Street."); //TODO: Hard code these as string in Event and UserEvent or use api
-        mHost.setText(event.getOwnerFirstName() + " " + event.getOwnerLastName());
-        mDescription.setText(event.getDescription());
+        if (event != null) {
+            mEventObj = event;
+            mTitle.setText(event.getTitle());
+            mDate.setText(event.getDate().toString()); //TODO: Maybe have this not be toString()?
+            mLocation.setText("123 Placeholder Street."); //TODO: Hard code these as string in Event and UserEvent or use api
+            mHost.setText(event.getOwnerFirstName() + " " + event.getOwnerLastName());
+            mDescription.setText(event.getDescription());
+        }
     }
-}

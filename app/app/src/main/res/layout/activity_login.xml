@@ -85,7 +85,6 @@
         android:layout_width="125dp"
         android:layout_height="52dp"
         android:elevation="3dp"
-        android:stateListAnimator="@null"
         android:text="@string/label_login"
         android:drawableStart="@drawable/ic_round_login_24"
         app:layout_constraintBottom_toTopOf="@+id/googleSignInButton"
@@ -98,7 +97,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/register_with_email"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -109,11 +107,9 @@
         android:layout_marginBottom="50dp"
         android:drawableStart="@drawable/ic_round_email_24"
         android:elevation="3dp"
-        android:stateListAnimator="@null"
         android:text="@string/label_create_with_email"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

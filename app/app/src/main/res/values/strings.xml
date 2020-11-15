@@ -28,6 +28,11 @@
     <string name="label_event_date">Date</string>
     <string name="label_event_location">Location</string>
     <string name="label_event_description">Description</string>
+    <string name="label_guest_list">Guest List</string>
+    <string name="label_add_guests">Add Guests</string>
+    <string name="label_clear_guests">Clear Guest List</string>
+    <string name="label_add_guest">Enter Email</string>
+    <string name="label_add_guest_message">Enter the email of the guest you would like to invite.</string>
 
     <!--nav bar-->
     <string name="title_home">Home</string>

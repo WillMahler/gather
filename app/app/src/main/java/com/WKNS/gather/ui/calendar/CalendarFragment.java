@@ -82,7 +82,7 @@ public class CalendarFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-                intent.putExtra("EXTRA_SESSION_ID", mUserEventsThisMonth.get(position).eventID());
+                intent.putExtra("EVENT_ID", mUserEventsThisMonth.get(position).eventID());
                 startActivity(intent);
             }
         });

@@ -35,6 +35,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
+    public static String TAG = HomeFragment.class.getSimpleName();
+    
     private ArrayList<UserEvent> mUserEvents;
     private HomeViewModel mHomeViewModel;
     private RecyclerView mRecyclerView;

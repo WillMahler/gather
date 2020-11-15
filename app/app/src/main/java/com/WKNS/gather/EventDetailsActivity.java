@@ -94,10 +94,10 @@ public class EventDetailsActivity extends AppCompatActivity {
                         mEventObj = document.toObject(Event.class);
                         ((EventDetailsSummary) mAdapter.getItem(0)).setEventDetails(mEventObj);
                     } else {
-
+                        Log.d(TAG, "getEventSummary() - document does not exist");
                     }
                 } else {
-
+                    Log.d(TAG, "getEventSummary() - task was unsuccessful");
                 }
             }});
     }

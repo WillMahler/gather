@@ -22,7 +22,7 @@ public class EventDetailsSummary extends Fragment {
     private ImageView mDisplayPic;
     private TextView mTitle, mDate, mLocation, mHost, mDescription;
 
-    public EventDetailsSummary(Event event){
+    public EventDetailsSummary(Event event) {
         mEventObj = event;
     }
 
@@ -45,10 +45,10 @@ public class EventDetailsSummary extends Fragment {
         mDisplayPic.setImageResource(R.drawable.ic_baseline_video_library_24);
         super.onViewCreated(view, savedInstanceState);
 
-       setEventDetails(mEventObj);
+        setEventDetails(mEventObj);
     }
 
-    public void setEventDetails(Event event){
+    public void setEventDetails(Event event) {
         if (event != null) {
             mEventObj = event;
             mTitle.setText(event.getTitle());
@@ -58,3 +58,4 @@ public class EventDetailsSummary extends Fragment {
             mDescription.setText(event.getDescription());
         }
     }
+}

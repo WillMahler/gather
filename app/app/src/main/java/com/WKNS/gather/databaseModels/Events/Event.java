@@ -1,7 +1,5 @@
 package com.WKNS.gather.databaseModels.Events;
 
-import android.util.Log;
-
 import com.google.firebase.firestore.Exclude;
 import com.google.type.DateTime;
 

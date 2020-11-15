@@ -2,9 +2,11 @@ package com.WKNS.gather.ui.calendar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CalendarView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -29,6 +31,7 @@ public class CalendarFragment extends Fragment {
     private ArrayList<UserEvent> mUserEvents;
     private ArrayList<UserEvent> mUserEventsThisMonth;
     private CalendarViewModel mCalendarViewModel;
+    private BetterCalenderView mCalendarView;
     private RecyclerView mRecyclerView;
     private CalendarRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -55,6 +58,16 @@ public class CalendarFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mCalendarViewModel = ViewModelProviders.of(this).get(CalendarViewModel.class);
         mRoot = inflater.inflate(R.layout.fragment_calendar, container, false);
+
+        mCalendarView = mRoot.findViewById(R.id.BetterCalendarView);
+        mCalendarView.setDate((new Date()).getTime());
+
+        mCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+
+            }
+        });
 
         mRecyclerView = mRoot.findViewById(R.id.recyclerView_Calendar);
         mRecyclerView.setHasFixedSize(true);
@@ -83,6 +96,7 @@ public class CalendarFragment extends Fragment {
             }
         });
 
+
         return mRoot;
     }
 
@@ -90,7 +104,7 @@ public class CalendarFragment extends Fragment {
         Date currentDate = new Date();
         ArrayList<UserEvent> eventsThisMonth = new ArrayList<UserEvent>();
         for(UserEvent e : userEvents){
-            if(e.getTime().getMonth() == currentDate.getMonth()){
+            if(e.getDate().getMonth() == currentDate.getMonth()){
                 eventsThisMonth.add(e);
             }
         }

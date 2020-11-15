@@ -19,7 +19,7 @@ public class Event {
     private String ownerLastName;
 
     //private String photo; TODO: find out how photos encoded/stored, can't be URI in firestore
-    private Date time;
+    private Date date;
     //private boolean published; TODO: discuss it more
 
     //private Uri photo;
@@ -31,18 +31,14 @@ public class Event {
 
     public Event(){ }
 
-    /**
-     * @param title         The title of the event
-     * @param description   The description of the event
-     * @param time          The time when the event happens
-     */
-    public Event(String title, String description, String ownerID, String ownerFirstName, String ownerLastName, Date time){
+
+    public Event(String title, String description, String ownerID, String ownerFirstName, String ownerLastName, Date date){
         this.title = title;
         this.description = description;
         this.ownerID = ownerID;
         this.ownerFirstName = ownerFirstName;
         this.ownerLastName = ownerLastName;
-        this.time = time;
+        this.date = date;
     }
 
     //Setters
@@ -56,9 +52,7 @@ public class Event {
     public void setOwnerID(String ownerID) { this.ownerID = ownerID; }
     public void setOwnerFirstName(String ownerFirstName){ this.ownerFirstName = ownerFirstName; };
     public void setOwnerLastName(String ownerLastName){ this.ownerLastName = ownerLastName; }
-    public void setTime(Date time){
-        this.time = time;
-    }
+    public void setDate(Date date){ this.date = date; }
     //public void setPublished(boolean published) { this.published = published; }
 
     //Getters
@@ -72,7 +66,7 @@ public class Event {
     public String getOwnerID() { return ownerID; }
     public String getOwnerFirstName(){ return ownerFirstName;}
     public String getOwnerLastName(){ return ownerLastName;}
-    public Date getTime() { return this.time; }
+    public Date getDate() { return this.date; }
     //public boolean isPublished() { return this.published;}
 
 

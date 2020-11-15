@@ -71,7 +71,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         holder.mImageView.setImageResource(R.drawable.ic_testimg_6_ft_apart_24);
         holder.mTextViewTitle.setText(e.getTitle());
         holder.mTextViewHost.setText("Hosted by: " + e.getOwnerFirstName());
-        holder.mTextViewDate.setText(e.getTime().toString().substring(0, 23));
+        holder.mTextViewDate.setText(e.getDate().toString());
     }
 
     @Override

@@ -15,18 +15,18 @@ public class UserEvent {
     private String ownerLastName;
 
     //@Exclude private String photo; //TODO: find out how photos encoded/stored, can't be URI in firestore
-    private Date time;
+    private Date date;
     private int status; // User's invite status; 0 if invited, -1 if denied, 1 if accepted
 
     // Constructors
     public UserEvent() {}
 
-    public UserEvent(String title, String description, String ownerFirstName, String ownerLastName, Date time, int status) {
+    public UserEvent(String title, String description, String ownerFirstName, String ownerLastName, Date date, int status) {
         this.title = title;
         this.description = description;
         this.ownerFirstName = ownerFirstName;
         this.ownerLastName = ownerLastName;
-        this.time = time;
+        this.date = date;
         this.status = status;
     }
     //Setters
@@ -35,7 +35,7 @@ public class UserEvent {
     public void setDescription(String description) { this.description = description; }
     public void setOwnerFirstName(String ownerFirstName) { this.ownerFirstName = ownerFirstName; }
     public void setOwnerLastName(String ownerLastName) { this.ownerLastName = ownerLastName; }
-    public void setTime(Date time) { this.time = time; }
+    public void setDate(Date date) {this.date = date; }
     public void setStatus(int status) { this.status = status; }
 
     // Getters
@@ -44,6 +44,6 @@ public class UserEvent {
     public String getDescription() { return description; }
     public String getOwnerFirstName() { return ownerFirstName; }
     public String getOwnerLastName() { return ownerLastName; }
-    public Date getTime() { return time; }
+    public Date getDate() { return date; }
     public int getStatus() { return status; }
 }

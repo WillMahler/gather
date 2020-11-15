@@ -73,6 +73,7 @@ public class CreateEventActivity extends AppCompatActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                ((CreateEventSummary)summaryFragment).deleteEvent();
                                 finish();
                             }
                         })

@@ -73,6 +73,7 @@ public class CalendarFragment extends Fragment {
                 intent.putExtra("userID", userObject.getUserID());
                 intent.putExtra("userFirst", userObject.getFirstName());
                 intent.putExtra("userLast", userObject.getLastName());
+                intent.putExtra("eventID", "");
 
                 startActivity(intent);
             }

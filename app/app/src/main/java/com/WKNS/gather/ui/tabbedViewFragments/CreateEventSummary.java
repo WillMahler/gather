@@ -145,9 +145,30 @@ public class CreateEventSummary extends Fragment {
         Event event = new Event(title, description, ownerID, ownerFirst,
                 ownerLast, date, location, isPublished);
 
-        // Add event to events collection
-        db.collection("events").add(event);
+        String eventID = intent.getStringExtra("eventID");
+
+        // Add event to events collection, if it doesn't already exist.
+        // Otherwise, update the event document.
+        if (eventID.isEmpty()) { // Initial Event Creation
+            db.collection("events").add(event);
+        }
+        else { // Event Edit
+            db.collection("events").document(eventID).set(event);
+        }
 
         return true;
+    }
+
+    public boolean deleteEvent() {
+        // Owner + Event Details
+        String eventID = intent.getStringExtra("eventID");
+
+        // If event is in database, delete. Do nothing otherwise.
+        if (!eventID.isEmpty()) {
+            db.collection("events").document(eventID).delete();
+            return true;
+        }
+
+        return false;
     }
 }

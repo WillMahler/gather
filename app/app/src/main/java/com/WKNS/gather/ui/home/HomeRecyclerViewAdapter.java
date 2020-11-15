@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
-import com.WKNS.gather.testData.Event;
 
 import java.util.ArrayList;
 

@@ -78,7 +78,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-                intent.putExtra("EXTRA_SESSION_ID", mUserEvents.get(position).eventID());
+                intent.putExtra("EVENT_ID", mUserEvents.get(position).eventID());
                 startActivity(intent);
             }
         });

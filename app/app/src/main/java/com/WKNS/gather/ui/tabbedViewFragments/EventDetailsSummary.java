@@ -45,7 +45,7 @@ public class EventDetailsSummary extends Fragment {
         mDisplayPic.setImageResource(R.drawable.ic_baseline_video_library_24);
         super.onViewCreated(view, savedInstanceState);
 
-        if(mEventObj != null) setEventDetails(mEventObj);
+       setEventDetails(mEventObj);
     }
 
     public void setEventDetails(Event event){

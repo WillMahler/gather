@@ -24,6 +24,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class EventDetailsActivity extends AppCompatActivity {
+    public static final String TAG = EventDetailsActivity.class.getSimpleName();
+
     private Event mEventObj;
     private String mEventID;
     private Toolbar actionbar;

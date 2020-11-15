@@ -41,7 +41,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_details);
 
         //EventID
-        mEventID = getIntent().getStringExtra("EXTRA_SESSION_ID");
+        mEventID = getIntent().getStringExtra("EVENT_ID");
 
         // mDb setup
         mDb = FirebaseFirestore.getInstance();

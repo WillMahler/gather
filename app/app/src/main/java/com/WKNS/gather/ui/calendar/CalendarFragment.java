@@ -2,6 +2,7 @@ package com.WKNS.gather.ui.calendar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.WKNS.gather.CreateEventActivity;
 import com.WKNS.gather.EventDetailsActivity;
+import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
 
+import com.WKNS.gather.databaseModels.Users.User;
 import com.WKNS.gather.testData.Event;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -65,6 +68,12 @@ public class CalendarFragment extends Fragment {
             @Override
             public void onClick(View root) {
                 Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+
+                User userObject = ((MainActivity) getActivity()).getUserObject();
+                intent.putExtra("userID", userObject.getUserID());
+                intent.putExtra("userFirst", userObject.getFirstName());
+                intent.putExtra("userLast", userObject.getLastName());
+
                 startActivity(intent);
             }
         });

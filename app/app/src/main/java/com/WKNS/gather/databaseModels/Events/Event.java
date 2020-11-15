@@ -3,6 +3,7 @@ package com.WKNS.gather.databaseModels.Events;
 import com.google.firebase.firestore.Exclude;
 import com.google.type.DateTime;
 
+import java.util.Date;
 import java.util.Map;
 
 
@@ -15,7 +16,8 @@ public class Event {
     private String ownerFirstName;
     private String ownerLastName;
 
-    private DateTime time;
+    private Date date;
+    private String location;
     private boolean published;
 
     //private Uri photo;
@@ -27,24 +29,22 @@ public class Event {
 
     public Event(){ }
 
-    /**
-     * @param title         The title of the event
-     * @param description   The description of the event
-     * @param time          The time when the event happens
-     */
-    public Event(String title, String description, String ownerFirstName, String ownerLastName, DateTime time, boolean published){
+    public Event(String title, String description, String ownerID, String ownerFirstName,
+                 String ownerLastName, Date date, String location, boolean published) {
         this.title = title;
         this.description = description;
+        this.ownerID = ownerID;
         this.ownerFirstName = ownerFirstName;
         this.ownerLastName = ownerLastName;
-        this.time = time;
+        this.date = date;
+        this.location = location;
         this.published = published;
     }
 
     public void addBudget(String id, Budget budget){
         budgetMap.put(id, budget);
     }
-
+    public void addAttendee(String id, Attendee attendee) { attendeeMap.put(id, attendee); }
 
     //Setters
     public void setID(String eventID){
@@ -54,26 +54,28 @@ public class Event {
         this.title = title;
     }
     public void setDescription(String description) { this.description = description; }
+    public void setOwnerID(String ownerID) { this.ownerID = ownerID; }
     public void setOwnerFirstName(String ownerFirstName){ this.ownerLastName = ownerFirstName; };
     public void setOwnerLastName(String ownerLastName){ this.ownerLastName = ownerLastName; }
-    public void setTime(DateTime time){
-        this.time = time;
-    }
+    public void setTime(Date date){ this.date = date; }
+    public void setLocation(String location) { this.location = location; }
     public void setPublished(boolean published) { this.published = published; }
 
     //Getters
-    public String getEventID(){
-        return this.eventID;
-    }
+    @Exclude
+    public String getEventID(){ return this.eventID; }
+
     public String getTitle(){
         return this.title;
     }
     public String getDescription() {
         return this.description;
     }
+    public String getOwnerID() { return this.ownerID; }
     public String getOwnerFirstName(){ return this.ownerFirstName;}
     public String getOwnerLastName(){ return this.ownerLastName;}
-    public DateTime getTime() { return this.time; }
+    public Date getDate() { return this.date; }
+    public String getLocation() {return this.location; }
     public boolean isPublished() { return this.published;}
 
 

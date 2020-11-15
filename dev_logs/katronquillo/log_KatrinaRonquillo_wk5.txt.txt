@@ -1,0 +1,4 @@
+- Cloud firestore setup
+- Meeting with Nick to design database
+       - Had to read cloud firestore documentation to better understand security, and what
+         we would need to follow best practices

@@ -9,13 +9,18 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.WKNS.gather.ui.tabbedViewFragments.CreateEventBudget;
 import com.WKNS.gather.ui.tabbedViewFragments.CreateEventSummary;
 import com.WKNS.gather.ui.tabbedViewFragments.CreateEventTasks;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.text.ParseException;
 
 public class CreateEventActivity extends AppCompatActivity {
 
@@ -91,8 +96,16 @@ public class CreateEventActivity extends AppCompatActivity {
                         .setPositiveButton("Publish", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if(((CreateEventSummary)summaryFragment).validateData()) {
-                                    // call publish function in 'CreateEventSummary here
+                                if (((CreateEventSummary)summaryFragment).validateData()) {
+                                    try {
+                                        ((CreateEventSummary)summaryFragment).addEvent(true);
+                                        Toast.makeText(context, "Event Published",
+                                                    Toast.LENGTH_SHORT).show();
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                        Toast.makeText(context, "Error: Event Not Published",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
                                     finish();
                                 }
                             }
@@ -100,7 +113,15 @@ public class CreateEventActivity extends AppCompatActivity {
                         .setNegativeButton("Draft", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // call draft function in 'CreateEventSummary here
+                                try {
+                                    ((CreateEventSummary)summaryFragment).addEvent(false);
+                                    Toast.makeText(context, "Event Published",
+                                            Toast.LENGTH_SHORT).show();
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(context, "Error: Event Not Published",
+                                            Toast.LENGTH_SHORT).show();
+                                }
                                 finish();
                             }
                         });

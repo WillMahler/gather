@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.WKNS.gather.R;
-import com.WKNS.gather.testData.Event;
+import com.WKNS.gather.databaseModels.Users.UserEvent;
 
 import java.util.ArrayList;
 
@@ -15,8 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.HomeViewHolder> {
-
-    private ArrayList<Event> mEvents;
+    private ArrayList<UserEvent> mUserEvents;
     private OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {
@@ -53,8 +52,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         }
     }
 
-    public HomeRecyclerViewAdapter(ArrayList<Event> events) {
-        mEvents = events;
+    public HomeRecyclerViewAdapter(ArrayList<UserEvent> mUserEvents) {
+        this.mUserEvents= mUserEvents;
     }
 
     @NonNull
@@ -66,16 +65,16 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
     @Override
     public void onBindViewHolder(@NonNull HomeViewHolder holder, int position) {
-        Event e = mEvents.get(position);
+        UserEvent e = mUserEvents.get(position);
 
         holder.mImageView.setImageResource(R.drawable.ic_testimg_6_ft_apart_24);
         holder.mTextViewTitle.setText(e.getTitle());
         holder.mTextViewHost.setText("Hosted by: " + e.getOwnerFirstName());
-        holder.mTextViewDate.setText(e.getTime().toString().substring(0, 23));
+        holder.mTextViewDate.setText(e.getDate().toString());
     }
 
     @Override
     public int getItemCount() {
-        return mEvents.size();
+        return mUserEvents.size();
     }
 }

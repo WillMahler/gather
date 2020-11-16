@@ -2,38 +2,48 @@ package com.WKNS.gather.databaseModels.Users;
 
 import android.net.Uri;
 
-import com.google.type.Date;
-import com.google.type.DateTime;
+import com.google.firebase.firestore.Exclude;
+import java.util.Date;
 
 // Represents an event associated with User in User's Private sub-collection
 public class UserEvent {
-    private String eventID;
-    private DateTime date;
+    @Exclude private String eventID;
     private String title;
     private String description;
-    private Uri photoURL;
-    private short status; // User's invite status; 0 if invited, -1 if denied, 1 if accepted
+
+    private String ownerFirstName;
+    private String ownerLastName;
+
+    //@Exclude private String photo; //TODO: find out how photos encoded/stored, can't be URI in firestore
+    private Date date;
+    private int status; // User's invite status; 0 if invited, -1 if denied, 1 if accepted
 
     // Constructors
     public UserEvent() {}
 
-    public UserEvent(String eventID, DateTime date, String description,
-                     Uri photoURL, Short status) {
-        this.eventID = eventID;
-        this.date = date;
+    public UserEvent(String title, String description, String ownerFirstName, String ownerLastName, Date date, int status) {
+        this.title = title;
         this.description = description;
-        this.photoURL = photoURL;
+        this.ownerFirstName = ownerFirstName;
+        this.ownerLastName = ownerLastName;
+        this.date = date;
         this.status = status;
     }
+    //Setters
+    public void eventID(String eventID) { this.eventID = eventID; } //This can't be named setEventID otherwise value is added to firebase
+    public void setTitle(String title) { this.title = title; }
+    public void setDescription(String description) { this.description = description; }
+    public void setOwnerFirstName(String ownerFirstName) { this.ownerFirstName = ownerFirstName; }
+    public void setOwnerLastName(String ownerLastName) { this.ownerLastName = ownerLastName; }
+    public void setDate(Date date) {this.date = date; }
+    public void setStatus(int status) { this.status = status; }
 
     // Getters
-    public String getEventID() { return eventID; }
-
-    public DateTime getDate() { return date; }
-
+    public String eventID() { return eventID; }     //This can't be named getEventID otherwise value is added to firebase
+    public String getTitle() { return title; }
     public String getDescription() { return description; }
-
-    public Uri getPhotoURL() { return photoURL; }
-
-    public short getStatus() { return status; }
+    public String getOwnerFirstName() { return ownerFirstName; }
+    public String getOwnerLastName() { return ownerLastName; }
+    public Date getDate() { return date; }
+    public int getStatus() { return status; }
 }

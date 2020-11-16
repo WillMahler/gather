@@ -7,7 +7,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.WKNS.gather.R;
-import com.WKNS.gather.testData.Event;
+import com.WKNS.gather.databaseModels.Users.UserEvent;
+
 
 import java.util.ArrayList;
 
@@ -16,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CalendarRecyclerViewAdapter extends RecyclerView.Adapter<CalendarRecyclerViewAdapter.CalendarViewHolder>{
 
-    private ArrayList<Event> mEvents;
+    private ArrayList<UserEvent> mUserEvents;
     private OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {
@@ -51,8 +52,8 @@ public class CalendarRecyclerViewAdapter extends RecyclerView.Adapter<CalendarRe
         }
     }
 
-    public CalendarRecyclerViewAdapter(ArrayList<Event> events) {
-        mEvents = events;
+    public CalendarRecyclerViewAdapter(ArrayList<UserEvent> events) {
+        mUserEvents = events;
     }
 
     @NonNull
@@ -64,7 +65,7 @@ public class CalendarRecyclerViewAdapter extends RecyclerView.Adapter<CalendarRe
 
     @Override
     public void onBindViewHolder(@NonNull CalendarViewHolder holder, int position) {
-        Event e = mEvents.get(position);
+        UserEvent e = mUserEvents.get(position);
 
         holder.mImageView.setImageResource(R.drawable.ic_testimg_6_ft_apart_24);
         holder.mTextViewTitle.setText(e.getTitle());
@@ -72,6 +73,6 @@ public class CalendarRecyclerViewAdapter extends RecyclerView.Adapter<CalendarRe
 
     @Override
     public int getItemCount() {
-        return mEvents.size();
+        return mUserEvents.size();
     }
 }

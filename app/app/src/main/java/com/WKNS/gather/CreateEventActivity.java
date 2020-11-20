@@ -3,7 +3,6 @@ package com.WKNS.gather;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
@@ -13,9 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.WKNS.gather.ui.tabbedViewFragments.CreateEventBudget;
 import com.WKNS.gather.ui.tabbedViewFragments.CreateEventSummary;
-import com.WKNS.gather.ui.tabbedViewFragments.CreateEventTasks;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -32,7 +29,7 @@ public class CreateEventActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private SectionsPagerAdapter mAdapter;
 
-    private Fragment summaryFragment, taskFragment, budgetFragment;
+    private CreateEventSummary summaryFragment;
 
     public FloatingActionButton mFabCancel, mFabDone;
 
@@ -47,12 +44,8 @@ public class CreateEventActivity extends AppCompatActivity {
         mAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         summaryFragment = new CreateEventSummary();
-        taskFragment = new CreateEventTasks();
-        budgetFragment = new CreateEventBudget();
 
         mAdapter.addFrag(summaryFragment, getString(R.string.tab_text_1));
-        mAdapter.addFrag(taskFragment, getString(R.string.tab_text_2));
-        mAdapter.addFrag(budgetFragment, getString(R.string.tab_text_3));
 
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
@@ -74,7 +67,7 @@ public class CreateEventActivity extends AppCompatActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ((CreateEventSummary)summaryFragment).deleteEvent();
+                                summaryFragment.deleteEvent();
                                 finish();
                             }
                         })
@@ -98,9 +91,9 @@ public class CreateEventActivity extends AppCompatActivity {
                         .setPositiveButton("Publish", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (((CreateEventSummary)summaryFragment).validateData()) {
+                                if (summaryFragment.validateData()) {
                                     try {
-                                        ((CreateEventSummary)summaryFragment).addEvent(true);
+                                        summaryFragment.addEvent(true);
                                         Toast.makeText(context, "Event Published",
                                                     Toast.LENGTH_SHORT).show();
                                     } catch (ParseException e) {
@@ -116,7 +109,7 @@ public class CreateEventActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
-                                    ((CreateEventSummary)summaryFragment).addEvent(false);
+                                    summaryFragment.addEvent(false);
                                     Toast.makeText(context, "Draft Saved",
                                             Toast.LENGTH_SHORT).show();
                                 } catch (ParseException e) {

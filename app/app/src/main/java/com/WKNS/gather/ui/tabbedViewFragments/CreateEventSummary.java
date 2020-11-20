@@ -5,8 +5,6 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.util.Log;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Patterns;
@@ -23,11 +21,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.WKNS.gather.CreateEventActivity;
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Events.Event;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
@@ -36,7 +36,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 public class CreateEventSummary extends Fragment {
@@ -276,10 +275,37 @@ public class CreateEventSummary extends Fragment {
         // Add event to events collection, if it doesn't already exist.
         // Otherwise, update the event document.
         if (eventID.isEmpty()) { // Initial Event Creation
-            db.collection("events").add(event);
+            db.collection("events")
+                    .add(event)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Log.d("CreateEventSummary",
+                                    "DocumentSnapshot written with ID: " + documentReference.getId());
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("CreateEventSummary", "Error writing document", e);
+                        }
+                    });
         }
         else { // Event Edit
-            db.collection("events").document(eventID).set(event);
+            db.collection("events").document(eventID)
+                    .set(event)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("CreateEventSummary", "DocumentSnapshot successfully written!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("CreateEventSummary", "Error writing document", e);
+                        }
+                    });
         }
 
         return true;
@@ -291,8 +317,21 @@ public class CreateEventSummary extends Fragment {
 
         // If event is in database, delete. Do nothing otherwise.
         if (!eventID.isEmpty()) {
-            db.collection("events").document(eventID).delete();
-            return true;
+            db.collection("events").document(eventID)
+                    .delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("CreateEventSummary", "DocumentSnapshot successfully deleted!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("CreateEventSummary", "Error deleting document", e);
+                        }
+                    });
+
         }
         return false;
     }

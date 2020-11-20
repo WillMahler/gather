@@ -33,7 +33,6 @@ import com.WKNS.gather.databaseModels.Users.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.type.DateTime;
 
 
 import java.text.ParseException;

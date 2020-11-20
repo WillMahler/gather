@@ -24,6 +24,7 @@ import java.text.ParseException;
 
 public class CreateEventActivity extends AppCompatActivity {
 
+    public static String TAG = CreateEventActivity.class.getSimpleName();
     private Context context;
 
     private Toolbar actionbar;

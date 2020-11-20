@@ -28,9 +28,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.WKNS.gather.CreateEventActivity;
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Events.Event;
-import com.WKNS.gather.databaseModels.Users.User;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 

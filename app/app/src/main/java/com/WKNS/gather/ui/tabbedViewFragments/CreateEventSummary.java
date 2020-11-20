@@ -26,7 +26,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.WKNS.gather.CreateEventActivity;
-import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Events.Event;
 import com.WKNS.gather.databaseModels.Users.User;

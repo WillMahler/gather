@@ -121,7 +121,7 @@ public class CreateEventActivity extends AppCompatActivity {
                                             Toast.LENGTH_SHORT).show();
                                 } catch (ParseException e) {
                                     e.printStackTrace();
-                                    Toast.makeText(context, "Error: Event Not Published",
+                                    Toast.makeText(context, "Error: Draft Not Saved",
                                             Toast.LENGTH_SHORT).show();
                                 }
                                 finish();

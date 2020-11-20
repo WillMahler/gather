@@ -24,6 +24,7 @@ import java.text.ParseException;
 
 public class CreateEventActivity extends AppCompatActivity {
 
+    public static String TAG = CreateEventActivity.class.getSimpleName();
     private Context context;
 
     private Toolbar actionbar;
@@ -116,11 +117,11 @@ public class CreateEventActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
                                     ((CreateEventSummary)summaryFragment).addEvent(false);
-                                    Toast.makeText(context, "Event Published",
+                                    Toast.makeText(context, "Draft Saved",
                                             Toast.LENGTH_SHORT).show();
                                 } catch (ParseException e) {
                                     e.printStackTrace();
-                                    Toast.makeText(context, "Error: Event Not Published",
+                                    Toast.makeText(context, "Error: Draft Not Saved",
                                             Toast.LENGTH_SHORT).show();
                                 }
                                 finish();

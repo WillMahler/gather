@@ -13,3 +13,5 @@
 - Worked with Shaun on the Event pages; implemented a base layout for the
   Overview tab of the Event page (when you view an existing event),
   while he did one for the create Event page
+- Reviewed Shaun's PR; requested a minor change to prevent users from creating
+  events using past dates and found a StackOverflow post on how to do it

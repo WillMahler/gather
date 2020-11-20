@@ -1,0 +1,11 @@
+- Reviewed Nick's PR (#78) and provided feedback / change requests
+- Reviewed Katrina's PR (#80) and provided feedback / change requests
+- Set up daily meetings to keep us on track and keep communication open 
+  for D3 report due date
+- Checked into refactoring the RecyclerViews using the Visitor pattern, but
+  after a few hours of reading/researching, it doesn't seem like ours can 
+  use this pattern, since ours also have onClick methods that vary and the 
+  only way I found how to address this is with things that are available 
+  in Kotlin, but not in Java
+  Source: https://medium.com/@slarsoncreative/click-handling-in-multi-view-recyclerviews-8b4a55bb4081
+- 

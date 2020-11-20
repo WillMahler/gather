@@ -117,7 +117,7 @@ public class CreateEventActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
                                     ((CreateEventSummary)summaryFragment).addEvent(false);
-                                    Toast.makeText(context, "Event Published",
+                                    Toast.makeText(context, "Draft Saved",
                                             Toast.LENGTH_SHORT).show();
                                 } catch (ParseException e) {
                                     e.printStackTrace();

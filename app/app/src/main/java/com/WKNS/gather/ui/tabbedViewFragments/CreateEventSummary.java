@@ -40,8 +40,6 @@ import org.w3c.dom.Document;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 import java.util.ArrayList;
 import java.util.Calendar;

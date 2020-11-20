@@ -1,0 +1,6 @@
+- Team meeting in which we partnered off. I will be working on the backend/server side
+with Nick Scott.
+- Meeting with Nick to talk about the back end service that we will be using. We settled
+on using Firebase, as it allowed us to easily integrate a lot of the functionality we 
+needed. Another key point with Firebase is its secure Authentication, which was 
+something we were worried about. 

@@ -19,6 +19,7 @@ import com.WKNS.gather.EventDetailsActivity;
 import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
 
+import com.WKNS.gather.databaseModels.Users.User;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.testData.Event;
 
@@ -81,6 +82,13 @@ public class CalendarFragment extends Fragment {
             @Override
             public void onClick(View root) {
                 Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+
+                User userObject = ((MainActivity) getActivity()).getUserObject();
+                intent.putExtra("userID", userObject.getUserID());
+                intent.putExtra("userFirst", userObject.getFirstName());
+                intent.putExtra("userLast", userObject.getLastName());
+                intent.putExtra("eventID", "");
+
                 startActivity(intent);
             }
         });

@@ -1,0 +1,7 @@
+- Meeting with the team to introduce Firebase and explain why Nick and I chose this
+service
+	- In this meeting we also discussed the type of queries that the app would need
+- Meeting with Nick to design database
+- Created project on Firebase
+- Reigstered app with Firebase
+- Added firebase configuration files

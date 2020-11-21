@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.WKNS.gather.R;
+import com.WKNS.gather.recyclerViews.adapters.InviteRecyclerViewAdapter;
+import com.WKNS.gather.recyclerViews.clickListeners.OnInviteClickListener;
 import com.WKNS.gather.testData.Notification;
 
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ public class NotificationFragment extends Fragment {
     private ArrayList<Notification> mDataSet;
     private NotificationViewModel mNotificationViewModel;
     private RecyclerView mRecyclerView;
-    private NotificationRecyclerViewAdapter mAdapter;
+    private InviteRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private View mRoot;
 
@@ -38,7 +40,7 @@ public class NotificationFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(mRoot.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new NotificationRecyclerViewAdapter(mDataSet);
+        mAdapter = new InviteRecyclerViewAdapter(mDataSet);
         mRecyclerView.setAdapter(mAdapter);
 
         setOnClickListeners(mAdapter);
@@ -46,8 +48,8 @@ public class NotificationFragment extends Fragment {
         return mRoot;
     }
 
-    private void setOnClickListeners(NotificationRecyclerViewAdapter adapter) {
-        adapter.setmOnItemClickListener(new NotificationRecyclerViewAdapter.OnItemClickListener() {
+    private void setOnClickListeners(InviteRecyclerViewAdapter adapter) {
+        adapter.setmOnItemClickListener(new OnInviteClickListener() {
             @Override
             public void onAcceptClick(int position) {
                 Notification n = mDataSet.get(position);

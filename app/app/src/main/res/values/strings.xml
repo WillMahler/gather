@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Gather</string>
-
     <!--login activity-->
     <string name="label_email">Email</string>
     <string name="label_password">Password</string>
@@ -18,10 +17,21 @@
     <string name="label_cancel">Cancel</string>
     <string name="label_register">Register</string>
 
-    <!--event create/details activity-->
+    <!--event create activity-->
     <string name="tab_text_1">Overview</string>
     <string name="tab_text_2">Tasks</string>
     <string name="tab_text_3">Budget</string>
+
+    <!--event details activity-->
+    <string name="label_details">Details</string>
+    <string name="label_people">People</string>
+    <string name="title_attending">Attending</string>
+    <string name="title_invited">Invited</string>
+    <string name="title_declined">Declined</string>
+
+    <!--home fragment-->
+    <string name="tab_label_upcoming">Upcoming</string>
+    <string name="tab_label_drafts">Drafts</string>
 
     <!--create event activity-->
     <string name="label_event_title">Title</string>

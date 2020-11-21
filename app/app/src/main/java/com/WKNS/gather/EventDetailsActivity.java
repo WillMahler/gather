@@ -1,7 +1,6 @@
 package com.WKNS.gather;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
@@ -10,18 +9,14 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.WKNS.gather.databaseModels.Events.Event;
-import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsBudget;
+import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsPeople;
 import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsSummary;
-import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsTasks;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class EventDetailsActivity extends AppCompatActivity {
     public static final String TAG = EventDetailsActivity.class.getSimpleName();
@@ -58,10 +53,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         // Adapter
         mAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        // 2 Tabs
-        mAdapter.addFrag(new EventDetailsSummary(mEventObj), getString(R.string.tab_text_1));
-        mAdapter.addFrag(new EventDetailsTasks(), getString(R.string.tab_text_2));
-        mAdapter.addFrag(new EventDetailsBudget(), getString(R.string.tab_text_3));
+        mAdapter.addFrag(new EventDetailsSummary(mEventObj), getString(R.string.label_details));
+        mAdapter.addFrag(new EventDetailsPeople(mEventObj), getString(R.string.label_people));
 
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);

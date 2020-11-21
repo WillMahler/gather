@@ -8,4 +8,10 @@
   only way I found how to address this is with things that are available 
   in Kotlin, but not in Java
   Source: https://medium.com/@slarsoncreative/click-handling-in-multi-view-recyclerviews-8b4a55bb4081
-- 
+- Attempted refactoring RecyclerViews using Factory pattern, but ran into same issue
+  as with Visitor pattern - onClickListeners hinder refactoring using either pattern
+- Refactored:
+	- RecyclerViews, separated clickListeners, ViewHolders, and adapters
+	- EventDetails tabbed activity; removed budget/task, replaced with
+          Details and People tabs instead. Also populated People tab with text headings
+          and RecyclerViews with test user data

@@ -17,11 +17,11 @@
         android:label="@string/title_search"
         tools:layout="@layout/fragment_search" />
 
-    <fragment
+<!--    <fragment
         android:id="@+id/navigation_create_event"
         android:name="com.WKNS.gather.ui.CreateEvent.CreateEventFragment"
         android:label="@string/title_new_gathering"
-        tools:layout="@layout/fragment_create_event" />
+        tools:layout="@layout/fragment_create_event" />-->
 
     <fragment
         android:id="@+id/navigation_notification"

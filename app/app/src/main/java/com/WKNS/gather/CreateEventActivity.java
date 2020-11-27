@@ -1,4 +1,4 @@
-package com.WKNS.gather.ui.CreateEvent;
+package com.WKNS.gather;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -8,9 +8,7 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -18,10 +16,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
-import com.WKNS.gather.MainActivity;
-import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Events.Event;
 import com.WKNS.gather.databaseModels.Users.User;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -29,6 +26,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,39 +34,45 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class CreateEventFragment extends Fragment {
+public class CreateEventActivity extends AppCompatActivity {
 
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private ArrayList<String> guestListArray;
     private Context context;
     private FirebaseFirestore db;
     private User userObject;
-    private View mRoot;
 
+    private Toolbar actionbar;
     private EditText mTitle, mDate, mLocation, mDescription, mGuestListView;
     private Button mClearGuestList;
     private FloatingActionButton mFabCancel, mFabDone;
 
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_create_event);
+
+        // setting title of action bar
+        actionbar = findViewById(R.id.actionbar);
+        setSupportActionBar(actionbar);
+        getSupportActionBar().setTitle("New Gathering");
+
+        mTitle = findViewById(R.id.editText_createEvent_title);
+        mDate = findViewById(R.id.editText_createEvent_date);
+        mLocation = findViewById(R.id.editText_createEvent_location);
+        mDescription = findViewById(R.id.editText_createEvent_description);
+        mGuestListView = findViewById(R.id.editText_guest_list);
+        mClearGuestList = findViewById(R.id.clear_guests);
+        mFabCancel = findViewById(R.id.fab_cancel);
+        mFabDone = findViewById(R.id.fab_done);
 
         guestListArray = new ArrayList<>();
-        context = this.getContext();
+        context = this;
         db = FirebaseFirestore.getInstance();
-        userObject = ((MainActivity) getActivity()).getUserObject();
-    }
 
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRoot = inflater.inflate(R.layout.fragment_create_event, container, false);
-
-        mTitle = mRoot.findViewById(R.id.editText_createEvent_title);
-        mDate = mRoot.findViewById(R.id.editText_createEvent_date);
-        mLocation = mRoot.findViewById(R.id.editText_createEvent_location);
-        mDescription = mRoot.findViewById(R.id.editText_createEvent_description);
-        mGuestListView = mRoot.findViewById(R.id.editText_guest_list);
-        mClearGuestList = mRoot.findViewById(R.id.clear_guests);
-        mFabCancel = mRoot.findViewById(R.id.fab_cancel);
-        mFabDone = mRoot.findViewById(R.id.fab_done);
+        Gson gson = new Gson();
+        String userObjectString = getIntent().getStringExtra("userObjectString");
+        userObject = gson.fromJson(userObjectString, User.class);
 
         mDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -115,11 +119,11 @@ public class CreateEventFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(guestListArray.isEmpty()) {
-                    Toast.makeText(getActivity(), "Guest list is already empty!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Guest list is already empty!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setMessage("Are you sure you want to clear the guest list?")
                         .setCancelable(true)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -127,7 +131,7 @@ public class CreateEventFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 guestListArray.clear();
                                 mGuestListView.setText("");
-                                Toast.makeText(getActivity(), "Guest list cleared.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "Guest list cleared.", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -150,7 +154,7 @@ public class CreateEventFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 deleteEvent();
-                                reset_activity();
+                                finish();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -183,7 +187,7 @@ public class CreateEventFragment extends Fragment {
                                         Toast.makeText(context, "Error: Event Not Published",
                                                 Toast.LENGTH_SHORT).show();
                                     }
-                                    reset_activity();
+                                    finish();
                                 }
                             }
                         })
@@ -199,24 +203,13 @@ public class CreateEventFragment extends Fragment {
                                     Toast.makeText(context, "Error: Draft Not Saved",
                                             Toast.LENGTH_SHORT).show();
                                 }
-                                reset_activity();
+                                finish();
                             }
                         });
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             }
         });
-
-        return mRoot;
-    }
-
-    private void reset_activity() {
-        mTitle.setText("");
-        mDate.setText("");
-        mLocation.setText("");
-        mDescription.setText("");
-        mGuestListView.setText("");
-        guestListArray.clear();
     }
 
     private void showDatePicker() {
@@ -226,7 +219,7 @@ public class CreateEventFragment extends Fragment {
         int year = calendar.get(Calendar.YEAR);
 
         DatePickerDialog dialog = new DatePickerDialog(
-                getActivity(),
+                context,
                 android.R.style.ThemeOverlay_Material_Dialog_Alert,
                 mDateSetListener,
                 year, month, day
@@ -237,7 +230,7 @@ public class CreateEventFragment extends Fragment {
     }
 
     private void showGuestDialog(View v) {
-        LinearLayout container = new LinearLayout(getActivity());
+        LinearLayout container = new LinearLayout(context);
         container.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(50, 0, 50, 0);
@@ -291,7 +284,7 @@ public class CreateEventFragment extends Fragment {
                 else {
                     guestListArray.add(email);
                     mGuestListView.setText(guestListArray.toString().substring(1, guestListArray.toString().length()-1));
-                    Toast.makeText(getActivity(), "Guest added.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Guest added.", Toast.LENGTH_SHORT).show();
                     guest_email.setText("");
                     //dialog.dismiss();
                 }

@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.CreateEvent.CreateEventFragment">
+    tools:context=".CreateEventActivity">
+
+    <include layout="@menu/actionbar"/>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
-        android:layout_marginBottom="34dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -188,7 +188,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start|bottom"
         android:layout_marginStart="10dp"
-        android:layout_marginBottom="65dp"
+        android:layout_marginBottom="10dp"
         android:clickable="true"
         android:src="@drawable/ic_round_cancel_24"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -200,7 +200,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="65dp"
+        android:layout_marginBottom="10dp"
         android:clickable="true"
         android:src="@drawable/ic_round_check_24"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -18,6 +18,8 @@ import com.WKNS.gather.EventDetailsActivity;
 import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
+import com.WKNS.gather.recyclerViews.adapters.UserEventRecyclerViewAdapter;
+import com.WKNS.gather.recyclerViews.clickListeners.OnItemClickListener;
 import com.WKNS.gather.testData.Event;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -40,7 +42,7 @@ public class HomeFragment extends Fragment {
     private ArrayList<UserEvent> mUserEvents;
     private HomeViewModel mHomeViewModel;
     private RecyclerView mRecyclerView;
-    private HomeRecyclerViewAdapter mAdapter;
+    private UserEventRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private View mRoot;
     private FirebaseFirestore db;
@@ -71,10 +73,10 @@ public class HomeFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(mRoot.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new HomeRecyclerViewAdapter(mUserEvents);
+        mAdapter = new UserEventRecyclerViewAdapter(mUserEvents);
         mRecyclerView.setAdapter(mAdapter);
 
-        mAdapter.setOnItemClickListener(new HomeRecyclerViewAdapter.OnItemClickListener() {
+        mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
@@ -82,6 +84,7 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
         return mRoot;
     }
 }

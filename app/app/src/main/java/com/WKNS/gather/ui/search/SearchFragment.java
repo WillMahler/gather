@@ -13,22 +13,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.WKNS.gather.EventDetailsActivity;
+import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
 
 import com.WKNS.gather.UserProfileActivity;
-import com.WKNS.gather.testData.Event;
+import com.WKNS.gather.databaseModels.Users.UserEvent;
+import com.WKNS.gather.recyclerViews.adapters.UserEventRecyclerViewAdapter;
+import com.WKNS.gather.recyclerViews.adapters.UserRecyclerViewAdapter;
+import com.WKNS.gather.recyclerViews.clickListeners.OnItemClickListener;
 import com.WKNS.gather.testData.User;
-import com.google.api.Distribution;
 
 import java.util.ArrayList;
 
 public class SearchFragment extends Fragment {
 
     private ArrayList<User> mUserList;
-    private ArrayList<Event> mEventList;
+    private ArrayList<UserEvent> mEventList;
     private RecyclerView mRecyclerViewEvents, mRecyclerViewUsers;
-    private SearchRecyclerViewAdapterPeople mAdapterPeople;
-    private SearchRecyclerViewAdapterGatherings mAdapterGatherings;
+    private UserRecyclerViewAdapter mAdapterPeople;
+    private UserEventRecyclerViewAdapter mAdapterGatherings;
     private RecyclerView.LayoutManager mLayoutManagerPeople, mLayoutManagerEvents;
     private View mRoot;
 
@@ -39,7 +42,7 @@ public class SearchFragment extends Fragment {
         mRoot = inflater.inflate(R.layout.fragment_search, container, false);
 
         mUserList = User.testUsers();
-        mEventList = Event.testEvents();
+        mEventList = ((MainActivity)getActivity()).getmUserEvents();
 
         mRecyclerViewEvents = mRoot.findViewById(R.id.recyclerView_Search_Gatherings);
         mRecyclerViewEvents.setHasFixedSize(true);
@@ -47,13 +50,14 @@ public class SearchFragment extends Fragment {
         mLayoutManagerEvents = new LinearLayoutManager(mRoot.getContext());
         mRecyclerViewEvents.setLayoutManager(mLayoutManagerEvents);
 
-        mAdapterGatherings = new SearchRecyclerViewAdapterGatherings(mEventList);
+        mAdapterGatherings = new UserEventRecyclerViewAdapter(mEventList);
         mRecyclerViewEvents.setAdapter(mAdapterGatherings);
 
-        mAdapterGatherings.setOnItemClickListener(new SearchRecyclerViewAdapterGatherings.OnItemClickListener() {
+        mAdapterGatherings.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                intent.putExtra("EVENT_ID", mEventList.get(position).eventID());
                 startActivity(intent);
             }
         });
@@ -64,16 +68,9 @@ public class SearchFragment extends Fragment {
         mLayoutManagerPeople = new LinearLayoutManager(mRoot.getContext(), LinearLayoutManager.HORIZONTAL, false);
         mRecyclerViewUsers.setLayoutManager(mLayoutManagerPeople);
 
-        mAdapterPeople = new SearchRecyclerViewAdapterPeople(mUserList);
+        mAdapterPeople = new UserRecyclerViewAdapter(mUserList);
         mRecyclerViewUsers.setAdapter(mAdapterPeople);
 
-        mAdapterPeople.setOnItemClickListener(new SearchRecyclerViewAdapterPeople.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-                startActivity(intent);
-            }
-        });
 
         return mRoot;
     }

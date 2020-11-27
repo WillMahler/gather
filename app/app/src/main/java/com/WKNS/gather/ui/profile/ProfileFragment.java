@@ -2,7 +2,10 @@ package com.WKNS.gather.ui.profile;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Users.User;
@@ -30,7 +32,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
+
+import java.io.InputStream;
 import java.util.UUID;
 
 import static android.app.Activity.RESULT_OK;
@@ -39,19 +42,28 @@ public class ProfileFragment extends Fragment {
 
     public static final String TAG = ProfileFragment.class.getSimpleName();
 
-    //private com.WKNS.gather.ui.profile.ProfileViewModel profileViewModel;
-    private ImageView mProfileImage;
-    private TextView firstName, lastName, email;
-    private Button mChooseImage, mLogout;
-
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private StorageReference mStorageRef;
     private GoogleSignInAccount signInAccount;
     private User userObject;
 
+    private ImageView mProfileImage;
+    private TextView firstName, lastName, email;
+    private Button mChooseImage, mLogout;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        db = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
+        mStorageRef = storage.getReference();
+        signInAccount = GoogleSignIn.getLastSignedInAccount(getContext());
+        userObject = ((MainActivity)getActivity()).getUserObject();
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //profileViewModel = ViewModelProviders.of(this).get(com.WKNS.gather.ui.profile.ProfileViewModel.class);
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
 
         mProfileImage = root.findViewById(R.id.profileImage);
@@ -61,24 +73,20 @@ public class ProfileFragment extends Fragment {
         mChooseImage = root.findViewById(R.id.chooseImage);
         mLogout = root.findViewById(R.id.logout);
 
-        db = FirebaseFirestore.getInstance();
-        storage = FirebaseStorage.getInstance();
-        mStorageRef = storage.getReference();
-        signInAccount = GoogleSignIn.getLastSignedInAccount(getContext());
-        userObject = ((MainActivity)getActivity()).getUserObject();
-
-        // populating fragment with user data
-        /*if(!userObject.getProfileImage().isEmpty()) {
-            Picasso.get().load(userObject.getProfileImage()).into(mProfileImage);
-        }*/
-        mProfileImage.setImageResource(R.drawable.ic_baseline_person_24);
-        firstName.setText(userObject.getFirstName());
-        lastName.setText(userObject.getLastName());
-        email.setText(userObject.getEmail());
-
         if(signInAccount!= null) {
             mChooseImage.setVisibility(View.GONE);
         }
+
+        if(!userObject.getProfileImage().equals("")) {
+            new DownloadImageTask(mProfileImage).execute(userObject.getProfileImage());
+        }
+        else {
+            mProfileImage.setImageResource(R.drawable.ic_baseline_person_24);
+        }
+
+        firstName.setText(userObject.getFirstName());
+        lastName.setText(userObject.getLastName());
+        email.setText(userObject.getEmail());
 
         // choose image button handler
         mChooseImage.setOnClickListener(new View.OnClickListener() {
@@ -144,7 +152,6 @@ public class ProfileFragment extends Fragment {
                 if (!task.isSuccessful()) {
                     throw task.getException();
                 }
-
                 // Continue with the task to get the download URL
                 return ref.getDownloadUrl();
             }
@@ -152,7 +159,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
-                    updateUserProfilePhoto(task.getResult().toString());
+                    updateUserProfile(task.getResult().toString());
                 }
                 else {
                     // Handle failures
@@ -161,10 +168,10 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void updateUserProfilePhoto(String downloadUrl) {
-        userObject.setProfileImage(downloadUrl);
+    private void updateUserProfile(String photoUrl) {
+        userObject.setProfileImage(photoUrl);
         DocumentReference documentReference = db.collection("users").document(userObject.getUserID());
-        documentReference.update("profileImg", downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+        documentReference.update("profileImg", photoUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Log.d(TAG, "user document update success");
@@ -175,5 +182,30 @@ public class ProfileFragment extends Fragment {
                 Log.d(TAG, "user document update failed: " + e.toString());
             }
         });
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urlDisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urlDisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
     }
 }

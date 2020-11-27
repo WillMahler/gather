@@ -1,12 +1,12 @@
-package com.WKNS.gather.ui.tabbedViewFragments;
+package com.WKNS.gather.ui.CreateEvent;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-
-import android.content.Intent;
-import android.util.Log;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,54 +18,57 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import com.WKNS.gather.CreateEventActivity;
+import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Events.Event;
+import com.WKNS.gather.databaseModels.Users.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
-public class CreateEventSummary extends Fragment {
+public class CreateEventFragment extends Fragment {
 
     private DatePickerDialog.OnDateSetListener mDateSetListener;
-    private EditText mTitle, mDate, mLocation, mDescription, mGuestListView;
-    private FirebaseFirestore db;
-    private Intent intent;
-    private Button mClearGuestList;
-
     private ArrayList<String> guestListArray;
+    private Context context;
+    private FirebaseFirestore db;
+    private User userObject;
+    private View mRoot;
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        intent = ((CreateEventActivity) getActivity()).getIntent();
-        db = FirebaseFirestore.getInstance();
-        return inflater.inflate(R.layout.fragment_create_event_summary, container, false);
-    }
+    private EditText mTitle, mDate, mLocation, mDescription, mGuestListView;
+    private Button mClearGuestList;
+    private FloatingActionButton mFabCancel, mFabDone;
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        mTitle = view.findViewById(R.id.editText_createEvent_title);
-        mDate = view.findViewById(R.id.editText_createEvent_date);
-        mLocation = view.findViewById(R.id.editText_createEvent_location);
-        mDescription = view.findViewById(R.id.editText_createEvent_description);
-        mGuestListView = view.findViewById(R.id.editText_guest_list);
-        mClearGuestList = view.findViewById(R.id.clear_guests);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         guestListArray = new ArrayList<>();
+        context = this.getContext();
+        db = FirebaseFirestore.getInstance();
+        userObject = ((MainActivity) getActivity()).getUserObject();
+    }
+
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mRoot = inflater.inflate(R.layout.fragment_create_event, container, false);
+
+        mTitle = mRoot.findViewById(R.id.editText_createEvent_title);
+        mDate = mRoot.findViewById(R.id.editText_createEvent_date);
+        mLocation = mRoot.findViewById(R.id.editText_createEvent_location);
+        mDescription = mRoot.findViewById(R.id.editText_createEvent_description);
+        mGuestListView = mRoot.findViewById(R.id.editText_guest_list);
+        mClearGuestList = mRoot.findViewById(R.id.clear_guests);
+        mFabCancel = mRoot.findViewById(R.id.fab_cancel);
+        mFabDone = mRoot.findViewById(R.id.fab_done);
 
         mDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -136,6 +139,84 @@ public class CreateEventSummary extends Fragment {
                 alertDialog.show();
             }
         });
+
+        mFabCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View root) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Are you sure you want to abandon this event?")
+                        .setCancelable(true)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                deleteEvent();
+                                reset_activity();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
+
+        mFabDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Would you like to draft or publish this event?")
+                        .setCancelable(true)
+                        .setPositiveButton("Publish", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (validateData()) {
+                                    try {
+                                        addEvent(true);
+                                        Toast.makeText(context, "Event Published",
+                                                Toast.LENGTH_SHORT).show();
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                        Toast.makeText(context, "Error: Event Not Published",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                    reset_activity();
+                                }
+                            }
+                        })
+                        .setNegativeButton("Draft", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    addEvent(false);
+                                    Toast.makeText(context, "Draft Saved",
+                                            Toast.LENGTH_SHORT).show();
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(context, "Error: Draft Not Saved",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                reset_activity();
+                            }
+                        });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
+
+        return mRoot;
+    }
+
+    private void reset_activity() {
+        mTitle.setText("");
+        mDate.setText("");
+        mLocation.setText("");
+        mDescription.setText("");
+        mGuestListView.setText("");
+        guestListArray.clear();
     }
 
     private void showDatePicker() {
@@ -218,7 +299,7 @@ public class CreateEventSummary extends Fragment {
         });
     }
 
-    public boolean validateData() {
+    private boolean validateData() {
         String title = mTitle.getText().toString().trim();
         String date = mDate.getText().toString().trim();
         String location = mLocation.getText().toString().trim();
@@ -253,11 +334,11 @@ public class CreateEventSummary extends Fragment {
         return true;
     }
 
-    public boolean addEvent(boolean isPublished) throws ParseException {
+    private boolean addEvent(boolean isPublished) throws ParseException {
         // Owner Details
-        String ownerID = intent.getStringExtra("userID");
-        String ownerFirst = intent.getStringExtra("userFirst");
-        String ownerLast = intent.getStringExtra("userLast");
+        String ownerID = userObject.getUserID();
+        String ownerFirst = userObject.getFirstName();
+        String ownerLast = userObject.getLastName();
 
         // Event Details
         String title = mTitle.getText().toString().trim();
@@ -267,10 +348,11 @@ public class CreateEventSummary extends Fragment {
         String description = mDescription.getText().toString().trim();
 
         // Instantiate New Event Object
-        Event event = new Event(title, description, ownerID, ownerFirst,
+        com.WKNS.gather.databaseModels.Events.Event event = new Event(title, description, ownerID, ownerFirst,
                 ownerLast, date, location, isPublished);
 
-        String eventID = intent.getStringExtra("eventID");
+        // String eventID = intent.getStringExtra("eventID");
+        String eventID = "";
 
         // Add event to events collection, if it doesn't already exist.
         // Otherwise, update the event document.
@@ -311,9 +393,10 @@ public class CreateEventSummary extends Fragment {
         return true;
     }
 
-    public boolean deleteEvent() {
+    private boolean deleteEvent() {
         // Owner + Event Details
-        String eventID = intent.getStringExtra("eventID");
+        // String eventID = intent.getStringExtra("eventID");
+        String eventID = "";
 
         // If event is in database, delete. Do nothing otherwise.
         if (!eventID.isEmpty()) {
@@ -335,5 +418,4 @@ public class CreateEventSummary extends Fragment {
         }
         return false;
     }
-  
 }

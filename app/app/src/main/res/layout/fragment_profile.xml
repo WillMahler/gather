@@ -11,9 +11,9 @@
         android:id="@+id/profileImageCard"
         android:layout_width="250dp"
         android:layout_height="250dp"
+        android:layout_marginTop="75dp"
         app:cardCornerRadius="250dp"
         app:cardElevation="5dp"
-        android:layout_marginTop="75dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">

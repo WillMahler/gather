@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.WKNS.gather.R;
 import com.WKNS.gather.testData.User;
-import com.WKNS.gather.ui.calendar.CalendarRecyclerViewAdapter;
 
 import java.util.ArrayList;
 

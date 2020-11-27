@@ -12,9 +12,9 @@
         android:title="@string/title_search" />
 
     <item
-        android:id="@+id/navigation_calendar"
-        android:icon="@drawable/ic_round_calendar_today_24"
-        android:title="@string/title_calendar" />
+        android:id="@+id/navigation_create_event"
+        android:icon="@drawable/ic_round_add_24"
+        android:title="@string/title_new_gathering" />
 
     <item
         android:id="@+id/navigation_notification"

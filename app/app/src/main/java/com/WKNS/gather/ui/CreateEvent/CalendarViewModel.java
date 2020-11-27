@@ -1,4 +1,4 @@
-package com.WKNS.gather.ui.calendar;
+package com.WKNS.gather.ui.CreateEvent;
 
 import androidx.lifecycle.ViewModel;
 

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -18,12 +19,20 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.WKNS.gather.databaseModels.Events.Event;
 import com.WKNS.gather.databaseModels.Users.User;
+import com.WKNS.gather.recyclerViews.adapters.GuestListRecyclerViewAdapter;
+import com.WKNS.gather.recyclerViews.clickListeners.OnRemoveClickListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
@@ -36,10 +45,16 @@ import java.util.Date;
 
 public class CreateEventActivity extends AppCompatActivity {
 
+    public static String TAG = CreateEventActivity.class.getSimpleName();
+
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private ArrayList<String> guestListArray;
     private Context context;
+    private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private RecyclerView mRecyclerView;
+    private GuestListRecyclerViewAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
     private User userObject;
 
     private Toolbar actionbar;
@@ -69,6 +84,7 @@ public class CreateEventActivity extends AppCompatActivity {
         guestListArray = new ArrayList<>();
         context = this;
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         Gson gson = new Gson();
         String userObjectString = getIntent().getStringExtra("userObjectString");
@@ -210,6 +226,23 @@ public class CreateEventActivity extends AppCompatActivity {
                 alertDialog.show();
             }
         });
+
+        mRecyclerView = findViewById(R.id.recyclerView_GuestList);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new GuestListRecyclerViewAdapter(guestListArray);
+        mRecyclerView.setAdapter(mAdapter);
+
+        mAdapter.setOnItemClickListener(new OnRemoveClickListener() {
+            @Override
+            public void onRemoveClick(int position) {
+                guestListArray.remove(position);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
     }
 
     private void showDatePicker() {
@@ -249,6 +282,9 @@ public class CreateEventActivity extends AppCompatActivity {
         builder.setMessage(R.string.label_add_guest_message);
         builder.setView(container);
 
+        final Drawable checkMark = (Drawable)getResources().getDrawable(R.drawable.ic_baseline_check_green_24);
+        checkMark.setBounds(0, 0, checkMark.getIntrinsicWidth(), checkMark.getIntrinsicHeight());
+
         builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -268,7 +304,7 @@ public class CreateEventActivity extends AppCompatActivity {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = guest_email.getText().toString().trim();
+                final String email = guest_email.getText().toString().trim();
                 if(email.isEmpty()) {
                     guest_email.setError("Email must be provided.");
                     guest_email.requestFocus();
@@ -282,11 +318,25 @@ public class CreateEventActivity extends AppCompatActivity {
                     guest_email.requestFocus();
                 }
                 else {
-                    guestListArray.add(email);
-                    mGuestListView.setText(guestListArray.toString().substring(1, guestListArray.toString().length()-1));
-                    Toast.makeText(context, "Guest added.", Toast.LENGTH_SHORT).show();
-                    guest_email.setText("");
-                    //dialog.dismiss();
+                    // Validate whether user exists
+                    mAuth.fetchSignInMethodsForEmail(email)
+                            .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                                    boolean userExists = !task.getResult().getSignInMethods().isEmpty();
+
+                                    if (!userExists) {
+                                        guest_email.setError("Email not registered with Gather.");
+                                        guest_email.requestFocus();
+                                    } else {
+                                        guest_email.setError("Added " + email, checkMark);
+                                        guest_email.requestFocus();
+                                        guestListArray.add(email);
+                                        mAdapter.notifyDataSetChanged();
+                                        guest_email.setText("");
+                                    }
+                                }
+                            });
                 }
             }
         });
@@ -297,7 +347,6 @@ public class CreateEventActivity extends AppCompatActivity {
         String date = mDate.getText().toString().trim();
         String location = mLocation.getText().toString().trim();
         String description = mDescription.getText().toString().trim();
-        String guestList = mGuestListView.getText().toString().trim();
 
         if (title.isEmpty()) {
             mTitle.setError("Title is required.");
@@ -319,7 +368,7 @@ public class CreateEventActivity extends AppCompatActivity {
             mDescription.requestFocus();
             return false;
         }
-        if (guestList.isEmpty()) {
+        if (guestListArray.isEmpty()) {
             mGuestListView.setError("Guests are required.");
             //mGuestListView.requestFocus();
             return false;
@@ -355,14 +404,14 @@ public class CreateEventActivity extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
-                            Log.d("CreateEventSummary",
+                            Log.d(TAG,
                                     "DocumentSnapshot written with ID: " + documentReference.getId());
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Log.w("CreateEventSummary", "Error writing document", e);
+                            Log.w(TAG, "Error writing document", e);
                         }
                     });
         }
@@ -372,13 +421,13 @@ public class CreateEventActivity extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Log.d("CreateEventSummary", "DocumentSnapshot successfully written!");
+                            Log.d(TAG, "DocumentSnapshot successfully written!");
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Log.w("CreateEventSummary", "Error writing document", e);
+                            Log.w(TAG, "Error writing document", e);
                         }
                     });
         }
@@ -398,13 +447,13 @@ public class CreateEventActivity extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Log.d("CreateEventSummary", "DocumentSnapshot successfully deleted!");
+                            Log.d(TAG, "DocumentSnapshot successfully deleted!");
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Log.w("CreateEventSummary", "Error deleting document", e);
+                            Log.w(TAG, "Error deleting document", e);
                         }
                     });
 

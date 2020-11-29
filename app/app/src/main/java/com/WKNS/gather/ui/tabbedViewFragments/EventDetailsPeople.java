@@ -1,6 +1,7 @@
 package com.WKNS.gather.ui.tabbedViewFragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Events.Event;
+import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.recyclerViews.adapters.UserRecyclerViewAdapter;
 import com.WKNS.gather.testData.User;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -27,6 +34,7 @@ public class EventDetailsPeople extends Fragment {
     private RecyclerView mRecyclerViewAttending, mRecyclerViewInvited, mRecyclerViewDeclined;
     private UserRecyclerViewAdapter mInvitedAdapter, mAttendingAdapter, mDeclinedAdapter;
     private RecyclerView.LayoutManager mLayoutManagerAttending, mLayoutManagerInvited, mLayoutManagerDeclined;
+    private CollectionReference mAttendeesCollection;
 
     public EventDetailsPeople(Event event) {
         mEventObj = event;
@@ -77,4 +85,5 @@ public class EventDetailsPeople extends Fragment {
         mRecyclerViewDeclined.setAdapter(mDeclinedAdapter);
         mRecyclerViewInvited.setAdapter(mInvitedAdapter);
     }
+
 }

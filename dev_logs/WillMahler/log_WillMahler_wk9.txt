@@ -15,3 +15,9 @@
 	- EventDetails tabbed activity; removed budget/task, replaced with
           Details and People tabs instead. Also populated People tab with text headings
           and RecyclerViews with test user data
+- Enabled users to invite guests to events in the UI via their email
+  - Implemented a guest list RecyclerView which also allows users to remove
+    guests they've added
+  - Implemented a check to ensure emails can only be added if they're registered
+    in our app
+- Started preparing my part of the D3 presentation script and slides

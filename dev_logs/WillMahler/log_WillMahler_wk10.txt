@@ -1,0 +1,2 @@
+- Reviewed Shaun's PR (#86)
+- Finished reparing my part of the D3 presentation script and slides

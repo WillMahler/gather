@@ -71,6 +71,13 @@ public class SearchFragment extends Fragment {
         mAdapterPeople = new UserRecyclerViewAdapter(mUserList);
         mRecyclerViewUsers.setAdapter(mAdapterPeople);
 
+        mAdapterPeople.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return mRoot;
     }

@@ -1,9 +1,13 @@
 package com.WKNS.gather;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 import com.WKNS.gather.databaseModels.Users.User;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
@@ -36,6 +40,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -53,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private User userObject;
     private ArrayList<UserEvent> mUserEvents;
 
-    //Firebase db refferences
+    //Firebase db references
     private DocumentReference userObjDoc;
     private CollectionReference userEventsCollection;
 
@@ -123,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if(value != null) {
-                    userObject = new User(mAuth.getCurrentUser().getUid(), value.getString("email"), value.getString("firstName"), value.getString("lastName"), value.getString("profileImg"));
+                    userObject = new User(mAuth.getCurrentUser().getUid(), value.getString("email"), value.getString("phoneNum"), value.getString("firstName"), value.getString("lastName"), value.getString("profileImg"), value.getString("bio"));
+                    new DownloadImageTask().execute(userObject.getProfileImage());
                 }
             }
         });
@@ -169,9 +175,30 @@ public class MainActivity extends AppCompatActivity {
         this.homeFragRefreshListener = fragmentRefreshListener;
     }
 
-    public User getUserObject() {
-        return userObject;
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+
+        public DownloadImageTask() {
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urlDisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urlDisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            userObject.setProfileBitmap(result);
+        }
     }
+
+    public User getUserObject() { return userObject; }
     public ArrayList<UserEvent> getmUserEvents(){ return mUserEvents; }
-    public String getUserID(){return mAuth.getUid(); }
+    public String getUserID(){ return mAuth.getUid(); }
 }

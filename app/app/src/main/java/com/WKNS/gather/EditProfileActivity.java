@@ -8,7 +8,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,9 +42,13 @@ public class EditProfileActivity extends AppCompatActivity {
     private FirebaseStorage storage;
     private StorageReference mStorageRef;
     private User userObject;
+    private Uri imageURI;
 
     private Toolbar actionbar;
     private ImageView mProfileImage;
+    private TextView mPhoneNum, mBio;
+    private ProgressBar mProgress;
+    private Button mSave;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,23 +59,27 @@ public class EditProfileActivity extends AppCompatActivity {
         actionbar = findViewById(R.id.actionbar);
         setSupportActionBar(actionbar);
         getSupportActionBar().setTitle("Edit Profile");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_round_arrow_back_ios_24));
 
         mProfileImage = findViewById(R.id.profileImage);
+        mPhoneNum = findViewById(R.id.editText_phone_number);
+        mBio = findViewById(R.id.editText_bio);
+        mProgress = findViewById(R.id.progressBar);
+        mSave = findViewById(R.id.save_button);
 
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
         mStorageRef = storage.getReference();
 
         Gson gson = new Gson();
-        String userObjectString = getIntent().getStringExtra("userObjectString");
+        final String userObjectString = getIntent().getStringExtra("userObjectString");
         userObject = gson.fromJson(userObjectString, User.class);
 
-        if(!userObject.getProfileImage().equals("")) {
-            new DownloadImageTask(mProfileImage).execute(userObject.getProfileImage());
-        }
-        else {
-            mProfileImage.setImageResource(R.drawable.ic_baseline_person_24);
-        }
+        mProfileImage.setImageBitmap(userObject.getProfileBitmap());
+        mPhoneNum.setText(userObject.getPhoneNum());
+        mBio.setText(userObject.getBio());
 
         mProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,11 +87,41 @@ public class EditProfileActivity extends AppCompatActivity {
                 choosePicture();
             }
         });
+
+        mSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String phoneNum = mPhoneNum.getText().toString().trim();
+                String bio = mBio.getText().toString().trim();
+
+                if (imageURI == null && phoneNum.equals(userObject.getPhoneNum()) && bio.equals(userObject.getBio())) {
+                    Toast.makeText(getApplicationContext(), "Profile updated!", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+
+                if (!phoneNum.isEmpty() && !android.util.Patterns.PHONE.matcher(phoneNum).matches()) {
+                    mPhoneNum.setError("Please enter valid phone number.");
+                    mPhoneNum.requestFocus();
+                    return;
+                }
+
+                if (imageURI == null) {
+                    mProgress.setVisibility(View.VISIBLE);
+                    updateUserProfile("", phoneNum, bio);
+                    return;
+                }
+
+                mProgress.setVisibility(View.VISIBLE);
+                uploadPictureToDB(imageURI);
+            }
+        });
     }
 
     @Override
-    public void onBackPressed() {
-        Toast.makeText(this, "TEST", Toast.LENGTH_SHORT).show();
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     @Override
@@ -88,9 +129,8 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == 1 && resultCode==RESULT_OK && data != null && data.getData() != null) {
-            Uri imageURI = data.getData();
+            imageURI = data.getData();
             mProfileImage.setImageURI(imageURI);
-            uploadPictureToDB(imageURI);
         }
     }
 
@@ -119,7 +159,7 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
-                    updateUserProfile(task.getResult().toString());
+                    updateUserProfile(task.getResult().toString(), mPhoneNum.getText().toString().trim(), mBio.getText().toString().trim());
                 }
                 else {
                     // Handle failures
@@ -128,44 +168,25 @@ public class EditProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void updateUserProfile(String photoUrl) {
-        userObject.setProfileImage(photoUrl);
+    private void updateUserProfile(String photoUrl, String phoneNum, String bio) {
         DocumentReference documentReference = db.collection("users").document(userObject.getUserID());
-        documentReference.update("profileImg", photoUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+        if(!photoUrl.equals("")) {
+            documentReference.update("profileImg", photoUrl);
+        }
+        documentReference.update("phoneNum", phoneNum);
+        documentReference.update("bio", bio).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Log.d(TAG, "user document update success");
+                Toast.makeText(getApplicationContext(), "Profile updated!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "user document update failed: " + e.toString());
+                Toast.makeText(getApplicationContext(), "User profile update failed: " + e.toString(), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urlDisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urlDisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
     }
 }

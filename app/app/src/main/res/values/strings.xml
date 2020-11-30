@@ -61,6 +61,8 @@
     <string name="label_last_name">Last</string>
     <string name="label_user_email">email</string>
     <string name="label_edit_profile">Edit Profile</string>
+    <string name="bio">Bio</string>
+    <string name="save">Save</string>
 
     <!--notification fragment-->
     <string name="notification_title_event">You\'ve Been Invited To:</string>

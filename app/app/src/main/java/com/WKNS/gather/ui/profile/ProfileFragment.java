@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +33,7 @@ public class ProfileFragment extends Fragment {
     private User userObject;
 
     private ImageView mProfileImage;
-    private TextView firstName, lastName, email;
+    private TextView mName, mEmail, mPhoneNum, mBio;
     private Button mEditProfile, mLogout;
 
     @Override
@@ -45,22 +46,36 @@ public class ProfileFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
 
         mProfileImage = root.findViewById(R.id.profileImage);
-        firstName = root.findViewById(R.id.firstName);
-        lastName = root.findViewById(R.id.lastName);
-        email = root.findViewById(R.id.email);
+        mName = root.findViewById(R.id.name);
+        mEmail = root.findViewById(R.id.email);
+        mPhoneNum = root.findViewById(R.id.phoneNum);
+        mBio = root.findViewById(R.id.bio);
         mEditProfile = root.findViewById(R.id.editProfile);
         mLogout = root.findViewById(R.id.logout);
 
         if(!userObject.getProfileImage().equals("")) {
-            new DownloadImageTask(mProfileImage).execute(userObject.getProfileImage());
+            //new DownloadImageTask(mProfileImage).execute(userObject.getProfileImage());
+            mProfileImage.setImageBitmap(userObject.getProfileBitmap());
         }
         else {
             mProfileImage.setImageResource(R.drawable.ic_baseline_person_24);
         }
 
-        firstName.setText(userObject.getFirstName());
-        lastName.setText(userObject.getLastName());
-        email.setText(userObject.getEmail());
+        mName.setText((userObject.getFirstName() + " " + userObject.getLastName()));
+        mEmail.setText(userObject.getEmail());
+        mPhoneNum.setText("+" + userObject.getPhoneNum());
+        mBio.setText(userObject.getBio());
+
+        if(mPhoneNum.getText().equals("+")) {
+            mPhoneNum.setVisibility(View.GONE);
+        }
+
+        if(mBio.getText().equals("")) {
+            mBio.setVisibility(View.GONE);
+        }
+
+        Linkify.addLinks(mEmail, Linkify.EMAIL_ADDRESSES);
+        Linkify.addLinks(mPhoneNum, Linkify.PHONE_NUMBERS);
 
         // choose image button handler
         mEditProfile.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +96,7 @@ public class ProfileFragment extends Fragment {
             public void onClick(View root) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setMessage("Are you sure you want to log out?")
-                        .setCancelable(false)
+                        .setCancelable(true)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -102,7 +117,7 @@ public class ProfileFragment extends Fragment {
         return root;
     }
 
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    /*private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
         public DownloadImageTask(ImageView bmImage) {
@@ -125,5 +140,5 @@ public class ProfileFragment extends Fragment {
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
         }
-    }
+    }*/
 }

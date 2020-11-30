@@ -1,3 +1,8 @@
-- Refactoring of calendar fragment / CreateEvent activity
-- Bottom navigation tab now starts the CreateEvent activity instead of showing in fragment
-- Began working on implementing images with events and user profiles
+- Refactoring of calendar fragment / CreateEvent activity.
+- Bottom navigation tab now starts the CreateEvent activity instead of showing in fragment.
+- User profile pictures now implemented and only get downloaded once on application startup and stored
+  in user object ot avoid repeated requests.
+- Bio and phone number fields added to user documents.
+- User profile editing now implemented.
+	- Users can change their profile picture, phone number, and update their bio.
+- User email and phone number is now hyperlinked in their profile page for easy contacting.

@@ -146,6 +146,7 @@ public class CreateEventActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 guestListArray.clear();
+                                mAdapter.notifyDataSetChanged();
                                 mGuestListView.setText("");
                                 Toast.makeText(context, "Guest list cleared.", Toast.LENGTH_SHORT).show();
                             }

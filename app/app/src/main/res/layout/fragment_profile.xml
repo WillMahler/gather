@@ -9,8 +9,8 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/profileImageCard"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
+        android:layout_width="175dp"
+        android:layout_height="175dp"
         android:layout_marginTop="75dp"
         app:cardCornerRadius="250dp"
         app:cardElevation="5dp"
@@ -65,11 +65,11 @@
         app:layout_constraintTop_toBottomOf="@+id/lastName" />
 
     <Button
-        android:id="@+id/chooseImage"
+        android:id="@+id/editProfile"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/label_choose_img"
+        android:text="@string/label_edit_profile"
         app:layout_constraintBottom_toTopOf="@+id/logout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

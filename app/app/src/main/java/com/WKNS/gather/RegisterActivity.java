@@ -25,7 +25,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     public static final String TAG = "TAG";
 
-    private EditText mEmail, mPassword, mConfirm_password, mFirstName, mLastName;
+    private EditText mEmail, mPassword, mConfirm_password, mFirstName, mLastName, mPhoneNum;
     private Button mCancel_btn, mRegister_btn;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -40,6 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
         mConfirm_password    = findViewById(R.id.editText_confirm_password);
         mFirstName           = findViewById(R.id.editText_firstName);
         mLastName            = findViewById(R.id.editText_lastName);
+        mPhoneNum            = findViewById(R.id.editText_phone_number);
         mCancel_btn          = findViewById(R.id.cancel_register);
         mRegister_btn        = findViewById(R.id.login_register);
         mAuth                = FirebaseAuth.getInstance();
@@ -63,6 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String confirm_password = mConfirm_password.getText().toString().trim();
                 final String first_name = mFirstName.getText().toString().trim();
                 final String last_name = mLastName.getText().toString().trim();
+                final String phoneNum = mPhoneNum.getText().toString().trim();
 
                 // input validation
                 if (email.isEmpty()) {
@@ -106,6 +108,11 @@ public class RegisterActivity extends AppCompatActivity {
                     mLastName.requestFocus();
                     return;
                 }
+                if(!phoneNum.isEmpty() && !android.util.Patterns.PHONE.matcher(phoneNum).matches()) {
+                    mPhoneNum.setError("Please enter valid phone number.");
+                    mPhoneNum.requestFocus();
+                    return;
+                }
 
                 // authenticating user with firebase
                 mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -113,7 +120,7 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             sendVerificationEmail();
-                            storeUser(email, first_name, last_name, "");
+                            storeUser("", email, phoneNum, first_name, last_name);
                         }
                         else {
                             Toast.makeText(RegisterActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -139,13 +146,15 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     // creates user document in users collection in Firebase
-    private void storeUser(String email, String firstName, String lastName, String profileImg) {
+    private void storeUser(String profileImg, String email, String phoneNum, String firstName, String lastName) {
         DocumentReference documentReference = db.collection("users").document(mAuth.getCurrentUser().getUid());
         final Map<String, Object> newUser = new HashMap<>();
+        newUser.put("profileImg", profileImg);
         newUser.put("email", email);
+        newUser.put("phoneNum", phoneNum);
         newUser.put("firstName", firstName);
         newUser.put("lastName", lastName);
-        newUser.put("profileImg", profileImg);
+        newUser.put("bio", "");
 
         documentReference.set(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

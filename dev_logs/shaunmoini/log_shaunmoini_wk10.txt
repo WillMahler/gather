@@ -1,0 +1,3 @@
+- Refactoring of calendar fragment / CreateEvent activity
+- Bottom navigation tab now starts the CreateEvent activity instead of showing in fragment
+- Began working on implementing images with events and user profiles

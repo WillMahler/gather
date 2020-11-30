@@ -167,6 +167,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_guest_list" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_GuestList"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="@+id/editText_guest_list"
+                app:layout_constraintStart_toStartOf="@+id/editText_guest_list"
+                app:layout_constraintTop_toBottomOf="@+id/editText_guest_list" />
+
             <Button
                 android:id="@+id/clear_guests"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -176,7 +185,7 @@
                 android:text="@string/label_clear_guests"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editText_guest_list" />
+                app:layout_constraintTop_toBottomOf="@+id/recyclerView_GuestList" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

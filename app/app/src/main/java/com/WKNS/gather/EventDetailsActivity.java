@@ -121,7 +121,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
     private void listenInvited(){
         mEventInvitedCollection = mDb.collection("events").document(mEventID)
-                .collection("invited");
+                .collection("invitations");
 
         mEventInvitedCollection.whereEqualTo("didDenied", false).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -145,9 +145,12 @@ public class EventDetailsActivity extends AppCompatActivity {
                         mInvites.add(newInvitation);
                     }
                 }
-//                if(getAttendeeRefreshListener()!=null){
-//                    getAttendeeRefreshListener().onRefresh(mAttendees);
-//                }
+                if(getInvitationRefreshListener()!=null){
+                    getInvitationRefreshListener().onRefresh(mInvites);
+                }
+                if(getInvitationDeniedRefreshListener()!=null){
+                    getInvitationDeniedRefreshListener().onRefresh(mInvitesDenied);
+                }
             }
         });
     }

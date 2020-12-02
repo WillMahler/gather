@@ -1,6 +1,10 @@
 package com.WKNS.gather.ui.tabbedViewFragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +15,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.WKNS.gather.EventDetailsActivity;
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Events.Event;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.io.InputStream;
 
 public class EventDetailsSummary extends Fragment {
     private Event mEventObj;
@@ -42,7 +45,6 @@ public class EventDetailsSummary extends Fragment {
         mHost = view.findViewById(R.id.textView_eventDetails_host);
         mDescription = view.findViewById(R.id.textView_eventDetails_description);
 
-        mDisplayPic.setImageResource(R.drawable.ic_baseline_video_library_24);
         super.onViewCreated(view, savedInstanceState);
 
         setEventDetails(mEventObj);
@@ -51,11 +53,42 @@ public class EventDetailsSummary extends Fragment {
     public void setEventDetails(Event event) {
         if (event != null) {
             mEventObj = event;
+
+            if(!event.getPhotoURL().isEmpty()) {
+                new DownloadImageTask(mDisplayPic).execute(event.getPhotoURL());
+            }
+
             mTitle.setText(event.getTitle());
             mDate.setText(event.getDate().toString()); //TODO: Maybe have this not be toString()?
             mLocation.setText("123 Placeholder Street."); //TODO: Hard code these as string in Event and UserEvent or use api
             mHost.setText(event.getOwnerFirstName() + " " + event.getOwnerLastName());
             mDescription.setText(event.getDescription());
+        }
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urlDisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urlDisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setPadding(0, 0, 0, 0);
+            bmImage.setImageBitmap(result);
         }
     }
 }

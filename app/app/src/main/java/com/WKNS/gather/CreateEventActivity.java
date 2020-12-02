@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -13,10 +15,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,6 +30,7 @@ import com.WKNS.gather.databaseModels.Events.Event;
 import com.WKNS.gather.databaseModels.Users.User;
 import com.WKNS.gather.recyclerViews.adapters.GuestListRecyclerViewAdapter;
 import com.WKNS.gather.recyclerViews.clickListeners.OnRemoveClickListener;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,6 +40,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 
 import java.text.ParseException;
@@ -42,6 +50,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 public class CreateEventActivity extends AppCompatActivity {
 
@@ -52,12 +61,17 @@ public class CreateEventActivity extends AppCompatActivity {
     private Context context;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private FirebaseStorage storage;
+    private StorageReference mStorageRef;
     private RecyclerView mRecyclerView;
     private GuestListRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private User userObject;
+    private Uri imageURI;
+    private String imageURL;
 
     private Toolbar actionbar;
+    private ImageView mEventImage;
     private EditText mTitle, mDate, mLocation, mDescription, mGuestListView;
     private Button mClearGuestList;
     private FloatingActionButton mFabCancel, mFabDone;
@@ -72,6 +86,7 @@ public class CreateEventActivity extends AppCompatActivity {
         setSupportActionBar(actionbar);
         getSupportActionBar().setTitle("New Gathering");
 
+        mEventImage = findViewById(R.id.imageView_createEvent_displayPic);
         mTitle = findViewById(R.id.editText_createEvent_title);
         mDate = findViewById(R.id.editText_createEvent_date);
         mLocation = findViewById(R.id.editText_createEvent_location);
@@ -85,10 +100,20 @@ public class CreateEventActivity extends AppCompatActivity {
         context = this;
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+        storage = FirebaseStorage.getInstance();
+        mStorageRef = storage.getReference();
 
         Gson gson = new Gson();
         String userObjectString = getIntent().getStringExtra("userObjectString");
         userObject = gson.fromJson(userObjectString, User.class);
+        imageURL = "";
+
+        mEventImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                choosePicture();
+            }
+        });
 
         mDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -195,13 +220,16 @@ public class CreateEventActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 if (validateData()) {
                                     try {
-                                        addEvent(true);
-                                        Toast.makeText(context, "Event Published",
-                                                Toast.LENGTH_SHORT).show();
+                                        if(imageURI != null) {
+                                            uploadPictureToDB(imageURI, true);
+                                        }
+                                        else {
+                                            addEvent(true);
+                                        }
+                                        Toast.makeText(context, "Event Published", Toast.LENGTH_SHORT).show();
                                     } catch (ParseException e) {
                                         e.printStackTrace();
-                                        Toast.makeText(context, "Error: Event Not Published",
-                                                Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Error: Event Not Published", Toast.LENGTH_SHORT).show();
                                     }
                                     finish();
                                 }
@@ -211,13 +239,16 @@ public class CreateEventActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
-                                    addEvent(false);
-                                    Toast.makeText(context, "Draft Saved",
-                                            Toast.LENGTH_SHORT).show();
+                                    if(imageURI != null) {
+                                        uploadPictureToDB(imageURI, false);
+                                    }
+                                    else {
+                                        addEvent(false);
+                                    }
+                                    Toast.makeText(context, "Draft Saved", Toast.LENGTH_SHORT).show();
                                 } catch (ParseException e) {
                                     e.printStackTrace();
-                                    Toast.makeText(context, "Error: Draft Not Saved",
-                                            Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Error: Draft Not Saved", Toast.LENGTH_SHORT).show();
                                 }
                                 finish();
                             }
@@ -242,7 +273,61 @@ public class CreateEventActivity extends AppCompatActivity {
                 mAdapter.notifyDataSetChanged();
             }
         });
+    }
 
+    @Override
+    public void onBackPressed() {
+        mFabCancel.callOnClick();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 1 && resultCode==RESULT_OK && data != null && data.getData() != null) {
+            imageURI = data.getData();
+            mEventImage.setPadding(0, 0, 0, 0);
+            mEventImage.setImageURI(imageURI);
+        }
+    }
+
+    private void choosePicture() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, 1);
+    }
+
+    private void uploadPictureToDB(Uri file, final boolean isPublished) {
+        final String randomKey = UUID.randomUUID().toString();
+        final StorageReference ref = mStorageRef.child("profile_images/" + randomKey);
+        UploadTask uploadTask = ref.putFile(file);
+
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+                // Continue with the task to get the download URL
+                return ref.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    imageURL = task.getResult().toString();
+                    try {
+                        addEvent(isPublished);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    Log.d(TAG, "Image upload failed.");
+                }
+            }
+        });
     }
 
     private void showDatePicker() {
@@ -391,7 +476,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
         // Instantiate New Event Object
         com.WKNS.gather.databaseModels.Events.Event event = new Event(title, description, ownerID, ownerFirst,
-                ownerLast, date, location, isPublished);
+                ownerLast, date, location, isPublished, imageURL);
 
         // String eventID = intent.getStringExtra("eventID");
         String eventID = "";

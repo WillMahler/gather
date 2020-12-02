@@ -12,18 +12,6 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_search"
-        android:name="com.WKNS.gather.ui.search.SearchFragment"
-        android:label="@string/title_search"
-        tools:layout="@layout/fragment_search" />
-
-<!--    <fragment
-        android:id="@+id/navigation_create_event"
-        android:name="com.WKNS.gather.ui.CreateEvent.CreateEventFragment"
-        android:label="@string/title_new_gathering"
-        tools:layout="@layout/fragment_create_event" />-->
-
-    <fragment
         android:id="@+id/navigation_notification"
         android:name="com.WKNS.gather.ui.notification.NotificationFragment"
         android:label="@string/title_notification"

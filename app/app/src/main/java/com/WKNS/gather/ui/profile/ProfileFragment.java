@@ -61,17 +61,21 @@ public class ProfileFragment extends Fragment {
             mProfileImage.setImageResource(R.drawable.ic_baseline_person_24);
         }
 
-        mName.setText((userObject.getFirstName() + " " + userObject.getLastName()));
+        mName.setText((userObject.getFirstName() + "\n" + userObject.getLastName()));
         mEmail.setText(userObject.getEmail());
-        mPhoneNum.setText("+" + userObject.getPhoneNum());
-        mBio.setText(userObject.getBio());
 
-        if(mPhoneNum.getText().equals("+")) {
+        if (userObject.getPhoneNum().isEmpty()) {
             mPhoneNum.setVisibility(View.GONE);
         }
+        else {
+            mPhoneNum.setText("+" + userObject.getPhoneNum());
+        }
 
-        if(mBio.getText().equals("")) {
+        if (userObject.getBio().isEmpty()) {
             mBio.setVisibility(View.GONE);
+        }
+        else {
+            mBio.setText(userObject.getBio());
         }
 
         Linkify.addLinks(mEmail, Linkify.EMAIL_ADDRESSES);

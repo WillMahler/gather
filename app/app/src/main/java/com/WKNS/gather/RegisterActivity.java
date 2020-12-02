@@ -59,12 +59,12 @@ public class RegisterActivity extends AppCompatActivity {
         mRegister_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String email = mEmail.getText().toString().trim();
+                String email = mEmail.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
                 String confirm_password = mConfirm_password.getText().toString().trim();
-                final String first_name = mFirstName.getText().toString().trim();
-                final String last_name = mLastName.getText().toString().trim();
-                final String phoneNum = mPhoneNum.getText().toString().trim();
+                String first_name = mFirstName.getText().toString().trim();
+                String last_name = mLastName.getText().toString().trim();
+                String phoneNum = mPhoneNum.getText().toString().trim();
 
                 // input validation
                 if (email.isEmpty()) {
@@ -114,19 +114,27 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
+                if (phoneNum.contains(" ") || phoneNum.contains("-") || phoneNum.contains("(") || phoneNum.contains(")")) {
+                    phoneNum = phoneNum.replaceAll("[()\\s-]+", "");
+                }
+
                 // authenticating user with firebase
-                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            sendVerificationEmail();
-                            storeUser("", email, phoneNum, first_name, last_name);
-                        }
-                        else {
-                            Toast.makeText(RegisterActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                registerUser(email, password, phoneNum, first_name, last_name);
+            }
+        });
+    }
+
+    private void registerUser(final String email, final String password, final String phoneNum, final String first_name, final String last_name) {
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    sendVerificationEmail();
+                    storeUser("", email, phoneNum, first_name, last_name);
+                }
+                else {
+                    Toast.makeText(RegisterActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

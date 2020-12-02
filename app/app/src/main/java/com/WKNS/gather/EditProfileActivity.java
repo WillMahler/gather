@@ -1,10 +1,7 @@
 package com.WKNS.gather;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.WKNS.gather.databaseModels.Users.User;
-import com.WKNS.gather.ui.profile.ProfileFragment;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -32,12 +28,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 
-import java.io.InputStream;
 import java.util.UUID;
 
 public class EditProfileActivity extends AppCompatActivity {
 
-    public static final String TAG = ProfileFragment.class.getSimpleName();
+    public static final String TAG = EditProfileActivity.class.getSimpleName();
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private StorageReference mStorageRef;
@@ -94,8 +89,11 @@ public class EditProfileActivity extends AppCompatActivity {
                 String phoneNum = mPhoneNum.getText().toString().trim();
                 String bio = mBio.getText().toString().trim();
 
+                if (phoneNum.contains(" ") || phoneNum.contains("-") || phoneNum.contains("(") || phoneNum.contains(")")) {
+                    phoneNum = phoneNum.replaceAll("[()\\s-]+", "");
+                }
+
                 if (imageURI == null && phoneNum.equals(userObject.getPhoneNum()) && bio.equals(userObject.getBio())) {
-                    Toast.makeText(getApplicationContext(), "Profile updated!", Toast.LENGTH_SHORT).show();
                     finish();
                     return;
                 }
@@ -162,7 +160,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     updateUserProfile(task.getResult().toString(), mPhoneNum.getText().toString().trim(), mBio.getText().toString().trim());
                 }
                 else {
-                    // Handle failures
+                    Log.d(TAG, "User profile update failed.");
                 }
             }
         });

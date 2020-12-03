@@ -21,7 +21,7 @@ public class UserProfileActivity extends AppCompatActivity {
         mName = findViewById(R.id.name);
         mEmail = findViewById(R.id.email);
         mPhoneNum = findViewById(R.id.phoneNum);
-        mBio = findViewById(R.id.bio);
+        mBio = findViewById(R.id.bio_userProfileActivity);
 
         // TODO Remove these later, this is just for display for the D2 demo
         mName.setText("Gordon\nRamsay");

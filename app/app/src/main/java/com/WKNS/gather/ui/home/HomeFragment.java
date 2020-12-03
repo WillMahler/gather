@@ -20,7 +20,6 @@ import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.recyclerViews.adapters.UserEventRecyclerViewAdapter;
 import com.WKNS.gather.recyclerViews.clickListeners.OnItemClickListener;
-import com.WKNS.gather.testData.Event;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;

@@ -1,8 +1,5 @@
 package com.WKNS.gather.ui.tabbedViewFragments;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,10 +14,12 @@ import androidx.fragment.app.Fragment;
 
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Events.Event;
-
-import java.io.InputStream;
+import com.WKNS.gather.helperMethods.DownloadImageTask;
 
 public class EventDetailsSummary extends Fragment {
+
+    public static String TAG = EventDetailsSummary.class.getSimpleName();
+
     private Event mEventObj;
     private ImageView mDisplayPic;
     private TextView mTitle, mDate, mLocation, mHost, mDescription;
@@ -54,8 +53,12 @@ public class EventDetailsSummary extends Fragment {
         if (event != null) {
             mEventObj = event;
 
-            if(!event.getPhotoURL().isEmpty()) {
-                new DownloadImageTask(mDisplayPic).execute(event.getPhotoURL());
+            String photoURL = event.getPhotoURL();
+
+            if (photoURL == null || photoURL.isEmpty()) {
+                mDisplayPic.setImageResource(R.drawable.ic_testimg_6_ft_apart_24);
+            } else {
+                new DownloadImageTask(mDisplayPic).execute(photoURL);
             }
 
             mTitle.setText(event.getTitle());
@@ -63,32 +66,6 @@ public class EventDetailsSummary extends Fragment {
             mLocation.setText("123 Placeholder Street."); //TODO: Hard code these as string in Event and UserEvent or use api
             mHost.setText(event.getOwnerFirstName() + " " + event.getOwnerLastName());
             mDescription.setText(event.getDescription());
-        }
-    }
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urlDisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urlDisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setPadding(0, 0, 0, 0);
-            bmImage.setImageBitmap(result);
         }
     }
 }

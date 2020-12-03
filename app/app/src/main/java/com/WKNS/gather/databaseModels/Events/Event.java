@@ -21,10 +21,7 @@ public class Event {
     private boolean published;
     // private String photo; TODO: find out how photos encoded/stored, can't be URI in firestore
 
-    @Exclude private Map<String, Budget> budgetMap;
     @Exclude private Map<String, Attendee> attendeeMap;
-    @Exclude private Map<String, Invitation> invitationMap;
-    @Exclude private Map<String, Task> taskMap;
 
     public Event(){ }
 
@@ -50,8 +47,7 @@ public class Event {
     public void setDate(Date date) { this.date = date; }
     public void setLocation(String location) { this.location = location; }
     public void setPublished(boolean published) { this.published = published; }
-    
-    public void addBudget(String id, Budget budget) { budgetMap.put(id, budget); }
+
     public void addAttendee(String id, Attendee attendee) { attendeeMap.put(id, attendee); }
   
     // Getters

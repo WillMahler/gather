@@ -1,7 +1,6 @@
 package com.WKNS.gather.ui.tabbedViewFragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,33 +13,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.WKNS.gather.EventDetailsActivity;
-import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Events.Attendee;
 import com.WKNS.gather.databaseModels.Events.Event;
-import com.WKNS.gather.databaseModels.Events.Invitation;
-import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.recyclerViews.adapters.AttendeeRecyclerViewAdapter;
-import com.WKNS.gather.recyclerViews.adapters.InvitationRecyclerViewAdapter;
-import com.WKNS.gather.recyclerViews.adapters.UserRecyclerViewAdapter;
-import com.WKNS.gather.testData.User;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
 public class EventDetailsPeople extends Fragment {
 
-    private ArrayList<Invitation> mListInvited, mListDeclined;
-    private ArrayList<Attendee> mListAttending;
+    private ArrayList<Attendee> mInvited,  mAccepted, mDenied;
     private Event mEventObj;
     private TextView mTextAttending, mTextInvited, mTextDeclined;
     private RecyclerView mRecyclerViewAttending, mRecyclerViewInvited, mRecyclerViewDeclined;
-    private InvitationRecyclerViewAdapter mInvitedAdapter, mDeclinedAdapter;
-    private AttendeeRecyclerViewAdapter mAttendingAdapter;
+    private AttendeeRecyclerViewAdapter mAttendingAdapter, mInvitedAdapter, mDeclinedAdapter;
     private RecyclerView.LayoutManager mLayoutManagerAttending, mLayoutManagerInvited, mLayoutManagerDeclined;
     private CollectionReference mAttendeesCollection;
 
@@ -50,34 +37,34 @@ public class EventDetailsPeople extends Fragment {
 
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
-        mListAttending = ((EventDetailsActivity)getActivity()).getAttendees();
-        mListInvited = ((EventDetailsActivity)getActivity()).getInvited();
-        mListDeclined = ((EventDetailsActivity)getActivity()).getDeclined();
+        mInvited = ((EventDetailsActivity)getActivity()).getInvited();
+        mAccepted = ((EventDetailsActivity)getActivity()).getAccepted();
+        mDenied = ((EventDetailsActivity)getActivity()).getDenied();
 
         ((EventDetailsActivity)getActivity()).setAttendeeRefreshListener(new EventDetailsActivity.AttendeeRefreshListener() {
             @Override
             public void onRefresh(ArrayList<Attendee> attendees) {
-                mListAttending.clear();
-                mListAttending.addAll(attendees);
+                mAccepted.clear();
+                mAccepted.addAll(attendees);
                 mAttendingAdapter.notifyDataSetChanged();
             }
         });
 
         ((EventDetailsActivity)getActivity()).setInvitationRefreshListener(new EventDetailsActivity.InvitationRefreshListener() {
             @Override
-            public void onRefresh(ArrayList<Invitation> invites) {
-                mListInvited.clear();
-                mListInvited.addAll(invites);
-                mAttendingAdapter.notifyDataSetChanged();
+            public void onRefresh(ArrayList<Attendee> invites) {
+                mInvited.clear();
+                mInvited.addAll(invites);
+                mInvitedAdapter.notifyDataSetChanged();
             }
         });
 
         ((EventDetailsActivity)getActivity()).setInvitationDeniedRefreshListener(new EventDetailsActivity.InvitationDeniedRefreshListener() {
             @Override
-            public void onRefresh(ArrayList<Invitation> invites) {
-                mListDeclined.clear();
-                mListDeclined.addAll(invites);
-                mAttendingAdapter.notifyDataSetChanged();
+            public void onRefresh(ArrayList<Attendee> invites) {
+                mDenied.clear();
+                mDenied.addAll(invites);
+                mDeclinedAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -115,9 +102,9 @@ public class EventDetailsPeople extends Fragment {
         mRecyclerViewDeclined.setLayoutManager(mLayoutManagerDeclined);
         mRecyclerViewAttending.setLayoutManager(mLayoutManagerAttending);
 
-        mAttendingAdapter = new AttendeeRecyclerViewAdapter(mListAttending);
-        mDeclinedAdapter = new InvitationRecyclerViewAdapter(mListDeclined);
-        mInvitedAdapter = new InvitationRecyclerViewAdapter(mListInvited);
+        mAttendingAdapter = new AttendeeRecyclerViewAdapter(mAccepted);
+        mDeclinedAdapter = new AttendeeRecyclerViewAdapter(mDenied);
+        mInvitedAdapter = new AttendeeRecyclerViewAdapter(mInvited);
 
         mRecyclerViewAttending.setAdapter(mAttendingAdapter);
         mRecyclerViewDeclined.setAdapter(mDeclinedAdapter);

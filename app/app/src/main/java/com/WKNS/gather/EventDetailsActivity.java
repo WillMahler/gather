@@ -11,8 +11,6 @@ import android.util.Log;
 
 import com.WKNS.gather.databaseModels.Events.Attendee;
 import com.WKNS.gather.databaseModels.Events.Event;
-import com.WKNS.gather.databaseModels.Events.Invitation;
-import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsPeople;
 import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsSummary;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,8 +31,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     public static final String TAG = EventDetailsActivity.class.getSimpleName();
 
     private Event mEventObj;
-    private ArrayList<Attendee> mAttendees;
-    private ArrayList<Invitation> mInvites, mInvitesDenied;   //Unaccapted and Denied Invites
+    private ArrayList<Attendee> mAccepted, mInvited, mDenied;
     private String mEventID;
     private Toolbar actionbar;
     private TabLayout mTabLayout;
@@ -42,7 +39,6 @@ public class EventDetailsActivity extends AppCompatActivity {
     private SectionsPagerAdapter mAdapter;
     private FirebaseFirestore mDb;
     private DocumentReference mEventDoc;
-    private CollectionReference mEventAttendeesCollection;
     private CollectionReference mEventInvitedCollection;
     //Listeners for event attendees/invites to be updated. Used to update recycler views.
     private AttendeeRefreshListener attendeeRefreshListener;
@@ -63,9 +59,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         mEventDoc = mDb.collection("events").document(mEventID);
 
         // Recyclerview Lists Setup
-        mAttendees = new ArrayList<Attendee>();
-        mInvites = new ArrayList<Invitation>();
-        mInvitesDenied = new ArrayList<Invitation>();
+        mAccepted = new ArrayList<Attendee>();
+        mInvited = new ArrayList<Attendee>();
+        mDenied = new ArrayList<Attendee>();
 
         // Tab layout
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -91,8 +87,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_round_arrow_back_ios_24));
 
         getEventSummary();
-        listenEventUsers();
-        listenInvited();
+        listenAttendees();
     }
 
     @Override
@@ -120,48 +115,12 @@ public class EventDetailsActivity extends AppCompatActivity {
             }});
     }
     //Queries the invited people.
-    private void listenInvited(){
+    private void listenAttendees(){
         mEventInvitedCollection = mDb.collection("events").document(mEventID)
-                .collection("invitations");
-
-        mEventInvitedCollection.whereEqualTo("didDenied", false).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
-                    return;
-                }
-                /*Rebuilds the list every events are retrieved/ a change is made
-                * Both are rebuilt together to save space, little inefficient
-                * if a user accepts the invite*/
-                mInvites = new ArrayList<>();
-                mInvitesDenied = new ArrayList<>();
-                for (QueryDocumentSnapshot doc : value) {
-                    Invitation newInvitation = doc.toObject(Invitation.class);
-                    newInvitation.setID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)
-                    if (newInvitation.isDidDenied()) {
-                        mInvitesDenied.add(newInvitation);
-                    } else {
-                        mInvites.add(newInvitation);
-                    }
-                }
-                if(getInvitationRefreshListener()!=null){
-                    getInvitationRefreshListener().onRefresh(mInvites);
-                }
-                if(getInvitationDeniedRefreshListener()!=null){
-                    getInvitationDeniedRefreshListener().onRefresh(mInvitesDenied);
-                }
-            }
-        });
-    }
-
-    //Queries the attending users
-    private void listenEventUsers(){
-        mEventAttendeesCollection = mDb.collection("events").document(mEventID)
                 .collection("attendees");
 
-        mEventAttendeesCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        //Listening for attendees
+        mEventInvitedCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value,
                                 @Nullable FirebaseFirestoreException e) {
@@ -169,15 +128,38 @@ public class EventDetailsActivity extends AppCompatActivity {
                     Log.w(TAG, "Listen failed.", e);
                     return;
                 }
-                //Rebuilds the list every events are retrieved/ a change is made
-                mAttendees = new ArrayList<>();
+                /*
+                Rebuilds all three lists anytime a change is made a lil inefficnet
+                but the fastest way I found to update recyclerviews without keeping
+                track of where the difference is in a recycler view.
+                 */
+                mInvited = new ArrayList<>();
+                mAccepted = new ArrayList<>();
+                mDenied = new ArrayList<>();
+
                 for (QueryDocumentSnapshot doc : value) {
-                    Attendee newAttendee = doc.toObject(Attendee.class);
-                    newAttendee.setID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)
-                    mAttendees.add(newAttendee);
+                    Attendee a = doc.toObject(Attendee.class);
+                    a.setID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)
+
+                    switch(a.getStatus()){
+                        case "0":
+                            mInvited.add(a);
+                            break;
+                        case "1":
+                            mAccepted.add(a);
+                            break;
+                        case "2":
+                            mDenied.add(a);
+                    }
                 }
                 if(getAttendeeRefreshListener()!=null){
-                    getAttendeeRefreshListener().onRefresh(mAttendees);
+                    getAttendeeRefreshListener().onRefresh(mAccepted);
+                }
+                if(getInvitationRefreshListener()!=null){
+                    getInvitationRefreshListener().onRefresh(mInvited);
+                }
+                if(getInvitationDeniedRefreshListener()!=null){
+                    getInvitationDeniedRefreshListener().onRefresh(mDenied);
                 }
             }
         });
@@ -187,7 +169,7 @@ public class EventDetailsActivity extends AppCompatActivity {
      * This would need the implementation of a Super-class for a user that has the basic info
      * of a user. I tried doing this but it required a lot of changes to every refference
      * of user type objects like Users, Attendees, Invites, which created problems with quering
-     * them from firebase. 
+     * them from firebase.
        -Nick*/
     //Interfaces for fragment to listen for updates in attendees
     public interface AttendeeRefreshListener{
@@ -204,7 +186,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     //Interfaces for fragment to listen for updates in invited users
     public interface InvitationRefreshListener{
-        void onRefresh(ArrayList<Invitation> attendees);
+        void onRefresh(ArrayList<Attendee> attendees);
     }
 
     public InvitationRefreshListener getInvitationRefreshListener() {
@@ -217,7 +199,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     //Interfaces for fragment to listen for updates in invited users who denied
     public interface InvitationDeniedRefreshListener{
-        void onRefresh(ArrayList<Invitation> attendees);
+        void onRefresh(ArrayList<Attendee> attendees);
     }
 
     public InvitationDeniedRefreshListener getInvitationDeniedRefreshListener() {
@@ -229,8 +211,8 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     public Event getmEventObj(){ return mEventObj; };
-    public ArrayList<Attendee> getAttendees(){ return mAttendees; }
-    public ArrayList<Invitation> getInvited(){ return mInvites; }
-    public ArrayList<Invitation> getDeclined(){ return mInvitesDenied; }
+    public ArrayList<Attendee> getAccepted(){ return mAccepted; }
+    public ArrayList<Attendee> getInvited(){ return mInvited; }
+    public ArrayList<Attendee> getDenied(){ return mDenied; }
 
 }

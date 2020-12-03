@@ -49,6 +49,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private ArrayList<String> guestListArray;
+    //arraylists of attendees/invitations
     private Context context;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -435,7 +436,10 @@ public class CreateEventActivity extends AppCompatActivity {
 
         return true;
     }
+    public boolean addInvites(){
 
+        return false;
+    }
     private boolean deleteEvent() {
         // Owner + Event Details
         // String eventID = intent.getStringExtra("eventID");

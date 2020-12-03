@@ -1,0 +1,7 @@
+- Daily meetings with team to stay on track for D3 due date
+- Studied the architecture and design of our application
+- Worked on D3 report and created diagrams of the architecture of our application
+- Researched different methods of working with images in an android application using Firebase
+  (for user profiles and events)
+- Began planning implementation strategies with existing code as images will be stored in Firebase
+  storage and linked with users / events

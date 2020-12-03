@@ -140,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                 user_email.setLayoutParams(lp);
                 user_email.setLayoutParams(lp);
                 user_email.setGravity(android.view.Gravity.TOP|android.view.Gravity.LEFT);
-                user_email.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES|InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+                user_email.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                 user_email.setLines(1);
                 user_email.setMaxLines(1);
                 container.addView(user_email, lp);
@@ -183,7 +183,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Toast.makeText(LoginActivity.this, "Log in Success.", Toast.LENGTH_SHORT).show();
-                        storeUser(signInAccount.getEmail(), signInAccount.getGivenName(), signInAccount.getFamilyName(), signInAccount.getPhotoUrl().toString());
+                        storeUser(signInAccount.getPhotoUrl().toString(), signInAccount.getEmail(), "", signInAccount.getGivenName(), signInAccount.getFamilyName());
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -235,13 +235,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // creates user document in users collection in Firebase
-    private void storeUser(String email, String firstName, String lastName, String profileImg) {
+    private void storeUser(String profileImg, String email, String phoneNum, String firstName, String lastName) {
         DocumentReference documentReference = db.collection("users").document(mAuth.getCurrentUser().getUid());
         final Map<String, Object> newUser = new HashMap<>();
+        newUser.put("profileImg", profileImg);
         newUser.put("email", email);
+        newUser.put("phoneNum", phoneNum);
         newUser.put("firstName", firstName);
         newUser.put("lastName", lastName);
-        newUser.put("profileImg", profileImg);
+        newUser.put("bio", "");
 
         documentReference.set(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

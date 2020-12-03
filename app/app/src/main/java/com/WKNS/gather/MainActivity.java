@@ -1,8 +1,13 @@
 package com.WKNS.gather;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 import com.WKNS.gather.databaseModels.Users.User;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
@@ -20,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +35,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private User userObject;
     private ArrayList<UserEvent> mUserEvents;
 
-    //Firebase db refferences
+    //Firebase db references
     private DocumentReference userObjDoc;
     private CollectionReference userEventsCollection;
 
@@ -66,10 +73,23 @@ public class MainActivity extends AppCompatActivity {
 
         mUserEvents = new ArrayList<UserEvent>();
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.navigation_home, R.id.navigation_search, R.id.navigation_calendar, R.id.navigation_notification, R.id.navigation_profile).build();
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.navigation_home, R.id.navigation_search, R.id.navigation_create_event, R.id.navigation_notification, R.id.navigation_profile).build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        // click listener for create event button in bottom navigation bar
+        findViewById(R.id.navigation_create_event).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Gson gson = new Gson();
+                String userObjectString = gson.toJson(userObject);
+
+                Intent intent = new Intent(MainActivity.this, CreateEventActivity.class);
+                intent.putExtra("userObjectString", userObjectString);
+                startActivity(intent);
+            }
+        });
 
         // retrieving user data from database
         listenUser();
@@ -102,7 +122,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if(value != null) {
-                    userObject = new User(mAuth.getCurrentUser().getUid(), value.getString("email"), value.getString("firstName"), value.getString("lastName"), value.getString("profileImg"));
+                    userObject = new User(mAuth.getCurrentUser().getUid(), value.getString("email"), value.getString("phoneNum"), value.getString("firstName"), value.getString("lastName"), value.getString("profileImg"), value.getString("bio"));
+                    new DownloadImageTask().execute(userObject.getProfileImage());
                 }
             }
         });
@@ -148,9 +169,30 @@ public class MainActivity extends AppCompatActivity {
         this.homeFragRefreshListener = fragmentRefreshListener;
     }
 
-    public User getUserObject() {
-        return userObject;
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+
+        public DownloadImageTask() {
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urlDisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urlDisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            userObject.setProfileBitmap(result);
+        }
     }
+
+    public User getUserObject() { return userObject; }
     public ArrayList<UserEvent> getmUserEvents(){ return mUserEvents; }
-    public String getUserID(){return mAuth.getUid(); }
+    public String getUserID(){ return mAuth.getUid(); }
 }

@@ -14,6 +14,7 @@
     <string name="label_confirm_password">Confirm Password</string>
     <string name="label_firstName">First Name</string>
     <string name="label_lastName">Last Name</string>
+    <string name="label_phone_number">Phone Number</string>
     <string name="label_cancel">Cancel</string>
     <string name="label_register">Register</string>
 
@@ -47,7 +48,7 @@
     <!--nav bar-->
     <string name="title_home">Home</string>
     <string name="title_search">Search</string>
-    <string name="title_calendar">Calendar</string>
+    <string name="title_new_gathering">New Gathering</string>
     <string name="title_notification">Notifications</string>
     <string name="title_profile">Profile</string>
 
@@ -59,7 +60,9 @@
     <string name="label_first_name">First</string>
     <string name="label_last_name">Last</string>
     <string name="label_user_email">email</string>
-    <string name="label_choose_img">Choose Image</string>
+    <string name="label_edit_profile">Edit Profile</string>
+    <string name="bio">Bio</string>
+    <string name="save">Save</string>
 
     <!--notification fragment-->
     <string name="notification_title_event">You\'ve Been Invited To:</string>

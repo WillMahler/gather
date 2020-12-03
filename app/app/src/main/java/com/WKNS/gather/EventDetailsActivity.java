@@ -119,6 +119,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 }
             }});
     }
+    //Queries the invited people.
     private void listenInvited(){
         mEventInvitedCollection = mDb.collection("events").document(mEventID)
                 .collection("invitations");
@@ -155,6 +156,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
     }
 
+    //Queries the attending users
     private void listenEventUsers(){
         mEventAttendeesCollection = mDb.collection("events").document(mEventID)
                 .collection("attendees");
@@ -181,8 +183,12 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
     }
 
-    /*TODO: Refactor this so that it doesn't resuse code like this, this was the only
-    *  way I found to get the recyclerviews to update properly. -Nick*/
+    /*TODO: If there is time, refactor this so that only one recycler view for a User is needed.
+     * This would need the implementation of a Super-class for a user that has the basic info
+     * of a user. I tried doing this but it required a lot of changes to every refference
+     * of user type objects like Users, Attendees, Invites, which created problems with quering
+     * them from firebase. 
+       -Nick*/
     //Interfaces for fragment to listen for updates in attendees
     public interface AttendeeRefreshListener{
         void onRefresh(ArrayList<Attendee> attendees);

@@ -142,13 +142,13 @@ public class EventDetailsActivity extends AppCompatActivity {
                     a.setID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)
 
                     switch(a.getStatus()){
-                        case "0":
+                        case 0:
                             mInvited.add(a);
                             break;
-                        case "1":
+                        case 1:
                             mAccepted.add(a);
                             break;
-                        case "2":
+                        case 2:
                             mDenied.add(a);
                     }
                 }

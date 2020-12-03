@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.WKNS.gather.EventDetailsActivity;
 import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
+import com.WKNS.gather.databaseModels.Users.User;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.recyclerViews.adapters.UserEventRecyclerViewAdapter;
 import com.WKNS.gather.recyclerViews.clickListeners.OnItemClickListener;
@@ -32,6 +33,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -81,6 +83,11 @@ public class HomeFragment extends Fragment {
             public void onItemClick(int position) {
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
                 intent.putExtra("EVENT_ID", mUserEvents.get(position).eventID());
+
+                Gson gson = new Gson();
+                String userObjectString = gson.toJson(((MainActivity) getActivity()).getUserObject());
+                intent.putExtra("USER_STR", userObjectString);
+
                 startActivity(intent);
             }
         });

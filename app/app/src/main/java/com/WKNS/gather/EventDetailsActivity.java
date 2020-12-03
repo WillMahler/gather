@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.WKNS.gather.databaseModels.Events.Event;
+import com.WKNS.gather.databaseModels.Users.User;
 import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsPeople;
 import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsSummary;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -17,6 +18,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
 
 public class EventDetailsActivity extends AppCompatActivity {
     public static final String TAG = EventDetailsActivity.class.getSimpleName();
@@ -29,6 +31,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private SectionsPagerAdapter mAdapter;
     private FirebaseFirestore mDb;
     private DocumentReference mEventDoc;
+    private User userObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,11 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         // Adapter
         mAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        // User Object
+        Gson gson = new Gson();
+        String userObjectString = getIntent().getStringExtra("USER_STR");
+        userObject = gson.fromJson(userObjectString, User.class);
 
         mAdapter.addFrag(new EventDetailsSummary(mEventObj), getString(R.string.label_details));
         mAdapter.addFrag(new EventDetailsPeople(mEventObj), getString(R.string.label_people));
@@ -85,7 +93,9 @@ public class EventDetailsActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         mEventObj = document.toObject(Event.class);
+                        mEventObj.setID(document.getId());
                         ((EventDetailsSummary) mAdapter.getItem(0)).setEventDetails(mEventObj);
+                        ((EventDetailsSummary) mAdapter.getItem(0)).displayFAB(mEventObj);
                     } else {
                         Log.d(TAG, "getEventSummary() - document does not exist");
                     }
@@ -95,6 +105,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             }});
     }
 
-    public Event getmEventObj(){ return mEventObj; };
+    public Event getmEventObj() { return mEventObj; };
 
+    public User getUserObject() { return userObject; }
 }

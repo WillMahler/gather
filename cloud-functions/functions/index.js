@@ -58,6 +58,56 @@ exports.addUserEvents = functions.firestore
             });
     });
 
+/* Listens for events updated from events/:eventID and updates event from the 
+releavant User Events collections. */
+exports.updateUserEvents = functions.firestore
+    .document('events/{eventID}')
+    .onUpdate((change, context) => {
+        let updatedEvent = change.after.data();
+        let eventID = context.params.eventID;
+        
+        let updatedUserEvent = {
+            title: updatedEvent.title,
+            date: updatedEvent.date,
+            location: updatedEvent.location,
+            ownerID: updatedEvent.ownerID,
+            ownerFirstName: updatedEvent.ownerFirstName,
+            ownerLastName: updatedEvent.ownerLastName, 
+            description: updatedEvent.description,
+            published: updatedEvent.published
+        };
+
+        functions.logger.log('Updating User Events for all attendees', eventID);
+
+        // Update UserEvents document of this Event for all Attendees
+        return db.collection('events')
+                 .doc(eventID)
+                 .collection('attendees')
+                 .get()
+                 .then((querySnapshot) => {
+                     querySnapshot.forEach((doc) => {
+                     let attendeeID = doc.id;
+                     functions.logger.log('Updating User Events of Attendee', attendeeID);
+                     
+                     db.collection('users')
+                       .doc(attendeeID)
+                       .collection('userEvents')
+                       .doc(eventID)
+                       .set(updatedUserEvent)
+                       .catch(e => {
+                           functions.logger.log('Error', e);
+                           return false;
+                        });
+                });
+
+                return true;
+            })
+            .catch(e => {
+                functions.logger.log('Error', e);
+                return false;
+            });
+    });
+
 /* Listens for events deleted from events/:eventID and deletes event from
 the relevant User Events collections + deletes event's private subcollection*/
 exports.deleteUserEvents = functions.firestore

@@ -34,12 +34,24 @@ public class NotificationFragment extends Fragment {
     private FirebaseFirestore db;
     private User userObject;
 
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        userObject = ((MainActivity) getActivity()).getUserObject();
+        mDataSet = ((MainActivity)getActivity()).getUserEventsInvited();
+
+        ((MainActivity)getActivity()).setNotificationFragmentRefreshListener(new MainActivity.NotificationFragmentRefreshListener() {
+            @Override
+            public void onRefresh(ArrayList<UserEvent> userEvents) {
+                mDataSet.clear();
+                mDataSet.addAll(userEvents);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mNotificationViewModel = ViewModelProviders.of(this).get(com.WKNS.gather.ui.notification.NotificationViewModel.class);
         mRoot = inflater.inflate(R.layout.fragment_notification, container, false);
-
-        // Filter user's events to only show events where user's status is pending
-        mDataSet = filterData();
 
         mRecyclerView = mRoot.findViewById(R.id.recyclerView_Notification);
         mRecyclerView.setHasFixedSize(true);
@@ -51,7 +63,6 @@ public class NotificationFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
 
         db = FirebaseFirestore.getInstance();
-        userObject = ((MainActivity) getActivity()).getUserObject();
 
         setOnClickListeners(mAdapter);
 
@@ -90,18 +101,6 @@ public class NotificationFragment extends Fragment {
                         .set(event, SetOptions.merge());
             }
         });
-    }
-
-    private ArrayList<UserEvent> filterData() {
-        ArrayList<UserEvent> invites = new ArrayList<>();
-
-        for (UserEvent userEvent : ((MainActivity) getActivity()).getmUserEvents()) {
-            if (userEvent.getStatus() == 0) { // Then user has responded already
-                invites.add(userEvent);
-            }
-        }
-
-        return invites;
     }
 
 }

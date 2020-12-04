@@ -42,7 +42,7 @@ public class SearchFragment extends Fragment {
         mRoot = inflater.inflate(R.layout.fragment_search, container, false);
 
         mUserList = User.testUsers();
-        mEventList = ((MainActivity)getActivity()).getmUserEvents();
+        mEventList = ((MainActivity)getActivity()).getUserEvents();
 
         mRecyclerViewEvents = mRoot.findViewById(R.id.recyclerView_Search_Gatherings);
         mRecyclerViewEvents.setHasFixedSize(true);

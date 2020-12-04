@@ -51,7 +51,7 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mUserEvents = ((MainActivity)getActivity()).getmUserEvents();
+        mUserEvents = ((MainActivity)getActivity()).getUserEvents();
 
         ((MainActivity)getActivity()).setHomeFragmentRefreshListener(new MainActivity.HomeFragmentRefreshListener() {
             @Override

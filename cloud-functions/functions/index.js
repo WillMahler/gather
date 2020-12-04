@@ -21,6 +21,7 @@ exports.addUserEvents = functions.firestore
         functions.logger.log('Addding Private Subcollection', eventID);
 
         let eventPrivate = {
+            ownerID: ownerID,
             roles: {},
             permissions: ['title', 'date', 'location', 'description']
         };
@@ -136,6 +137,8 @@ exports.deleteUserEvents = functions.firestore
             .delete();
     });
 
+//Using an email list, it sends an invite to every user on the List
+//If the list is being updated, those people get removed from the event
 exports.sendInvites = functions.https
   .onCall(async (data, context) => {
     const eventID = data.eventID;
@@ -176,16 +179,6 @@ exports.sendInvites = functions.https
             attendeesRef.doc(userDoc.id).set(newAttendee);
         });
     }
-
-    let arr = ['a', 'b'];
-    let test = {
-        first: arr[0],
-        second: arr[1]
-      }
-
-      return db
-        .collection('test')
-        .add(test)
   });
 
 exports.createEventAttendee = functions.firestore
@@ -214,3 +207,37 @@ exports.createEventAttendee = functions.firestore
             userEventsRef.doc(eventDoc.id).set(userEvent);
         })
     });
+
+exports.deleteEventAttendee = functions.firestore
+    .document('events/{eventID}/attendees/{userID}')
+    .onDelete((snap, context) => {
+          const userID = snap.id;
+          const eventRef = snap.ref.parent.parent;
+          eventRef.get().then(eventDoc => {
+              const eventID = eventDoc.id;
+              console.log("User: " + userID + " Event: " + eventID);
+              db.collection('users')
+                .doc(userID)
+                .collection('userEvents')
+                .doc(eventID)
+                .delete();
+          });
+    });
+
+    exports.updateAttendeeStatus = functions.firestore
+        .document('users/{userID}/userEvents/{eventID}')
+        .onUpdate((change, context) => {
+            let eventID = context.params.eventID;
+            let attendeeID = context.params.userID;
+            let updatedAttendee = change.after.data();
+
+            return db.collection('events')
+                     .doc(eventID)
+                     .collection('attendees')
+                     .doc(attendeeID)
+                     .set(updatedAttendee)
+                     .catch(e => {
+                         functions.logger.log('Error', e);
+                         return false;
+                      });
+        });

@@ -58,7 +58,6 @@ public class CreateEventActivity extends AppCompatActivity {
 
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private ArrayList<String> guestListArray;
-    //arraylists of attendees/invitations
     private Context context;
     private Gson gson;
     private FirebaseAuth mAuth;
@@ -458,7 +457,7 @@ public class CreateEventActivity extends AppCompatActivity {
         data.put("invites", gson.toJson(guestListArray));
         if(newEvent){ data.put("newEvent", true); }
         else { data.put("newEvent", false); }
-        Log.d(TAG, "Sending Invites");
+        Log.d(TAG, "Sending Invites: " + eventID);
         return mFunctions
                 .getHttpsCallable("sendInvites")
                 .call(data)
@@ -495,7 +494,6 @@ public class CreateEventActivity extends AppCompatActivity {
                             Log.w(TAG, "Error deleting document", e);
                         }
                     });
-
         }
         return false;
     }

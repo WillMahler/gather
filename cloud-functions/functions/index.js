@@ -215,3 +215,21 @@ exports.createEventAttendee = functions.firestore
             userEventsRef.doc(eventDoc.id).set(userEvent);
         })
     });
+
+exports.updateAttendeeStatus = functions.firestore
+    .document('users/{userID}/userEvents/{eventID}')
+    .onUpdate((change, context) => {
+        let eventID = context.params.eventID;
+        let attendeeID = context.params.userID;
+        let updatedAttendee = change.after.data();
+
+        return db.collection('events')
+                 .doc(eventID)
+                 .collection('attendees')
+                 .doc(attendeeID)
+                 .set(updatedAttendee)
+                 .catch(e => {
+                     functions.logger.log('Error', e);
+                     return false;
+                  });
+    });

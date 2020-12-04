@@ -26,6 +26,7 @@ import com.WKNS.gather.databaseModels.Events.Event;
 import com.WKNS.gather.databaseModels.Users.User;
 import com.WKNS.gather.recyclerViews.adapters.GuestListRecyclerViewAdapter;
 import com.WKNS.gather.recyclerViews.clickListeners.OnRemoveClickListener;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,8 +34,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
 import com.google.gson.Gson;
 
 import java.text.ParseException;
@@ -42,6 +49,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateEventActivity extends AppCompatActivity {
 
@@ -51,13 +60,15 @@ public class CreateEventActivity extends AppCompatActivity {
     private ArrayList<String> guestListArray;
     //arraylists of attendees/invitations
     private Context context;
+    private Gson gson;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private FirebaseFunctions mFunctions;
     private RecyclerView mRecyclerView;
     private GuestListRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private User userObject;
-
+    private String eventID;
     private Toolbar actionbar;
     private EditText mTitle, mDate, mLocation, mDescription, mGuestListView;
     private Button mClearGuestList;
@@ -86,8 +97,9 @@ public class CreateEventActivity extends AppCompatActivity {
         context = this;
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+        mFunctions = FirebaseFunctions.getInstance();
+        gson = new Gson();
 
-        Gson gson = new Gson();
         String userObjectString = getIntent().getStringExtra("userObjectString");
         userObject = gson.fromJson(userObjectString, User.class);
 
@@ -396,18 +408,20 @@ public class CreateEventActivity extends AppCompatActivity {
                 ownerLast, date, location, isPublished);
 
         // String eventID = intent.getStringExtra("eventID");
-        String eventID = "";
+        eventID = "";
 
         // Add event to events collection, if it doesn't already exist.
         // Otherwise, update the event document.
         if (eventID.isEmpty()) { // Initial Event Creation
-            db.collection("events")
+             db.collection("events")
                     .add(event)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
                             Log.d(TAG,
                                     "DocumentSnapshot written with ID: " + documentReference.getId());
+                            eventID = documentReference.getId();
+                            sendInvites(true);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -436,10 +450,30 @@ public class CreateEventActivity extends AppCompatActivity {
 
         return true;
     }
-    public boolean addInvites(){
 
-        return false;
+    private Task<String> sendInvites(boolean newEvent) {
+        // Create the arguments to the callable function.
+        Map<String, Object> data = new HashMap<>();
+        data.put("eventID", eventID);
+        data.put("invites", gson.toJson(guestListArray));
+        if(newEvent){ data.put("newEvent", true); }
+        else { data.put("newEvent", false); }
+        Log.d(TAG, "Sending Invites");
+        return mFunctions
+                .getHttpsCallable("sendInvites")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+                    @Override
+                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        // This continuation runs on either success or failure, but if the task
+                        // has failed then getResult() will throw an Exception which will be
+                        // propagated down.
+                        String result = (String) task.getResult().getData();
+                        return result;
+                    }
+                });
     }
+
     private boolean deleteEvent() {
         // Owner + Event Details
         // String eventID = intent.getStringExtra("eventID");

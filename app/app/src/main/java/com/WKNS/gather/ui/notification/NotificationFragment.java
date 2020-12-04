@@ -14,9 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
+import com.WKNS.gather.databaseModels.Users.User;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.recyclerViews.adapters.InviteRecyclerViewAdapter;
 import com.WKNS.gather.recyclerViews.clickListeners.OnInviteClickListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 
@@ -28,7 +31,8 @@ public class NotificationFragment extends Fragment {
     private InviteRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private View mRoot;
-
+    private FirebaseFirestore db;
+    private User userObject;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mNotificationViewModel = ViewModelProviders.of(this).get(com.WKNS.gather.ui.notification.NotificationViewModel.class);
@@ -46,6 +50,9 @@ public class NotificationFragment extends Fragment {
         mAdapter = new InviteRecyclerViewAdapter(mDataSet);
         mRecyclerView.setAdapter(mAdapter);
 
+        db = FirebaseFirestore.getInstance();
+        userObject = ((MainActivity) getActivity()).getUserObject();
+
         setOnClickListeners(mAdapter);
 
         return mRoot;
@@ -55,16 +62,32 @@ public class NotificationFragment extends Fragment {
         adapter.setmOnItemClickListener(new OnInviteClickListener() {
             @Override
             public void onAcceptClick(int position) {
-                UserEvent n = mDataSet.get(position);
-                String toastMessage = "Accepted Event Invite to " + n.getTitle();
+                UserEvent event = mDataSet.get(position);
+                String toastMessage = "Accepted Event Invite to " + event.getTitle();
                 Toast.makeText(mRoot.getContext(), toastMessage, Toast.LENGTH_LONG).show();
+
+                event.setStatus(1);
+
+                db.collection("users")
+                  .document(userObject.getUserID())
+                  .collection("userEvents")
+                  .document(event.getEventID())
+                  .set(event, SetOptions.merge());
             }
 
             @Override
             public void onDeclineClick(int position) {
-                UserEvent n = mDataSet.get(position);
-                String toastMessage = "Declined Event Invite to " + n.getTitle();
+                UserEvent event = mDataSet.get(position);
+                String toastMessage = "Declined Event Invite to " + event.getTitle();
                 Toast.makeText(mRoot.getContext(), toastMessage, Toast.LENGTH_LONG).show();
+
+                event.setStatus(2);
+
+                db.collection("users")
+                        .document(userObject.getUserID())
+                        .collection("userEvents")
+                        .document(event.getEventID())
+                        .set(event, SetOptions.merge());
             }
         });
     }

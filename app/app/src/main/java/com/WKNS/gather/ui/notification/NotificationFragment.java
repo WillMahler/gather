@@ -12,27 +12,30 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
+import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.recyclerViews.adapters.InviteRecyclerViewAdapter;
 import com.WKNS.gather.recyclerViews.clickListeners.OnInviteClickListener;
-import com.WKNS.gather.testData.Notification;
 
 import java.util.ArrayList;
 
 public class NotificationFragment extends Fragment {
 
-    private ArrayList<Notification> mDataSet;
+    private ArrayList<UserEvent> mDataSet;
     private NotificationViewModel mNotificationViewModel;
     private RecyclerView mRecyclerView;
     private InviteRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private View mRoot;
 
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mNotificationViewModel = ViewModelProviders.of(this).get(com.WKNS.gather.ui.notification.NotificationViewModel.class);
         mRoot = inflater.inflate(R.layout.fragment_notification, container, false);
 
-        mDataSet = Notification.testData();
+        // Filter user's events to only show events where user's status is pending
+        mDataSet = filterData();
 
         mRecyclerView = mRoot.findViewById(R.id.recyclerView_Notification);
         mRecyclerView.setHasFixedSize(true);
@@ -52,35 +55,30 @@ public class NotificationFragment extends Fragment {
         adapter.setmOnItemClickListener(new OnInviteClickListener() {
             @Override
             public void onAcceptClick(int position) {
-                Notification n = mDataSet.get(position);
-                StringBuilder toastMessage = new StringBuilder();
-                Notification.Type type = n.getType();
-                toastMessage.append("Accepted ");
-
-                if (type == Notification.Type.EVENT_INVITE) {
-                    toastMessage.append("Event Invite to " + n.getmEventTitle());
-                } else if (type == Notification.Type.FRIEND_REQUEST) {
-                    toastMessage.append(n.getmRequesterFirstName() + "'s Friend Request");
-                }
-
-                Toast.makeText(mRoot.getContext(), toastMessage.toString(), Toast.LENGTH_LONG).show();
+                UserEvent n = mDataSet.get(position);
+                String toastMessage = "Accepted Event Invite to " + n.getTitle();
+                Toast.makeText(mRoot.getContext(), toastMessage, Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onDeclineClick(int position) {
-                Notification n = mDataSet.get(position);
-                StringBuilder toastMessage = new StringBuilder();
-                Notification.Type type = n.getType();
-                toastMessage.append("Declined ");
-
-                if (type == Notification.Type.EVENT_INVITE) {
-                    toastMessage.append("Event Invite to " + n.getmEventTitle());
-                } else if (type == Notification.Type.FRIEND_REQUEST) {
-                    toastMessage.append(n.getmRequesterFirstName() + "'s Friend Request");
-                }
-
-                Toast.makeText(mRoot.getContext(), toastMessage.toString(), Toast.LENGTH_LONG).show();
+                UserEvent n = mDataSet.get(position);
+                String toastMessage = "Declined Event Invite to " + n.getTitle();
+                Toast.makeText(mRoot.getContext(), toastMessage, Toast.LENGTH_LONG).show();
             }
         });
     }
+
+    private ArrayList<UserEvent> filterData() {
+        ArrayList<UserEvent> invites = new ArrayList<>();
+
+        for (UserEvent userEvent : ((MainActivity) getActivity()).getmUserEvents()) {
+            if (userEvent.getStatus() == 0) { // Then user has responded already
+                invites.add(userEvent);
+            }
+        }
+
+        return invites;
+    }
+
 }

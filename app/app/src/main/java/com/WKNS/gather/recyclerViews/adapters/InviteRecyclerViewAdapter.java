@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.recyclerViews.clickListeners.OnInviteClickListener;
 import com.WKNS.gather.recyclerViews.viewHolders.InviteViewHolder;
 import com.WKNS.gather.testData.Notification;
@@ -19,14 +20,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class InviteRecyclerViewAdapter extends RecyclerView.Adapter<InviteViewHolder> {
 
-    private ArrayList<Notification> mNotifications;
+    private ArrayList<UserEvent> mNotifications;
     private OnInviteClickListener mOnItemClickListener;
 
     public void setmOnItemClickListener(OnInviteClickListener listener) {
         mOnItemClickListener = listener;
     }
 
-    public InviteRecyclerViewAdapter(ArrayList<Notification> notifications) {
+    public InviteRecyclerViewAdapter(ArrayList<UserEvent> notifications) {
         mNotifications = notifications;
     }
 
@@ -39,23 +40,13 @@ public class InviteRecyclerViewAdapter extends RecyclerView.Adapter<InviteViewHo
 
     @Override
     public void onBindViewHolder(@NonNull InviteViewHolder holder, int position) {
-        Notification n = mNotifications.get(position);
+        UserEvent n = mNotifications.get(position);
 
-        Notification.Type type = n.getType();
-
-        if (type == Notification.Type.EVENT_INVITE) {
-            holder.mImageView.setImageResource(R.drawable.ic_testimg_6_ft_apart_24);
-            holder.mTextViewTitle.setText(R.string.notification_title_event);
-            holder.mTextViewContent.setText(n.getmEventTitle() + "\n" +
-                    "Hosted by: " + n.getmHostName() + "\n" +
-                     "Date: " + n.getmTime().toString().substring(0, 23));
-
-        } else if (type == Notification.Type.FRIEND_REQUEST) {
-            holder.mImageView.setImageResource(R.drawable.ic_baseline_person_add_24);
-            holder.mTextViewTitle.setText(R.string.notification_title_friend);
-            holder.mTextViewContent.setText(n.getmRequesterFirstName() + " " + n.getmRequesterLastName());
-
-        }
+        holder.mImageView.setImageResource(R.drawable.ic_testimg_6_ft_apart_24);
+        holder.mTextViewTitle.setText(R.string.notification_title_event);
+        holder.mTextViewContent.setText(n.getTitle() + "\n" +
+                "Hosted by: " + n.getOwnerFirstName() + "\n" +
+                 "Date: " + n.getDate().toString().substring(0, 23));
     }
 
     @Override

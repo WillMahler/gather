@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 mUserEvents = new ArrayList<>();
                 for (QueryDocumentSnapshot doc : value) {
                     UserEvent newEvent = doc.toObject(UserEvent.class);
-                    newEvent.eventID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)
+                    newEvent.setEventID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)
                     mUserEvents.add(newEvent);
                 }
                 if(getFragmentRefreshListener()!=null){

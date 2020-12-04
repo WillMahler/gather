@@ -57,7 +57,7 @@ public class SearchFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-                intent.putExtra("EVENT_ID", mEventList.get(position).eventID());
+                intent.putExtra("EVENT_ID", mEventList.get(position).getEventID());
                 startActivity(intent);
             }
         });

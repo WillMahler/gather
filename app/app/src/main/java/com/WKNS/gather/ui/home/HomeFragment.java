@@ -45,6 +45,7 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home,container, false);
         ViewPager viewPager = view.findViewById(R.id.viewpager_homeFragment);
         setupViewPager(viewPager);
+
         TabLayout tabs = view.findViewById(R.id.tablayout_homeFragment);
         tabs.setTabMode(TabLayout.MODE_FIXED);
         tabs.setTabGravity(TabLayout.GRAVITY_FILL);

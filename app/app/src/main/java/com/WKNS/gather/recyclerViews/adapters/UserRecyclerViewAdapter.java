@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.WKNS.gather.R;
+import com.WKNS.gather.helperMethods.DownloadImageTask;
 import com.WKNS.gather.recyclerViews.clickListeners.OnItemClickListener;
 import com.WKNS.gather.recyclerViews.viewHolders.UserViewHolder;
 import com.WKNS.gather.testData.User;
@@ -38,7 +39,14 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserViewHolder
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User u = mUsers.get(position);
 
-        holder.mImageView.setImageResource(R.drawable.ic_baseline_person_24);
+        String imgURI = u.getProfileImage();
+
+        if (imgURI == null || imgURI.isEmpty()) {
+            holder.mImageView.setImageResource(R.drawable.ic_baseline_person_24);
+        } else {
+            new DownloadImageTask(holder.mImageView).execute(imgURI);
+        }
+
         holder.mTextViewName.setText(u.getFirstName() + "\n" + u.getLastName());
     }
 

@@ -14,7 +14,7 @@ public class UserEvent {
     private String ownerFirstName;
     private String ownerLastName;
 
-    //@Exclude private String photo; //TODO: find out how photos encoded/stored, can't be URI in firestore
+    private String photoURL;
     private Date date;
     private int status; // User's invite status; 0 if invited, -1 if denied, 1 if accepted
 
@@ -37,6 +37,7 @@ public class UserEvent {
     public void setOwnerLastName(String ownerLastName) { this.ownerLastName = ownerLastName; }
     public void setDate(Date date) {this.date = date; }
     public void setStatus(int status) { this.status = status; }
+    public void setPhotoURL(String url) { this.photoURL = url; }
 
     // Getters
     public String eventID() { return eventID; }     //This can't be named getEventID otherwise value is added to firebase
@@ -46,4 +47,5 @@ public class UserEvent {
     public String getOwnerLastName() { return ownerLastName; }
     public Date getDate() { return date; }
     public int getStatus() { return status; }
+    public String getPhotoURL() { return this.photoURL; }
 }

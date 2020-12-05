@@ -5,10 +5,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.WKNS.gather.R;
-import com.WKNS.gather.databaseModels.Users.UserEvent;
+import com.WKNS.gather.helperMethods.DownloadImageTask;
 import com.WKNS.gather.recyclerViews.clickListeners.OnItemClickListener;
 import com.WKNS.gather.recyclerViews.viewHolders.EventViewHolder;
-import com.WKNS.gather.testData.Event;
+import com.WKNS.gather.databaseModels.Users.UserEvent;
 
 import java.util.ArrayList;
 
@@ -39,7 +39,14 @@ public class UserEventRecyclerViewAdapter extends RecyclerView.Adapter<EventView
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         UserEvent e = mEvents.get(position);
 
-        holder.mImageView.setImageResource(R.drawable.ic_testimg_6_ft_apart_24);
+        String imgURI = e.getPhotoURL();
+
+        if (imgURI == null || imgURI.isEmpty()) {
+            holder.mImageView.setImageResource(R.drawable.ic_testimg_6_ft_apart_24);
+        } else {
+            new DownloadImageTask(holder.mImageView).execute(imgURI);
+        }
+
         holder.mTextViewTitle.setText(e.getTitle());
         holder.mTextViewHost.setText("Hosted by: " + e.getOwnerFirstName());
         holder.mTextViewDate.setText(e.getDate().toString());;

@@ -1,2 +1,5 @@
 - Reviewed Shaun's PR (#86)
-- Finished reparing my part of the D3 presentation script and slides
+- Finished repairing my part of the D3 presentation script and slides
+- Added image loading to cards in RecyclerViews for users and events
+- Added image loading for event page
+- Aligned some of the test data classes to match up with the updated db model classes

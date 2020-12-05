@@ -56,7 +56,7 @@ public class EventDetailsSummary extends Fragment {
             String photoURL = event.getPhotoURL();
 
             if (photoURL == null || photoURL.isEmpty()) {
-                mDisplayPic.setImageResource(R.drawable.ic_testimg_6_ft_apart_24);
+                mDisplayPic.setImageResource(R.drawable.ic_baseline_video_library_24);
             } else {
                 new DownloadImageTask(mDisplayPic).execute(photoURL);
             }

@@ -43,7 +43,6 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_home,container, false);
-        // Setting ViewPager for each Tabs
         ViewPager viewPager = view.findViewById(R.id.viewpager_homeFragment);
         setupViewPager(viewPager);
         // Set Tabs inside Toolbar

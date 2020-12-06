@@ -3,3 +3,6 @@
 - Added image loading to cards in RecyclerViews for users and events
 - Added image loading for event page
 - Aligned some of the test data classes to match up with the updated db model classes
+- Updated Home page to be 2 tabbed fragments:
+  - 1 for Upcoming Events
+  - 1 for Drafts

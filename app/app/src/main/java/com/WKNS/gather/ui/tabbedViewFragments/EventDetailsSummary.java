@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Events.Event;
+import com.WKNS.gather.helperMethods.DateFormatter;
 import com.WKNS.gather.helperMethods.DownloadImageTask;
 
 public class EventDetailsSummary extends Fragment {
@@ -61,10 +62,15 @@ public class EventDetailsSummary extends Fragment {
                 new DownloadImageTask(mDisplayPic).execute(photoURL);
             }
 
+            StringBuilder b = new StringBuilder("Hosted by: ");
+            b.append(event.getOwnerFirstName());
+            b.append(" ");
+            b.append(event.getOwnerLastName());
+
             mTitle.setText(event.getTitle());
-            mDate.setText(event.getDate().toString()); //TODO: Maybe have this not be toString()?
-            mLocation.setText("123 Placeholder Street."); //TODO: Hard code these as string in Event and UserEvent or use api
-            mHost.setText(event.getOwnerFirstName() + " " + event.getOwnerLastName());
+            mDate.setText(DateFormatter.getFormattedDate(event.getDate()));
+            mLocation.setText(event.getLocation());
+            mHost.setText(b.toString());
             mDescription.setText(event.getDescription());
         }
     }

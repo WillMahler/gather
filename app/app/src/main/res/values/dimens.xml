@@ -7,4 +7,6 @@
     <dimen name="appbar_padding_top">8dp</dimen>
 
     <dimen name="recyclerview_height_users">145dp</dimen>
+
+    <dimen name="horizontal_padding">12dp</dimen>
 </resources>

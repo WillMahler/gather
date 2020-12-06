@@ -73,4 +73,7 @@
     <string name="button_decline">Decline</string>
     <string name="gatherings">Gatherings</string>
     <string name="people">People</string>
+
+    <!--recyclerview item text-->
+    <string name="tap_for_info">Tap for more info</string>
 </resources>

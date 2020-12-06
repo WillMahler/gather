@@ -8,23 +8,19 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/imgCard"
-        android:layout_width="175dp"
-        android:layout_height="175dp"
-        app:cardCornerRadius="250dp"
+        android:layout_width="match_parent"
+        android:layout_height="225dp"
         app:cardElevation="5dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
         <ImageView
             android:id="@+id/imageView_eventDetails_displayPic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="50dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_baseline_video_library_24"/>
+            android:scaleType="centerCrop"/>
     </androidx.cardview.widget.CardView>
 
     <TextView

@@ -9,3 +9,6 @@
 - Polished User cards that are used in RecyclerViews
 - Polished Event user cards that are used in RecyclerViews
 - Created DateFormatter helper class to get nicely formatted dates
+- Polished invite cards used in recyclerViews
+- Extended width on screen of a bunch of items in layouts
+- Polished guest cards used in recyclerViews

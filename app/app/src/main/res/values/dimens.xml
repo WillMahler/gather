@@ -8,5 +8,6 @@
 
     <dimen name="recyclerview_height_users">145dp</dimen>
 
-    <dimen name="horizontal_padding">12dp</dimen>
+    <dimen name="horizontal_padding_recyclerviews">12dp</dimen>
+    <dimen name="horizontal_padding_general">24dp</dimen>
 </resources>

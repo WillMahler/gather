@@ -1,0 +1,4 @@
+Nov 29 - Dec 5 
+-Enabled event invites
+	-done through cloud functions taking an email list and updating Events/Attendees and Users/UserEvent 
+-Enabled attendee/invited/declined to display on event people summary page 

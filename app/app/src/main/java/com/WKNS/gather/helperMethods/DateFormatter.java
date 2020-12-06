@@ -15,7 +15,7 @@ public class DateFormatter {
         b.append(getFormattedMonth(date.getMonth()));
         b.append(" ");
 
-        // Dau of the month
+        // Day of the month
         b.append(date.getDate());
         b.append(" ");
 

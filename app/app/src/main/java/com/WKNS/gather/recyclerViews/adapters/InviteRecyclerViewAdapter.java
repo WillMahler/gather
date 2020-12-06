@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.WKNS.gather.helperMethods.DateFormatter;
 import com.WKNS.gather.recyclerViews.clickListeners.OnInviteClickListener;
 import com.WKNS.gather.recyclerViews.viewHolders.InviteViewHolder;
 import com.WKNS.gather.testData.Notification;
@@ -48,7 +49,7 @@ public class InviteRecyclerViewAdapter extends RecyclerView.Adapter<InviteViewHo
             holder.mTextViewTitle.setText(R.string.notification_title_event);
             holder.mTextViewContent.setText(n.getmEventTitle() + "\n" +
                     "Hosted by: " + n.getmHostName() + "\n" +
-                     "Date: " + n.getmTime().toString().substring(0, 23));
+                     "Date: " + DateFormatter.getFormattedDate(n.getmTime()));
 
         } else if (type == Notification.Type.FRIEND_REQUEST) {
             holder.mImageView.setImageResource(R.drawable.ic_baseline_person_add_24);

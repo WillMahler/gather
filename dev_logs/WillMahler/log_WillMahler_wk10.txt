@@ -7,3 +7,5 @@
   - 1 for Upcoming Events
   - 1 for Drafts
 - Polished User cards that are used in RecyclerViews
+- Polished Event user cards that are used in RecyclerViews
+- Created DateFormatter helper class to get nicely formatted dates

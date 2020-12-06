@@ -6,3 +6,4 @@
 - Updated Home page to be 2 tabbed fragments:
   - 1 for Upcoming Events
   - 1 for Drafts
+- Polished User cards that are used in RecyclerViews

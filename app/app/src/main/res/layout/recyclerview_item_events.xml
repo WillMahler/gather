@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_marginBottom="10dp"
     android:layout_marginTop="10dp"
-    android:layout_marginStart="@dimen/horizontal_padding"
-    android:layout_marginEnd="@dimen/horizontal_padding"
+    android:layout_marginStart="@dimen/horizontal_padding_recyclerviews"
+    android:layout_marginEnd="@dimen/horizontal_padding_recyclerviews"
     app:cardElevation="16dp"
     app:cardCornerRadius="8dp">
 

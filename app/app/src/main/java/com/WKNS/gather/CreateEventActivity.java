@@ -470,8 +470,8 @@ public class CreateEventActivity extends AppCompatActivity {
 
         // Event Details
         String title = mTitle.getText().toString().trim();
-        String dateString = mDate.getText().toString().trim();;
-        Date date = new SimpleDateFormat("dd/MM/yyyy").parse(dateString);
+        String dateString = mDate.getText().toString().trim();
+        Date date = new SimpleDateFormat("dd/MM/yyyy/HH:mm").parse(dateString);
         String location = mLocation.getText().toString().trim();
         String description = mDescription.getText().toString().trim();
 

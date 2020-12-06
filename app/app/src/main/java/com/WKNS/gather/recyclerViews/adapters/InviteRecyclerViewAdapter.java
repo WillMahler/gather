@@ -3,11 +3,9 @@ package com.WKNS.gather.recyclerViews.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.WKNS.gather.helperMethods.DateFormatter;
+import com.WKNS.gather.helperMethods.DownloadImageTask;
 import com.WKNS.gather.recyclerViews.clickListeners.OnInviteClickListener;
 import com.WKNS.gather.recyclerViews.viewHolders.InviteViewHolder;
 import com.WKNS.gather.testData.Notification;
@@ -45,17 +43,29 @@ public class InviteRecyclerViewAdapter extends RecyclerView.Adapter<InviteViewHo
         Notification.Type type = n.getType();
 
         if (type == Notification.Type.EVENT_INVITE) {
-            holder.mImageView.setImageResource(R.drawable.ic_testimg_6_ft_apart_24);
+
+            String imgURI = n.getPhotoURL();
+
+            if (imgURI == null || imgURI.isEmpty()) {
+                holder.mImageView.setImageResource(R.drawable.ic_testimg_6_ft_apart_24);
+            } else {
+                new DownloadImageTask(holder.mImageView).execute(imgURI);
+            }
+
             holder.mTextViewTitle.setText(R.string.notification_title_event);
-            holder.mTextViewContent.setText(n.getmEventTitle() + "\n" +
-                    "Hosted by: " + n.getmHostName() + "\n" +
-                     "Date: " + DateFormatter.getFormattedDate(n.getmTime()));
+            holder.mTextViewEventTitle.setText(n.getmEventTitle());
+
+            // Host name formatting
+            StringBuilder b = new StringBuilder("Hosted by:\n");
+            b.append(n.getmHostName());
+
+            holder.mTextViewHost.setText(b.toString());
+            holder.mTextViewEventDate.setText(DateFormatter.getFormattedDate(n.getmTime()));
 
         } else if (type == Notification.Type.FRIEND_REQUEST) {
             holder.mImageView.setImageResource(R.drawable.ic_baseline_person_add_24);
             holder.mTextViewTitle.setText(R.string.notification_title_friend);
-            holder.mTextViewContent.setText(n.getmRequesterFirstName() + " " + n.getmRequesterLastName());
-
+            holder.mTextViewEventTitle.setText(n.getmRequesterFirstName() + " " + n.getmRequesterLastName());
         }
     }
 

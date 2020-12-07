@@ -16,7 +16,7 @@ public class UserEvent {
 
     private String photoURL;
     private Date date;
-    private int status; // User's invite status; 0 if invited, -1 if denied, 1 if accepted
+    private int status; // User's invite status; 0 if invited, 1 if accepted, 2 if declined
 
     // Constructors
     public UserEvent() {}
@@ -30,7 +30,7 @@ public class UserEvent {
         this.status = status;
     }
     //Setters
-    public void eventID(String eventID) { this.eventID = eventID; } //This can't be named setEventID otherwise value is added to firebase
+    public void setEventID(String eventID) { this.eventID = eventID; }
     public void setTitle(String title) { this.title = title; }
     public void setDescription(String description) { this.description = description; }
     public void setOwnerFirstName(String ownerFirstName) { this.ownerFirstName = ownerFirstName; }
@@ -40,7 +40,7 @@ public class UserEvent {
     public void setPhotoURL(String url) { this.photoURL = url; }
 
     // Getters
-    public String eventID() { return eventID; }     //This can't be named getEventID otherwise value is added to firebase
+    @Exclude public String getEventID() { return eventID; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
     public String getOwnerFirstName() { return ownerFirstName; }

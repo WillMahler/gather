@@ -32,7 +32,7 @@ public class HomeUpcomingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mUserEvents = ((MainActivity)getActivity()).getmUserEvents();
+        mUserEvents = ((MainActivity)getActivity()).getUserEvents();
 
         // TODO Need to actually clean this up so that this pulls upcoming only
         ((MainActivity)getActivity()).setHomeFragmentRefreshListener(new MainActivity.HomeFragmentRefreshListener() {
@@ -61,7 +61,7 @@ public class HomeUpcomingFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-                intent.putExtra("EVENT_ID", mUserEvents.get(position).eventID());
+                intent.putExtra("EVENT_ID", mUserEvents.get(position).getEventID());
                 startActivity(intent);
             }
         });

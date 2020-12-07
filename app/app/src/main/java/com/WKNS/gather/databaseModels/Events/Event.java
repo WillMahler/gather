@@ -21,10 +21,7 @@ public class Event {
     private boolean published;
     private String photoURL;
 
-    @Exclude private Map<String, Budget> budgetMap;
     @Exclude private Map<String, Attendee> attendeeMap;
-    @Exclude private Map<String, Invitation> invitationMap;
-    @Exclude private Map<String, Task> taskMap;
 
     public Event(){ }
 
@@ -52,8 +49,7 @@ public class Event {
     public void setLocation(String location) { this.location = location; }
     public void setPublished(boolean published) { this.published = published; }
     public void setPhotoURL(String url) { this.photoURL = url; }
-    
-    public void addBudget(String id, Budget budget) { budgetMap.put(id, budget); }
+
     public void addAttendee(String id, Attendee attendee) { attendeeMap.put(id, attendee); }
   
     // Getters

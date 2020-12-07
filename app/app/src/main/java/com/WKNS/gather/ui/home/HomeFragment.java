@@ -55,7 +55,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-
         Adapter adapter = new Adapter(getChildFragmentManager());
         adapter.addFragment(new HomeUpcomingFragment(), "Upcoming Events");
         adapter.addFragment(new HomeDraftsFragment(), "Drafts");

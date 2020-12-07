@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.InputType;
@@ -206,6 +207,7 @@ public class CreateEventActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 deleteEvent();
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                 finish();
                             }
                         })
@@ -239,6 +241,7 @@ public class CreateEventActivity extends AppCompatActivity {
                                         Toast.makeText(context, "Error: Event Not Published",
                                                 Toast.LENGTH_SHORT).show();
                                     }
+                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                     finish();
                                 }
                             }
@@ -262,6 +265,7 @@ public class CreateEventActivity extends AppCompatActivity {
                                     Toast.makeText(context, "Error: Draft Not Saved",
                                             Toast.LENGTH_SHORT).show();
                                 }
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                 finish();
                             }
                         });

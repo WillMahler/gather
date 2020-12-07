@@ -16,7 +16,7 @@ public class UserEvent {
 
     private String photoURL;
     private Date date;
-    private int status; // User's invite status; 0 if invited, 1 if accepted, 2 if declines
+    private int status; // User's invite status; 0 if invited, 1 if accepted, 2 if declined
 
     // Constructors
     public UserEvent() {}

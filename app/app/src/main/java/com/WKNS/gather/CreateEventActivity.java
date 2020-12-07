@@ -38,15 +38,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
 import com.google.gson.Gson;
@@ -537,11 +533,18 @@ public class CreateEventActivity extends AppCompatActivity {
     private Task<String> sendInvites(boolean newEvent) {
         // Create the arguments to the callable function.
         Map<String, Object> data = new HashMap<>();
+
         data.put("eventID", eventID);
         data.put("invites", gson.toJson(guestListArray));
-        if(newEvent){ data.put("newEvent", true); }
-        else { data.put("newEvent", false); }
-        Log.d(TAG, "Sending Invites: " + eventID);
+
+        if (newEvent) {
+            data.put("newEvent", true);
+        } else {
+            data.put("newEvent", false);
+        }
+
+        Log.d(TAG, "sendInvites() for eventID: " + eventID);
+
         return mFunctions
                 .getHttpsCallable("sendInvites")
                 .call(data)
@@ -552,6 +555,7 @@ public class CreateEventActivity extends AppCompatActivity {
                         // has failed then getResult() will throw an Exception which will be
                         // propagated down.
                         String result = (String) task.getResult().getData();
+                        Log.d(TAG, "sendInvites() result: " + result);
                         return result;
                     }
                 });

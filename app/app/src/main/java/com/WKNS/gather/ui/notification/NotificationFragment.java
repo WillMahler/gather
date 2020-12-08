@@ -1,5 +1,6 @@
 package com.WKNS.gather.ui.notification;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,14 +13,17 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.WKNS.gather.EventDetailsActivity;
 import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Users.User;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.recyclerViews.adapters.InviteRecyclerViewAdapter;
 import com.WKNS.gather.recyclerViews.clickListeners.OnInviteClickListener;
+import com.WKNS.gather.recyclerViews.clickListeners.OnItemClickListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -70,6 +74,21 @@ public class NotificationFragment extends Fragment {
     }
 
     private void setOnClickListeners(InviteRecyclerViewAdapter adapter) {
+
+        adapter.setCardClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+                intent.putExtra("EVENT_ID", mDataSet.get(position).getEventID());
+
+                Gson gson = new Gson();
+                String userObjectString = gson.toJson(((MainActivity) getActivity()).getUserObject());
+                intent.putExtra("USER_STR", userObjectString);
+
+                startActivity(intent);
+            }
+        });
+
         adapter.setmOnItemClickListener(new OnInviteClickListener() {
             @Override
             public void onAcceptClick(int position) {

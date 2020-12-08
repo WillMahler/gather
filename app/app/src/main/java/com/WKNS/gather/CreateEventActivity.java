@@ -43,6 +43,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -119,6 +120,7 @@ public class CreateEventActivity extends AppCompatActivity implements TimePicker
         context = this;
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+
         storage = FirebaseStorage.getInstance();
         mStorageRef = storage.getReference();
         mFunctions = FirebaseFunctions.getInstance();
@@ -601,7 +603,7 @@ public class CreateEventActivity extends AppCompatActivity implements TimePicker
         // Add event to events collection, if it doesn't already exist.
         // Otherwise, update the event document.
         if (eventID.isEmpty()) { // Initial Event Creation
-            db.collection("events")
+             db.collection("events")
                     .add(event)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override

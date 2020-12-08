@@ -8,6 +8,7 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 const db = admin.firestore();
 
+
 /* Listens for events added to events/:eventID and adds event to
 the userEvents collections of the event organizer + adds event's
 private subcollection */
@@ -59,33 +60,21 @@ exports.addUserEvents = functions.firestore
             });
     });
 
-<<<<<<< HEAD
-/* Listens for events updated from events/:eventID and updates event from the 
-=======
 /* Listens for events updated from events/:eventID and updates event from the
->>>>>>> master
 releavant User Events collections. */
 exports.updateUserEvents = functions.firestore
     .document('events/{eventID}')
     .onUpdate((change, context) => {
         let updatedEvent = change.after.data();
         let eventID = context.params.eventID;
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> master
         let updatedUserEvent = {
             title: updatedEvent.title,
             date: updatedEvent.date,
             location: updatedEvent.location,
             ownerID: updatedEvent.ownerID,
             ownerFirstName: updatedEvent.ownerFirstName,
-<<<<<<< HEAD
-            ownerLastName: updatedEvent.ownerLastName, 
-=======
             ownerLastName: updatedEvent.ownerLastName,
->>>>>>> master
             description: updatedEvent.description,
             published: updatedEvent.published
         };
@@ -101,11 +90,7 @@ exports.updateUserEvents = functions.firestore
                      querySnapshot.forEach((doc) => {
                      let attendeeID = doc.id;
                      functions.logger.log('Updating User Events of Attendee', attendeeID);
-<<<<<<< HEAD
-                     
-=======
 
->>>>>>> master
                      db.collection('users')
                        .doc(attendeeID)
                        .collection('userEvents')
@@ -155,6 +140,7 @@ exports.deleteUserEvents = functions.firestore
 
 //Using an email list, it sends an invite to every user on the List
 //If the list is being updated, those people get removed from the event
+
 exports.sendInvites = functions.https
   .onCall(async (data, context) => {
     const eventID = data.eventID;
@@ -240,20 +226,20 @@ exports.deleteEventAttendee = functions.firestore
           });
     });
 
-    exports.updateAttendeeStatus = functions.firestore
-        .document('users/{userID}/userEvents/{eventID}')
-        .onUpdate((change, context) => {
-            let eventID = context.params.eventID;
-            let attendeeID = context.params.userID;
-            let updatedAttendee = change.after.data();
+exports.updateAttendeeStatus = functions.firestore
+    .document('users/{userID}/userEvents/{eventID}')
+    .onUpdate((change, context) => {
+        let eventID = context.params.eventID;
+        let attendeeID = context.params.userID;
+        let updatedAttendee = change.after.data();
 
-            return db.collection('events')
-                     .doc(eventID)
-                     .collection('attendees')
-                     .doc(attendeeID)
-                     .set(updatedAttendee)
-                     .catch(e => {
-                         functions.logger.log('Error', e);
-                         return false;
-                      });
-        });
+        return db.collection('events')
+                    .doc(eventID)
+                    .collection('attendees')
+                    .doc(attendeeID)
+                    .set(updatedAttendee)
+                    .catch(e => {
+                        functions.logger.log('Error', e);
+                        return false;
+                    });
+    });

@@ -17,17 +17,19 @@ public class UserEvent {
     private String photoURL;
     private Date date;
     private int status; // User's invite status; 0 if invited, 1 if accepted, 2 if declined
+    private boolean published;
 
     // Constructors
     public UserEvent() {}
 
-    public UserEvent(String title, String description, String ownerFirstName, String ownerLastName, Date date, int status) {
+    public UserEvent(String title, String description, String ownerFirstName, String ownerLastName, Date date, int status, boolean published) {
         this.title = title;
         this.description = description;
         this.ownerFirstName = ownerFirstName;
         this.ownerLastName = ownerLastName;
         this.date = date;
         this.status = status;
+        this.published = published;
     }
     //Setters
     public void setEventID(String eventID) { this.eventID = eventID; }
@@ -38,6 +40,9 @@ public class UserEvent {
     public void setDate(Date date) {this.date = date; }
     public void setStatus(int status) { this.status = status; }
     public void setPhotoURL(String url) { this.photoURL = url; }
+    public void setPublished(boolean published) {
+        this.published = published;
+    }
 
     // Getters
     @Exclude public String getEventID() { return eventID; }
@@ -48,4 +53,7 @@ public class UserEvent {
     public Date getDate() { return date; }
     public int getStatus() { return status; }
     public String getPhotoURL() { return this.photoURL; }
+    public boolean isPublished() {
+        return published;
+    }
 }

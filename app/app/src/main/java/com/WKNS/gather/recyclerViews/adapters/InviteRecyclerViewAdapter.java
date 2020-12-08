@@ -8,6 +8,7 @@ import com.WKNS.gather.helperMethods.DateFormatter;
 import com.WKNS.gather.helperMethods.DownloadImageTask;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.recyclerViews.clickListeners.OnInviteClickListener;
+import com.WKNS.gather.recyclerViews.clickListeners.OnItemClickListener;
 import com.WKNS.gather.recyclerViews.viewHolders.InviteViewHolder;
 import com.WKNS.gather.R;
 
@@ -21,6 +22,12 @@ public class InviteRecyclerViewAdapter extends RecyclerView.Adapter<InviteViewHo
     private ArrayList<UserEvent> mNotifications;
     private OnInviteClickListener mOnItemClickListener;
 
+    private OnItemClickListener mOnCardClickListener;
+
+    public void setCardClickListener(OnItemClickListener listener) {
+        mOnCardClickListener = listener;
+    }
+
     public void setmOnItemClickListener(OnInviteClickListener listener) {
         mOnItemClickListener = listener;
     }
@@ -33,7 +40,7 @@ public class InviteRecyclerViewAdapter extends RecyclerView.Adapter<InviteViewHo
     @Override
     public InviteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item_notification, parent, false);
-        return new InviteViewHolder(v, mOnItemClickListener);
+        return new InviteViewHolder(v, mOnItemClickListener, mOnCardClickListener);
     }
 
     @Override

@@ -49,7 +49,7 @@ public class ProfileFragment extends Fragment {
         mName = root.findViewById(R.id.name);
         mEmail = root.findViewById(R.id.email);
         mPhoneNum = root.findViewById(R.id.phoneNum);
-        mBio = root.findViewById(R.id.bio);
+        mBio = root.findViewById(R.id.bio_profileFragment);
         mEditProfile = root.findViewById(R.id.editProfile);
         mLogout = root.findViewById(R.id.logout);
 

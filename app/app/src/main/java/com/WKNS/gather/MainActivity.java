@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 import com.WKNS.gather.databaseModels.Users.User;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
@@ -44,16 +43,13 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar actionBar;
     private BottomNavigationView navView;
 
-    //Firebase setup
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    //User Information
     private User userObject;
-    private ArrayList<UserEvent> mUserEventsAccapted;
+    private ArrayList<UserEvent> mUserEventsAccepted;
     private ArrayList<UserEvent> mUserEventsInvited;
 
-    //Firebase db references
     private DocumentReference userObjDoc;
     private CollectionReference userEventsCollection;
 
@@ -73,10 +69,12 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(actionBar);
 
-        mUserEventsAccapted = new ArrayList<UserEvent>();
-        mUserEventsInvited = new ArrayList<UserEvent>();
+        mUserEventsAccepted = new ArrayList<>();
+        mUserEventsInvited = new ArrayList<>();
+
+
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.navigation_home, R.id.navigation_search, R.id.navigation_create_event, R.id.navigation_notification, R.id.navigation_profile).build();
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.navigation_home, R.id.navigation_create_event, R.id.navigation_notification, R.id.navigation_profile).build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
@@ -90,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(MainActivity.this, CreateEventActivity.class);
                 intent.putExtra("userObjectString", userObjectString);
+                intent.putExtra("eventID", "");
                 startActivity(intent);
             }
         });
@@ -142,18 +141,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable QuerySnapshot value,
                                 @Nullable FirebaseFirestoreException e) {
+
                 if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
+                    Log.d(TAG, "listenUserEventsInvited(): Listen Failed.", e);
                     return;
                 }
+
                 //Rebuilds the list every events are retrieved/ a change is made
-                mUserEventsInvited = new ArrayList<>();
+                mUserEventsInvited.clear();
+
                 for (QueryDocumentSnapshot doc : value) {
                     UserEvent newEvent = doc.toObject(UserEvent.class);
                     newEvent.setEventID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)
                     mUserEventsInvited.add(newEvent);
                 }
-                if(getNotificationRefreshListener()!=null){
+
+                if (getNotificationRefreshListener()!=null) {
                     getNotificationRefreshListener().onRefresh(mUserEventsInvited);
                 }
             }
@@ -167,19 +170,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable QuerySnapshot value,
                                 @Nullable FirebaseFirestoreException e) {
+
                 if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
+                    Log.d(TAG, "listenUserEventsAccepted(): Listen failed.", e);
                     return;
                 }
+
                 //Rebuilds the list every events are retrieved/ a change is made
-                mUserEventsAccapted = new ArrayList<>();
+                mUserEventsAccepted.clear();
                 for (QueryDocumentSnapshot doc : value) {
                     UserEvent newEvent = doc.toObject(UserEvent.class);
                     newEvent.setEventID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)
-                    mUserEventsAccapted.add(newEvent);
+                    mUserEventsAccepted.add(newEvent);
                 }
-                if(getHomeRefreshListener()!=null){
-                    getHomeRefreshListener().onRefresh(mUserEventsAccapted);
+
+                if (getHomeRefreshListener()!=null) {
+                    getHomeRefreshListener().onRefresh(mUserEventsAccepted);
                 }
             }
         });
@@ -235,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public User getUserObject() { return userObject; }
-    public ArrayList<UserEvent> getUserEvents(){ return mUserEventsAccapted; }
+    public ArrayList<UserEvent> getUserEvents(){ return mUserEventsAccepted; }
     public ArrayList<UserEvent> getUserEventsInvited(){ return mUserEventsInvited; }
     public String getUserID(){ return mAuth.getUid(); }
 }

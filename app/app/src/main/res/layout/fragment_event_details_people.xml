@@ -25,7 +25,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView_eventDetails_attending"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="@dimen/recyclerview_height_users"
             app:layout_constraintTop_toBottomOf="@+id/textView_eventDetails_attending" />
 
         <TextView
@@ -42,7 +42,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView_eventDetails_invited"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="@dimen/recyclerview_height_users"
             app:layout_constraintTop_toBottomOf="@+id/textView_eventDetails_invited" />
 
         <TextView
@@ -59,7 +59,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView_eventDetails_declined"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="@dimen/recyclerview_height_users"
             app:layout_constraintTop_toBottomOf="@+id/textView_eventDetails_declined" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,14 +14,17 @@ import androidx.recyclerview.widget.RecyclerView;
 public class InviteViewHolder extends RecyclerView.ViewHolder {
 
     public ImageView mImageView;
-    public TextView mTextViewTitle, mTextViewContent;
+    public TextView mTextViewTitle, mTextViewEventTitle, mTextViewHost,
+                    mTextViewEventDate;
     public Button mButtonAccept, mButtonDecline;
 
     public InviteViewHolder(@NonNull View itemView, final OnInviteClickListener listener) {
         super(itemView);
         mImageView = itemView.findViewById(R.id.imageview_friend_or_event);
-        mTextViewTitle = itemView.findViewById(R.id.textview_title);
-        mTextViewContent = itemView.findViewById(R.id.textview_content);
+        mTextViewTitle = itemView.findViewById(R.id.textview_invite_title);
+        mTextViewEventTitle = itemView.findViewById(R.id.textview_invite_eventTitle);
+        mTextViewHost = itemView.findViewById(R.id.textview_invite_eventHost);
+        mTextViewEventDate = itemView.findViewById(R.id.textview_invite_eventDate);
         mButtonAccept = itemView.findViewById(R.id.button_accept);
         mButtonDecline = itemView.findViewById(R.id.button_decline);
 

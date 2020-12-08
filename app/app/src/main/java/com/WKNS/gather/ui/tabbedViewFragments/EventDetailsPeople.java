@@ -59,7 +59,7 @@ public class EventDetailsPeople extends Fragment {
             }
         });
 
-        ((EventDetailsActivity)getActivity()).setInvitationDeniedRefreshListener(new EventDetailsActivity.InvitationDeniedRefreshListener() {
+        ((EventDetailsActivity)getActivity()).setInvitationDeclined(new EventDetailsActivity.InvitationDeclinedRefreshListener() {
             @Override
             public void onRefresh(ArrayList<Attendee> invites) {
                 mDenied.clear();

@@ -19,14 +19,14 @@ public class Event {
     private Date date;
     private String location;
     private boolean published;
-    // private String photo; TODO: find out how photos encoded/stored, can't be URI in firestore
+    private String photoURL;
 
     @Exclude private Map<String, Attendee> attendeeMap;
 
     public Event(){ }
 
     public Event(String title, String description, String ownerID, String ownerFirstName,
-                 String ownerLastName, Date date, String location, boolean published) {
+                 String ownerLastName, Date date, String location, boolean published, String photoURL) {
         this.title = title;
         this.description = description;
         this.ownerID = ownerID;
@@ -35,6 +35,7 @@ public class Event {
         this.date = date;
         this.location = location;
         this.published = published;
+        this.photoURL = photoURL;
     }
 
     // Setters
@@ -47,6 +48,7 @@ public class Event {
     public void setDate(Date date) { this.date = date; }
     public void setLocation(String location) { this.location = location; }
     public void setPublished(boolean published) { this.published = published; }
+    public void setPhotoURL(String url) { this.photoURL = url; }
 
     public void addAttendee(String id, Attendee attendee) { attendeeMap.put(id, attendee); }
   
@@ -60,5 +62,6 @@ public class Event {
     public Date getDate() { return this.date; }
     public String getLocation() {return this.location; }
     public boolean isPublished() { return this.published; }
+    public String getPhotoURL() { return this.photoURL; }
 
 }

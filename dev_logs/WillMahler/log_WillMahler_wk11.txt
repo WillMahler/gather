@@ -1,0 +1,8 @@
+- Wrote D4 report with input from Shaun
+- Wrote D4 video demo script/ideas
+- Shaun created a video branch which we both pushed commits to
+  to make the app work for the YouTube video
+  (need to code some of the actual implementations still)
+- Reviewed Nick's PR for Invites (#100)
+  - Mostly cleaned up formatting/naming
+- Reviewed Katrina's PR for accepting/declining Invites (#101)

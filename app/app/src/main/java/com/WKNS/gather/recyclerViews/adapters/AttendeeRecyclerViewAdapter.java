@@ -31,7 +31,7 @@ public class AttendeeRecyclerViewAdapter extends RecyclerView.Adapter<UserViewHo
     @NonNull
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item_search_people, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item_users, parent, false);
         return new UserViewHolder(v, mOnItemClickListener);
     }
 

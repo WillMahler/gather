@@ -19,6 +19,7 @@ public class Attendee {
         this.profileImg = photo;
         this.status = status;
     }
+
     //Setters
     public void setID(String attendeeID) { this.attendeeID = attendeeID; }
     public void setFirstName(String firstName) { this.firstName = firstName; }

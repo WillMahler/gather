@@ -18,6 +18,7 @@ public class Notification {
     private String mEventTitle;
     private Date mTime;
     private String mHostName;
+    private String photoURL;
 
     public Notification(String firstName, String lastName) {
         type = Type.FRIEND_REQUEST;
@@ -32,6 +33,13 @@ public class Notification {
         mTime = time;
     }
 
+    public String getPhotoURL() {
+        return photoURL;
+    }
+
+    public void setPhotoURL(String photoURL) {
+        this.photoURL = photoURL;
+    }
     public Type getType() {
         return type;
     }

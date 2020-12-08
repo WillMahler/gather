@@ -1,0 +1,3 @@
+- Event pictures now implemented.
+- Photos stored in database on event creation and retrieved in EventDetails activity.
+- Handled cases where a user may not supply an image.

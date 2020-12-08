@@ -1,2 +1,14 @@
 - Reviewed Shaun's PR (#86)
-- Finished reparing my part of the D3 presentation script and slides
+- Finished repairing my part of the D3 presentation script and slides
+- Added image loading to cards in RecyclerViews for users and events
+- Added image loading for event page
+- Aligned some of the test data classes to match up with the updated db model classes
+- Updated Home page to be 2 tabbed fragments:
+  - 1 for Upcoming Events
+  - 1 for Drafts
+- Polished User cards that are used in RecyclerViews
+- Polished Event user cards that are used in RecyclerViews
+- Created DateFormatter helper class to get nicely formatted dates
+- Polished invite cards used in recyclerViews
+- Extended width on screen of a bunch of items in layouts
+- Polished guest cards used in recyclerViews

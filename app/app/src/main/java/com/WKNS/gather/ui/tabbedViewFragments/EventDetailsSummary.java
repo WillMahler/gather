@@ -2,7 +2,6 @@ package com.WKNS.gather.ui.tabbedViewFragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +14,18 @@ import androidx.fragment.app.Fragment;
 
 import com.WKNS.gather.CreateEventActivity;
 import com.WKNS.gather.EventDetailsActivity;
-import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Events.Event;
 import com.WKNS.gather.databaseModels.Users.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
+import com.WKNS.gather.helperMethods.DateFormatter;
+import com.WKNS.gather.helperMethods.DownloadImageTask;
 
 public class EventDetailsSummary extends Fragment {
+
+    public static String TAG = EventDetailsSummary.class.getSimpleName();
+
     private Event mEventObj;
     private ImageView mDisplayPic;
     private TextView mTitle, mDate, mLocation, mHost, mDescription;
@@ -56,11 +57,11 @@ public class EventDetailsSummary extends Fragment {
         mLocation = view.findViewById(R.id.textView_eventDetails_location);
         mHost = view.findViewById(R.id.textView_eventDetails_host);
         mDescription = view.findViewById(R.id.textView_eventDetails_description);
-
         mFAB = view.findViewById(R.id.floatingActionButton);
-        mFAB.hide();
 
+        mFAB.hide();
         mDisplayPic.setImageResource(R.drawable.ic_baseline_video_library_24);
+
         super.onViewCreated(view, savedInstanceState);
 
         setEventDetails(mEventObj);
@@ -70,10 +71,24 @@ public class EventDetailsSummary extends Fragment {
     public void setEventDetails(Event event) {
         if (event != null) {
             mEventObj = event;
+
+            String photoURL = event.getPhotoURL();
+
+            if (photoURL == null || photoURL.isEmpty()) {
+                mDisplayPic.setImageResource(R.drawable.ic_baseline_video_library_24);
+            } else {
+                new DownloadImageTask(mDisplayPic).execute(photoURL);
+            }
+
+            StringBuilder b = new StringBuilder("Hosted by: ");
+            b.append(event.getOwnerFirstName());
+            b.append(" ");
+            b.append(event.getOwnerLastName());
+
             mTitle.setText(event.getTitle());
-            mDate.setText(event.getDate().toString()); //TODO: Maybe have this not be toString()?
-            mLocation.setText("123 Placeholder Street."); //TODO: Hard code these as string in Event and UserEvent or use api
-            mHost.setText(event.getOwnerFirstName() + " " + event.getOwnerLastName());
+            mDate.setText(DateFormatter.getFormattedDate(event.getDate()));
+            mLocation.setText(event.getLocation());
+            mHost.setText(b.toString());
             mDescription.setText(event.getDescription());
         }
     }

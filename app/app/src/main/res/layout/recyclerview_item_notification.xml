@@ -1,70 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="175dp"
-    android:layout_marginBottom="8dp"
-    android:layout_marginHorizontal="8dp"
-    app:cardBackgroundColor="@android:color/darker_gray"
-    app:cardElevation="4dp"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="16dp">
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_marginBottom="10dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginStart="@dimen/horizontal_padding_recyclerviews"
+    android:layout_marginEnd="@dimen/horizontal_padding_recyclerviews"
+    app:cardElevation="16dp"
+    app:cardCornerRadius="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:padding="2dp"
-        android:layout_margin="6dp">
+        android:layout_gravity="center">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardview_invitePicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="250dp"
+            app:cardElevation="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/imageview_friend_or_event"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginStart="8dp"
-            android:padding="2dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_gravity="center"
+            android:scaleType="centerCrop" />
+        </androidx.cardview.widget.CardView>
 
         <TextView
-            android:id="@+id/textview_title"
-            android:gravity="start"
+            android:id="@+id/textview_invite_title"
+            android:gravity="center"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:layout_marginTop="8dp"
-            android:layout_toEndOf="@+id/imageview_friend_or_event"
+            android:layout_toEndOf="@+id/cardview_invitePicture"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageview_friend_or_event"
+            app:layout_constraintStart_toEndOf="@+id/cardview_invitePicture"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textview_content"
+            android:id="@+id/textview_invite_eventTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:layout_toEndOf="@+id/imageview_friend_or_event"
+            android:layout_toEndOf="@+id/cardview_invitePicture"
             android:gravity="center"
             android:textColor="@android:color/black"
-            android:textSize="15sp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/cardview_invitePicture"
+            app:layout_constraintTop_toBottomOf="@+id/textview_invite_title" />
+
+        <TextView
+            android:id="@+id/textview_invite_eventHost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/cardview_invitePicture"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/textview_invite_eventDate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/cardview_invitePicture"
+            app:layout_constraintTop_toBottomOf="@+id/textview_invite_eventTitle" />
+
+        <TextView
+            android:id="@+id/textview_invite_eventDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_toEndOf="@+id/cardview_invitePicture"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
             app:layout_constraintBottom_toTopOf="@+id/button_accept"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageview_friend_or_event"
-            app:layout_constraintTop_toBottomOf="@+id/textview_title" />
+            app:layout_constraintStart_toEndOf="@+id/cardview_invitePicture"
+            app:layout_constraintTop_toBottomOf="@+id/textview_invite_eventHost" />
 
         <Button
             android:id="@+id/button_accept"
             android:background="@android:color/holo_orange_light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minHeight="30dp"
+            android:minWidth="64dp"
             android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/button_decline"
-            app:layout_constraintStart_toEndOf="@+id/imageview_friend_or_event"
             android:text="@string/button_accept"
             android:textColor="@android:color/black" />
 
@@ -73,6 +110,8 @@
             android:background="@android:color/holo_orange_light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minHeight="30dp"
+            android:minWidth="64dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="parent"

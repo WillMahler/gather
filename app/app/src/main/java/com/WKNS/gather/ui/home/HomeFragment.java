@@ -1,8 +1,6 @@
 package com.WKNS.gather.ui.home;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,24 +8,17 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
-import com.WKNS.gather.EventDetailsActivity;
-import com.WKNS.gather.MainActivity;
 import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Users.User;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.recyclerViews.adapters.UserEventRecyclerViewAdapter;
-import com.WKNS.gather.recyclerViews.clickListeners.OnItemClickListener;
-import com.WKNS.gather.testData.Event;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.MetadataChanges;
@@ -35,12 +26,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
     public static String TAG = HomeFragment.class.getSimpleName();
-    
+
     private ArrayList<UserEvent> mUserEvents;
     private HomeViewModel mHomeViewModel;
     private RecyclerView mRecyclerView;
@@ -52,46 +42,58 @@ public class HomeFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mUserEvents = ((MainActivity)getActivity()).getmUserEvents();
-
-        ((MainActivity)getActivity()).setHomeFragmentRefreshListener(new MainActivity.HomeFragmentRefreshListener() {
-            @Override
-            public void onRefresh(ArrayList<UserEvent> userEvents) {
-                mUserEvents.clear();
-                mUserEvents.addAll(userEvents);
-                mAdapter.notifyDataSetChanged();
-            }
-        });
     }
 
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mHomeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        mRoot = inflater.inflate(R.layout.fragment_home, container, false);
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        mRecyclerView = mRoot.findViewById(R.id.recyclerView_Home);
-        mRecyclerView.setHasFixedSize(true);
+        View view = inflater.inflate(R.layout.fragment_home,container, false);
+        ViewPager viewPager = view.findViewById(R.id.viewpager_homeFragment);
+        setupViewPager(viewPager);
 
-        mLayoutManager = new LinearLayoutManager(mRoot.getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        TabLayout tabs = view.findViewById(R.id.tablayout_homeFragment);
+        tabs.setTabMode(TabLayout.MODE_FIXED);
+        tabs.setTabGravity(TabLayout.GRAVITY_FILL);
+        tabs.setupWithViewPager(viewPager);
 
-        mAdapter = new UserEventRecyclerViewAdapter(mUserEvents);
-        mRecyclerView.setAdapter(mAdapter);
+        return view;
+    }
 
-        mAdapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-                intent.putExtra("EVENT_ID", mUserEvents.get(position).eventID());
+    private void setupViewPager(ViewPager viewPager) {
+        Adapter adapter = new Adapter(getChildFragmentManager());
+        adapter.addFragment(new HomeUpcomingFragment(), "Upcoming Events");
+        adapter.addFragment(new HomeDraftsFragment(), "Drafts");
 
-                Gson gson = new Gson();
-                String userObjectString = gson.toJson(((MainActivity) getActivity()).getUserObject());
-                intent.putExtra("USER_STR", userObjectString);
+        viewPager.setAdapter(adapter);
+    }
 
-                startActivity(intent);
-            }
-        });
+    static class Adapter extends FragmentPagerAdapter {
+        private final ArrayList<Fragment> mFragmentList = new ArrayList<>();
+        private final ArrayList<String> mFragmentTitleList = new ArrayList<>();
 
-        return mRoot;
+        public Adapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
 }

@@ -62,7 +62,6 @@ public class EventDetailsSummary extends Fragment {
         mFAB = view.findViewById(R.id.floatingActionButton);
 
         mFAB.hide();
-        mDisplayPic.setImageResource(R.drawable.ic_baseline_video_library_24);
 
         setEventDetails(mEventObj);
         displayFAB(mEventObj);
@@ -77,6 +76,8 @@ public class EventDetailsSummary extends Fragment {
             if (photoURL == null || photoURL.isEmpty()) {
                 mDisplayPic.setImageResource(R.drawable.ic_baseline_video_library_24);
             } else {
+                mDisplayPic.setImageResource(0);
+                mDisplayPic.setPadding(0, 0, 0, 0);
                 new DownloadImageTask(mDisplayPic).execute(photoURL);
             }
 

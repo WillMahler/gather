@@ -290,7 +290,7 @@ public class CreateEventActivity extends AppCompatActivity implements TimePicker
                             public void onClick(DialogInterface dialog, int which) {
                                 if (validateData()) {
                                     try {
-                                        if(imageURI != null) {
+                                        if(imageURI != null && imageURL.isEmpty()) {
                                             uploadPictureToDB(imageURI, true);
                                         }
                                         else {
@@ -310,7 +310,7 @@ public class CreateEventActivity extends AppCompatActivity implements TimePicker
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
-                                    if(imageURI != null) {
+                                    if(imageURI != null && imageURL.isEmpty()) {
                                         uploadPictureToDB(imageURI, false);
                                     }
                                     if (!eventID.isEmpty() && event.isPublished()) {
@@ -362,6 +362,7 @@ public class CreateEventActivity extends AppCompatActivity implements TimePicker
 
         if(requestCode == 1 && resultCode==RESULT_OK && data != null && data.getData() != null) {
             imageURI = data.getData();
+            imageURL = "";
             mEventImage.setPadding(0, 0, 0, 0);
             mEventImage.setImageURI(imageURI);
         }
@@ -510,6 +511,8 @@ public class CreateEventActivity extends AppCompatActivity implements TimePicker
 
     private void populateFields() {
         if(!event.getPhotoURL().equals("")) {
+            imageURL = event.getPhotoURL();
+            mEventImage.setImageResource(0);
             mEventImage.setPadding(0, 0, 0, 0);
             new DownloadImageTask(mEventImage).execute(event.getPhotoURL());
         }
@@ -529,7 +532,7 @@ public class CreateEventActivity extends AppCompatActivity implements TimePicker
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Attendee attendee = document.toObject(Attendee.class);
-                                if (!attendee.getEmail().equals(userObject.getEmail())) {
+                                if (attendee.getEmail() != null && !attendee.getEmail().equals(userObject.getEmail())) {
                                     guestListArray.add(attendee.getEmail());
                                 }
                             }
@@ -603,7 +606,7 @@ public class CreateEventActivity extends AppCompatActivity implements TimePicker
         // Add event to events collection, if it doesn't already exist.
         // Otherwise, update the event document.
         if (eventID.isEmpty()) { // Initial Event Creation
-             db.collection("events")
+            db.collection("events")
                     .add(event)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override

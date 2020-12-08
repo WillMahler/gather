@@ -6,4 +6,5 @@
 - Reviewed Nick's PR for Invites (#100)
   - Mostly cleaned up formatting/naming
 - Reviewed Katrina's PR for accepting/declining Invites (#101)
+- Made Notifications clickable to bring up specific event page
 - Fixed Drafts vs Upcoming events showing up in homepage fragments

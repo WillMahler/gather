@@ -33,10 +33,10 @@ public class HomeDraftsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mUserEvents = ((MainActivity)getActivity()).getUserEvents();
+        mUserEvents = ((MainActivity)getActivity()).getmUserEventsDrafts();
 
         // TODO Need to actually clean this up so that this pulls drafts only
-        ((MainActivity)getActivity()).setHomeFragmentRefreshListener(new MainActivity.HomeFragmentRefreshListener() {
+        ((MainActivity)getActivity()).setDraftRefreshListener(new MainActivity.DraftEventsRefreshListener() {
             @Override
             public void onRefresh(ArrayList<UserEvent> userEvents) {
                 mUserEvents.clear();

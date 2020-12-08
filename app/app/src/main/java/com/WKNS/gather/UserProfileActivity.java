@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.os.Bundle;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -94,6 +95,9 @@ public class UserProfileActivity extends AppCompatActivity {
                     else {
                         mBio.setText(bio);
                     }
+
+                    Linkify.addLinks(mEmail, Linkify.EMAIL_ADDRESSES);
+                    Linkify.addLinks(mPhoneNum, Linkify.PHONE_NUMBERS);
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {

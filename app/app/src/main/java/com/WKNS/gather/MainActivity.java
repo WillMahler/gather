@@ -148,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //Rebuilds the list every events are retrieved/ a change is made
                 mUserEventsInvited.clear();
+
                 for (QueryDocumentSnapshot doc : value) {
                     UserEvent newEvent = doc.toObject(UserEvent.class);
                     newEvent.setEventID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)

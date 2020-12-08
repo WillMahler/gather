@@ -98,7 +98,6 @@ public class EventDetailsPeople extends Fragment {
         mDeclined = new ArrayList<>();
 
         mDb = FirebaseFirestore.getInstance();
-
         mEventDetailsActivity = (EventDetailsActivity) getActivity();
 
         mTextAttending = view.findViewById(R.id.textView_eventDetails_attending);

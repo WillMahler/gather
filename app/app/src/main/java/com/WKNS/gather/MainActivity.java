@@ -9,21 +9,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import com.WKNS.gather.databaseModels.Users.User;
-import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
@@ -35,7 +31,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -47,13 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
 
     private User userObject;
-    private ArrayList<UserEvent> mUserEventsInvited;
 
     private DocumentReference userObjDoc;
-    private CollectionReference userEventsCollection;
-
-    //Listeners for fragments to be updated on userEvents
-    private NotificationFragmentRefreshListener notificationFragmentRefreshListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         setSupportActionBar(actionBar);
-
-        mUserEventsInvited = new ArrayList<>();
 
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.navigation_home, R.id.navigation_create_event, R.id.navigation_notification, R.id.navigation_profile).build();
@@ -91,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
 
         // retrieving user data from database
         listenUser();
-        listenUserEventsInvited();
     }
 
     public void logout() {
@@ -127,52 +114,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //This function listen to user events collection
-    private void listenUserEventsInvited(){
-        //TODO: BATCH the requests for events, limit it to 15 most recent events??
-        userEventsCollection = db.collection("users").document(mAuth.getUid())
-                .collection("userEvents");
-        userEventsCollection.whereEqualTo("status", 0).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value,
-                                @Nullable FirebaseFirestoreException e) {
-
-                if (e != null) {
-                    Log.d(TAG, "listenUserEventsInvited(): Listen Failed.", e);
-                    return;
-                }
-
-                //Rebuilds the list every events are retrieved/ a change is made
-                mUserEventsInvited.clear();
-
-                for (QueryDocumentSnapshot doc : value) {
-                    UserEvent newEvent = doc.toObject(UserEvent.class);
-                    newEvent.setEventID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)
-                    newEvent.setPublished(doc.getBoolean("published"));
-                    mUserEventsInvited.add(newEvent);
-                }
-
-                if (getNotificationRefreshListener()!=null) {
-                    getNotificationRefreshListener().onRefresh(mUserEventsInvited);
-                }
-            }
-        });
-    }
-
-
-    //Listener setup for notification fragment to recieve updates for when userEvents are downloaded properly
-    public interface NotificationFragmentRefreshListener{
-        void onRefresh(ArrayList<UserEvent> userEvents);
-    }
-
-    public NotificationFragmentRefreshListener getNotificationRefreshListener() {
-        return notificationFragmentRefreshListener;
-    }
-
-    public void setNotificationFragmentRefreshListener(NotificationFragmentRefreshListener notificationRefreshListener) {
-        this.notificationFragmentRefreshListener = notificationRefreshListener;
-    }
-
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
         public DownloadImageTask() {
@@ -197,6 +138,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public User getUserObject() { return userObject; }
-    public ArrayList<UserEvent> getUserEventsInvited(){ return mUserEventsInvited; }
     public String getUserID(){ return mAuth.getUid(); }
 }

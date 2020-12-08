@@ -1,6 +1,7 @@
 package com.WKNS.gather.ui.tabbedViewFragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,18 +19,30 @@ import com.WKNS.gather.databaseModels.Events.Attendee;
 import com.WKNS.gather.databaseModels.Events.Event;
 import com.WKNS.gather.recyclerViews.adapters.AttendeeRecyclerViewAdapter;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
 public class EventDetailsPeople extends Fragment {
 
-    private ArrayList<Attendee> mInvited,  mAccepted, mDenied;
+    public static String TAG = EventDetailsPeople.class.getSimpleName();
+
+    private ArrayList<Attendee> mInvited,  mAccepted, mDeclined;
     private Event mEventObj;
     private TextView mTextAttending, mTextInvited, mTextDeclined;
     private RecyclerView mRecyclerViewAttending, mRecyclerViewInvited, mRecyclerViewDeclined;
     private AttendeeRecyclerViewAdapter mAttendingAdapter, mInvitedAdapter, mDeclinedAdapter;
     private RecyclerView.LayoutManager mLayoutManagerAttending, mLayoutManagerInvited, mLayoutManagerDeclined;
     private CollectionReference mAttendeesCollection;
+    private CollectionReference mEventInvitedCollection;
+    private FirebaseFirestore mDb;
+    private EventDetailsActivity mEventDetailsActivity;
+    private ListenerRegistration mListenerRegistration;
 
     public EventDetailsPeople(Event event) {
         mEventObj = event;
@@ -37,36 +50,37 @@ public class EventDetailsPeople extends Fragment {
 
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
-        mInvited = ((EventDetailsActivity)getActivity()).getInvited();
-        mAccepted = ((EventDetailsActivity)getActivity()).getAccepted();
-        mDenied = ((EventDetailsActivity)getActivity()).getDenied();
 
-        ((EventDetailsActivity)getActivity()).setAttendeeRefreshListener(new EventDetailsActivity.AttendeeRefreshListener() {
-            @Override
-            public void onRefresh(ArrayList<Attendee> attendees) {
-                mAccepted.clear();
-                mAccepted.addAll(attendees);
-                mAttendingAdapter.notifyDataSetChanged();
-            }
-        });
-
-        ((EventDetailsActivity)getActivity()).setInvitationRefreshListener(new EventDetailsActivity.InvitationRefreshListener() {
-            @Override
-            public void onRefresh(ArrayList<Attendee> invites) {
-                mInvited.clear();
-                mInvited.addAll(invites);
-                mInvitedAdapter.notifyDataSetChanged();
-            }
-        });
-
-        ((EventDetailsActivity)getActivity()).setInvitationDeclined(new EventDetailsActivity.InvitationDeclinedRefreshListener() {
-            @Override
-            public void onRefresh(ArrayList<Attendee> invites) {
-                mDenied.clear();
-                mDenied.addAll(invites);
-                mDeclinedAdapter.notifyDataSetChanged();
-            }
-        });
+//        mInvited = ((EventDetailsActivity)getActivity()).getInvited();
+//        mAccepted = ((EventDetailsActivity)getActivity()).getAccepted();
+//        mDenied = ((EventDetailsActivity)getActivity()).getDenied();
+//
+//        ((EventDetailsActivity)getActivity()).setAttendeeRefreshListener(new EventDetailsActivity.AttendeeRefreshListener() {
+//            @Override
+//            public void onRefresh(ArrayList<Attendee> attendees) {
+//                mAccepted.clear();
+//                mAccepted.addAll(attendees);
+//                mAttendingAdapter.notifyDataSetChanged();
+//            }
+//        });
+//
+//        ((EventDetailsActivity)getActivity()).setInvitationRefreshListener(new EventDetailsActivity.InvitationRefreshListener() {
+//            @Override
+//            public void onRefresh(ArrayList<Attendee> invites) {
+//                mInvited.clear();
+//                mInvited.addAll(invites);
+//                mInvitedAdapter.notifyDataSetChanged();
+//            }
+//        });
+//
+//        ((EventDetailsActivity)getActivity()).setInvitationDeclined(new EventDetailsActivity.InvitationDeclinedRefreshListener() {
+//            @Override
+//            public void onRefresh(ArrayList<Attendee> invites) {
+//                mDenied.clear();
+//                mDenied.addAll(invites);
+//                mDeclinedAdapter.notifyDataSetChanged();
+//            }
+//        });
     }
 
     @Nullable
@@ -78,6 +92,14 @@ public class EventDetailsPeople extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mInvited = new ArrayList<>();
+        mAccepted = new ArrayList<>();
+        mDeclined = new ArrayList<>();
+
+        mDb = FirebaseFirestore.getInstance();
+
+        mEventDetailsActivity = (EventDetailsActivity) getActivity();
 
         mTextAttending = view.findViewById(R.id.textView_eventDetails_attending);
         mTextInvited = view.findViewById(R.id.textView_eventDetails_invited);
@@ -103,12 +125,74 @@ public class EventDetailsPeople extends Fragment {
         mRecyclerViewAttending.setLayoutManager(mLayoutManagerAttending);
 
         mAttendingAdapter = new AttendeeRecyclerViewAdapter(mAccepted);
-        mDeclinedAdapter = new AttendeeRecyclerViewAdapter(mDenied);
+        mDeclinedAdapter = new AttendeeRecyclerViewAdapter(mDeclined);
         mInvitedAdapter = new AttendeeRecyclerViewAdapter(mInvited);
 
         mRecyclerViewAttending.setAdapter(mAttendingAdapter);
         mRecyclerViewDeclined.setAdapter(mDeclinedAdapter);
         mRecyclerViewInvited.setAdapter(mInvitedAdapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        attachListener();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        detachListener();
+    }
+
+    private void attachListener() {
+        mEventInvitedCollection = mDb.collection("events").
+                document(mEventDetailsActivity.getmEventID())
+                .collection("attendees");
+
+        //Listening for attendees
+        mListenerRegistration = mEventInvitedCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.d(TAG, "listenAttendees(): Listen failed.", e);
+                    return;
+                }
+                /*
+                Rebuilds all three lists anytime a change is made a lil inefficnet
+                but the fastest way I found to update recyclerviews without keeping
+                track of where the difference is in a recycler view.
+                 */
+                mInvited.clear();
+                mAccepted.clear();
+                mDeclined.clear();
+
+                for (QueryDocumentSnapshot doc : value) {
+                    Attendee a = doc.toObject(Attendee.class);
+                    a.setID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)
+
+                    switch (a.getStatus()) {
+                        case 0:
+                            mInvited.add(a);
+                            break;
+                        case 1:
+                            mAccepted.add(a);
+                            break;
+                        case 2:
+                            mDeclined.add(a);
+                    }
+                }
+
+                mAttendingAdapter.notifyDataSetChanged();
+                mInvitedAdapter.notifyDataSetChanged();
+                mDeclinedAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void detachListener() {
+        mListenerRegistration.remove();
     }
 
 }

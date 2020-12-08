@@ -159,15 +159,15 @@ public class EventDetailsActivity extends AppCompatActivity {
                     }
                 }
 
-                if (getAttendeeRefreshListener()!=null) {
-                    getAttendeeRefreshListener().onRefresh(mListAccepted);
-                }
-                if (getInvitationRefreshListener()!=null) {
-                    getInvitationRefreshListener().onRefresh(mListInvited);
-                }
-                if (getInvitationDeclinedRefreshListener()!=null) {
-                    getInvitationDeclinedRefreshListener().onRefresh(mListDeclined);
-                }
+//                if (getAttendeeRefreshListener()!=null) {
+//                    getAttendeeRefreshListener().onRefresh(mListAccepted);
+//                }
+//                if (getInvitationRefreshListener()!=null) {
+//                    getInvitationRefreshListener().onRefresh(mListInvited);
+//                }
+//                if (getInvitationDeclinedRefreshListener()!=null) {
+//                    getInvitationDeclinedRefreshListener().onRefresh(mListDeclined);
+//                }
             }
         });
     }
@@ -217,7 +217,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         this.invitationDeclinedRefreshListener = invitationDeniedRefreshListener;
     }
 
-    public Event getmEventObj(){ return mEventObj; };
+    public Event getmEventObj(){ return mEventObj; }
+    public String getmEventID() { return  mEventID; }
     public ArrayList<Attendee> getAccepted(){ return mListAccepted; }
     public ArrayList<Attendee> getInvited(){ return mListInvited; }
     public ArrayList<Attendee> getDenied(){ return mListDeclined; }

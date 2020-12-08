@@ -69,7 +69,6 @@ public class CreateEventActivity extends AppCompatActivity {
 
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private ArrayList<String> guestListArray;
-    //arraylists of attendees/invitations
     private Context context;
     private Gson gson;
     private FirebaseAuth mAuth;

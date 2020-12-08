@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
         mUserEventsAccepted = new ArrayList<>();
         mUserEventsInvited = new ArrayList<>();
 
-
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.navigation_home, R.id.navigation_create_event, R.id.navigation_notification, R.id.navigation_profile).build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);

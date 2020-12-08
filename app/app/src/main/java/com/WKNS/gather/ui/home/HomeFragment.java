@@ -10,35 +10,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.WKNS.gather.R;
-import com.WKNS.gather.databaseModels.Users.User;
-import com.WKNS.gather.databaseModels.Users.UserEvent;
-import com.WKNS.gather.recyclerViews.adapters.UserEventRecyclerViewAdapter;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.MetadataChanges;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
     public static String TAG = HomeFragment.class.getSimpleName();
-
-    private ArrayList<UserEvent> mUserEvents;
-    private HomeViewModel mHomeViewModel;
-    private RecyclerView mRecyclerView;
-    private UserEventRecyclerViewAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private View mRoot;
-    private FirebaseFirestore db;
-    private CollectionReference userEventsCollection;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +44,6 @@ public class HomeFragment extends Fragment {
         Adapter adapter = new Adapter(getChildFragmentManager());
         adapter.addFragment(new HomeUpcomingFragment(), "Upcoming Events");
         adapter.addFragment(new HomeDraftsFragment(), "Drafts");
-
 
         viewPager.setAdapter(adapter);
     }

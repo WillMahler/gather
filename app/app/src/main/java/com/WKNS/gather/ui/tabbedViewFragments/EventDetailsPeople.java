@@ -1,5 +1,6 @@
 package com.WKNS.gather.ui.tabbedViewFragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +15,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.WKNS.gather.EventDetailsActivity;
 import com.WKNS.gather.R;
+import com.WKNS.gather.UserProfileActivity;
 import com.WKNS.gather.databaseModels.Events.Attendee;
 import com.WKNS.gather.databaseModels.Events.Event;
 import com.WKNS.gather.recyclerViews.adapters.AttendeeRecyclerViewAdapter;
+import com.WKNS.gather.recyclerViews.clickListeners.OnItemClickListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -109,6 +113,37 @@ public class EventDetailsPeople extends Fragment {
         mRecyclerViewAttending.setAdapter(mAttendingAdapter);
         mRecyclerViewDeclined.setAdapter(mDeclinedAdapter);
         mRecyclerViewInvited.setAdapter(mInvitedAdapter);
+
+        setUpClickListeners(mInvitedAdapter, mDeclinedAdapter, mAttendingAdapter);
     }
 
+    private void setUpClickListeners(AttendeeRecyclerViewAdapter a1, AttendeeRecyclerViewAdapter a2, AttendeeRecyclerViewAdapter a3) {
+
+        a1.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+                intent.putExtra("attendeeID", mInvited.get(position).getAttendeeID());
+                startActivity(intent);
+            }
+        });
+
+        a2.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+                intent.putExtra("attendeeID", mDenied.get(position).getAttendeeID());
+                startActivity(intent);
+            }
+        });
+
+        a3.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+                intent.putExtra("attendeeID", mAccepted.get(position).getAttendeeID());
+                startActivity(intent);
+            }
+        });
+    }
 }

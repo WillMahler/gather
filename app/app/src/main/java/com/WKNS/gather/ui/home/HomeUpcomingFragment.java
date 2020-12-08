@@ -2,6 +2,7 @@ package com.WKNS.gather.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +13,20 @@ import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.recyclerViews.adapters.UserEventRecyclerViewAdapter;
 import com.WKNS.gather.recyclerViews.clickListeners.OnItemClickListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,24 +40,22 @@ public class HomeUpcomingFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private View mRoot;
 
+    private ListenerRegistration mListenerRegistration;
+    private CollectionReference mUserEventsCollection;
+
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore mDB;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mUserEvents = ((MainActivity)getActivity()).getUserEventsUpcoming();
-
-        // TODO Need to actually clean this up so that this pulls upcoming only
-        ((MainActivity)getActivity()).setUpcomingRefreshListener(new MainActivity.UpcomingEventsRefreshListener() {
-            @Override
-            public void onRefresh(ArrayList<UserEvent> userEvents) {
-                mUserEvents.clear();
-                mUserEvents.addAll(userEvents);
-                mAdapter.notifyDataSetChanged();
-            }
-        });
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRoot = inflater.inflate(R.layout.fragment_home_tab_upcoming, container, false);
+
+        mAuth = FirebaseAuth.getInstance();
+        mDB = FirebaseFirestore.getInstance();
+        mUserEvents = new ArrayList<>();
 
         mRecyclerView = mRoot.findViewById(R.id.recyclerView_home_upcoming);
         mRecyclerView.setHasFixedSize(true);
@@ -73,6 +81,53 @@ public class HomeUpcomingFragment extends Fragment {
         });
 
         return mRoot;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        attachListener();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        detachListener();
+    }
+
+    private void attachListener() {
+
+        mUserEventsCollection = mDB.collection("users").document(mAuth.getUid())
+                .collection("userEvents");
+        mListenerRegistration = mUserEventsCollection.whereEqualTo("status", 1).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value,
+                                @Nullable FirebaseFirestoreException e) {
+
+                if (e != null) {
+                    Log.d(TAG, "listenUserEventsAccepted(): Listen failed.", e);
+                    return;
+                }
+
+                mUserEvents.clear();
+
+                for (QueryDocumentSnapshot doc : value) {
+                    UserEvent newEvent = doc.toObject(UserEvent.class);
+                    newEvent.setEventID(doc.getId());
+                    newEvent.setPublished(doc.getBoolean("published"));
+                    if (newEvent.isPublished()) {
+                        mUserEvents.add(newEvent);
+                    }
+                }
+
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
+    }
+
+    private void detachListener() {
+        mListenerRegistration.remove();
     }
 
 }

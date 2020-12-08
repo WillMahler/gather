@@ -38,7 +38,6 @@ public class EventDetailsPeople extends Fragment {
     private RecyclerView mRecyclerViewAttending, mRecyclerViewInvited, mRecyclerViewDeclined;
     private AttendeeRecyclerViewAdapter mAttendingAdapter, mInvitedAdapter, mDeclinedAdapter;
     private RecyclerView.LayoutManager mLayoutManagerAttending, mLayoutManagerInvited, mLayoutManagerDeclined;
-    private CollectionReference mAttendeesCollection;
     private CollectionReference mEventInvitedCollection;
     private FirebaseFirestore mDb;
     private EventDetailsActivity mEventDetailsActivity;
@@ -50,37 +49,6 @@ public class EventDetailsPeople extends Fragment {
 
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
-
-//        mInvited = ((EventDetailsActivity)getActivity()).getInvited();
-//        mAccepted = ((EventDetailsActivity)getActivity()).getAccepted();
-//        mDenied = ((EventDetailsActivity)getActivity()).getDenied();
-//
-//        ((EventDetailsActivity)getActivity()).setAttendeeRefreshListener(new EventDetailsActivity.AttendeeRefreshListener() {
-//            @Override
-//            public void onRefresh(ArrayList<Attendee> attendees) {
-//                mAccepted.clear();
-//                mAccepted.addAll(attendees);
-//                mAttendingAdapter.notifyDataSetChanged();
-//            }
-//        });
-//
-//        ((EventDetailsActivity)getActivity()).setInvitationRefreshListener(new EventDetailsActivity.InvitationRefreshListener() {
-//            @Override
-//            public void onRefresh(ArrayList<Attendee> invites) {
-//                mInvited.clear();
-//                mInvited.addAll(invites);
-//                mInvitedAdapter.notifyDataSetChanged();
-//            }
-//        });
-//
-//        ((EventDetailsActivity)getActivity()).setInvitationDeclined(new EventDetailsActivity.InvitationDeclinedRefreshListener() {
-//            @Override
-//            public void onRefresh(ArrayList<Attendee> invites) {
-//                mDenied.clear();
-//                mDenied.addAll(invites);
-//                mDeclinedAdapter.notifyDataSetChanged();
-//            }
-//        });
     }
 
     @Nullable
@@ -130,6 +98,7 @@ public class EventDetailsPeople extends Fragment {
         mRecyclerViewAttending.setAdapter(mAttendingAdapter);
         mRecyclerViewDeclined.setAdapter(mDeclinedAdapter);
         mRecyclerViewInvited.setAdapter(mInvitedAdapter);
+
     }
 
     @Override
@@ -149,7 +118,6 @@ public class EventDetailsPeople extends Fragment {
                 document(mEventDetailsActivity.getmEventID())
                 .collection("attendees");
 
-        //Listening for attendees
         mListenerRegistration = mEventInvitedCollection.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value,
@@ -158,18 +126,14 @@ public class EventDetailsPeople extends Fragment {
                     Log.d(TAG, "listenAttendees(): Listen failed.", e);
                     return;
                 }
-                /*
-                Rebuilds all three lists anytime a change is made a lil inefficnet
-                but the fastest way I found to update recyclerviews without keeping
-                track of where the difference is in a recycler view.
-                 */
+
                 mInvited.clear();
                 mAccepted.clear();
                 mDeclined.clear();
 
                 for (QueryDocumentSnapshot doc : value) {
                     Attendee a = doc.toObject(Attendee.class);
-                    a.setID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)
+                    a.setID(doc.getId());
 
                     switch (a.getStatus()) {
                         case 0:
@@ -193,5 +157,4 @@ public class EventDetailsPeople extends Fragment {
     private void detachListener() {
         mListenerRegistration.remove();
     }
-
 }

@@ -47,16 +47,12 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
 
     private User userObject;
-    private ArrayList<UserEvent> mUserEventsUpcoming;
-    private ArrayList<UserEvent> mUserEventsDrafts;
     private ArrayList<UserEvent> mUserEventsInvited;
 
     private DocumentReference userObjDoc;
     private CollectionReference userEventsCollection;
 
     //Listeners for fragments to be updated on userEvents
-    private UpcomingEventsRefreshListener mHomeFragRefreshListener;
-    private DraftEventsRefreshListener mDraftsRefreshListener;
     private NotificationFragmentRefreshListener notificationFragmentRefreshListener;
 
     @Override
@@ -71,8 +67,6 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(actionBar);
 
-        mUserEventsUpcoming = new ArrayList<>();
-        mUserEventsDrafts = new ArrayList<>();
         mUserEventsInvited = new ArrayList<>();
 
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
@@ -97,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
 
         // retrieving user data from database
         listenUser();
-        listenUserEventsAccepted();
         listenUserEventsInvited();
     }
 
@@ -165,68 +158,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    private void listenUserEventsAccepted(){
-        //TODO: BATCH the requests for events, limit it to 15 most recent events??
-        userEventsCollection = db.collection("users").document(mAuth.getUid())
-                .collection("userEvents");
-        userEventsCollection.whereEqualTo("status", 1).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value,
-                                @Nullable FirebaseFirestoreException e) {
-
-                if (e != null) {
-                    Log.d(TAG, "listenUserEventsAccepted(): Listen failed.", e);
-                    return;
-                }
-
-                //Rebuilds the list every events are retrieved/ a change is made
-                mUserEventsUpcoming.clear();
-                for (QueryDocumentSnapshot doc : value) {
-                    UserEvent newEvent = doc.toObject(UserEvent.class);
-                    newEvent.setEventID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)
-                    newEvent.setPublished(doc.getBoolean("published"));
-                    if (newEvent.isPublished()) {
-                        mUserEventsUpcoming.add(newEvent);
-                    } else {
-                        mUserEventsDrafts.add(newEvent);
-                    }
-                }
-
-                if (mHomeFragRefreshListener != null ) {
-                    mHomeFragRefreshListener.onRefresh(mUserEventsUpcoming);
-                }
-
-                if (mDraftsRefreshListener != null) {
-                    mDraftsRefreshListener.onRefresh(mUserEventsDrafts);
-                }
-            }
-        });
-    }
-
-    //Listener setup for home fragment to recieve updates for when userEvents are downloaded properly
-    public interface UpcomingEventsRefreshListener {
-        void onRefresh(ArrayList<UserEvent> userEvents);
-    }
-
-    public UpcomingEventsRefreshListener getUpcomingRefreshListener() {
-        return mHomeFragRefreshListener;
-    }
-
-    public void setUpcomingRefreshListener(UpcomingEventsRefreshListener listener) {
-        this.mHomeFragRefreshListener = listener;
-    }
-
-    public interface DraftEventsRefreshListener {
-        void onRefresh(ArrayList<UserEvent> userEvents);
-    }
-
-    public DraftEventsRefreshListener getDraftRefreshListener() {
-        return mDraftsRefreshListener;
-    }
-
-    public void setDraftRefreshListener(DraftEventsRefreshListener listener) {
-        mDraftsRefreshListener = listener;
-    }
 
 
     //Listener setup for notification fragment to recieve updates for when userEvents are downloaded properly
@@ -266,8 +197,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public User getUserObject() { return userObject; }
-    public ArrayList<UserEvent> getUserEventsUpcoming(){ return mUserEventsUpcoming; }
-    public ArrayList<UserEvent> getmUserEventsDrafts() { return mUserEventsDrafts; }
     public ArrayList<UserEvent> getUserEventsInvited(){ return mUserEventsInvited; }
     public String getUserID(){ return mAuth.getUid(); }
 }

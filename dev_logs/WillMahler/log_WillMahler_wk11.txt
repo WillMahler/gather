@@ -8,3 +8,9 @@
 - Reviewed Katrina's PR for accepting/declining Invites (#101)
 - Made Notifications clickable to bring up specific event page
 - Fixed Drafts vs Upcoming events showing up in homepage fragments
+- Fixed HomeDraftsFragment and HomeUpcomingFragment data refreshing
+  by moving listeners out of the activity and into the fragment
+- Fixed User display in people tab:
+  - Rearranged db calls and listeners for changes, moved them into fragment
+  - Attendees will display, but something's wrong with the cloud functions 
+    that update attendees

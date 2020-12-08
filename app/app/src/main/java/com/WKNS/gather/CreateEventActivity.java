@@ -26,8 +26,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.WKNS.gather.databaseModels.Events.Attendee;
 import com.WKNS.gather.databaseModels.Events.Event;
 import com.WKNS.gather.databaseModels.Users.User;
+import com.WKNS.gather.helperMethods.DownloadImageTask;
 import com.WKNS.gather.recyclerViews.adapters.GuestListRecyclerViewAdapter;
 import com.WKNS.gather.recyclerViews.clickListeners.OnRemoveClickListener;
 import com.google.android.gms.tasks.Continuation;
@@ -39,7 +41,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -47,6 +52,7 @@ import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
 import com.google.gson.Gson;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,10 +78,13 @@ public class CreateEventActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private GuestListRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
     private User userObject;
     private Uri imageURI;
     private String imageURL;
+    private Event event;
     private String eventID;
+
     private Toolbar actionbar;
     private ImageView mEventImage;
     private EditText mTitle, mDate, mLocation, mDescription, mGuestListView;
@@ -121,6 +130,34 @@ public class CreateEventActivity extends AppCompatActivity {
                 choosePicture();
             }
         });
+
+        eventID = getIntent().getStringExtra("eventID");
+
+        // Initialize Event if editing + Populate Text Fields
+        if (!eventID.isEmpty()) {
+            db.collection("events")
+                    .document(eventID)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            DocumentSnapshot document = task.getResult();
+                            if (task.isSuccessful()) {
+                                if (document.exists()) {
+                                    event = document.toObject(Event.class);
+                                    event.setID(document.getId());
+                                    populateFields();
+                                }
+                                else {
+                                    Log.d("CreateEventActivity", "No such event");
+                                }
+                            }
+                            else {
+                                Log.d("CreateEventActivity", "get failed with ", task.getException());
+                            }
+                        }
+                    });
+        }
 
         mDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -203,6 +240,7 @@ public class CreateEventActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 deleteEvent();
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                 finish();
                             }
                         })
@@ -239,6 +277,7 @@ public class CreateEventActivity extends AppCompatActivity {
                                         e.printStackTrace();
                                         Toast.makeText(context, "Error: Event Not Published", Toast.LENGTH_SHORT).show();
                                     }
+                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                     finish();
                                 }
                             }
@@ -250,14 +289,19 @@ public class CreateEventActivity extends AppCompatActivity {
                                     if(imageURI != null) {
                                         uploadPictureToDB(imageURI, false);
                                     }
+                                    if (!eventID.isEmpty() && event.isPublished()) {
+                                        addEvent(true);
+                                        Toast.makeText(context, "Published Event Cannot Be Drafted - Event Published", Toast.LENGTH_SHORT).show();
+                                    }
                                     else {
                                         addEvent(false);
+                                        Toast.makeText(context, "Draft Saved", Toast.LENGTH_SHORT).show();
                                     }
-                                    Toast.makeText(context, "Draft Saved", Toast.LENGTH_SHORT).show();
                                 } catch (ParseException e) {
                                     e.printStackTrace();
                                     Toast.makeText(context, "Error: Draft Not Saved", Toast.LENGTH_SHORT).show();
                                 }
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                 finish();
                             }
                         });
@@ -435,6 +479,42 @@ public class CreateEventActivity extends AppCompatActivity {
         });
     }
 
+    private void populateFields() {
+        if(!event.getPhotoURL().equals("")) {
+            mEventImage.setPadding(0, 0, 0, 0);
+            new DownloadImageTask(mEventImage).execute(event.getPhotoURL());
+        }
+        mTitle.setText(event.getTitle());
+        mLocation.setText(event.getLocation());
+        mDescription.setText(event.getDescription());
+
+        mDate.setText(new SimpleDateFormat("dd/MM/yyyy").format(event.getDate()));
+
+        db.collection("events")
+                .document(event.getEventID())
+                .collection("attendees")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Attendee attendee = document.toObject(Attendee.class);
+                                if (!attendee.getEmail().equals(userObject.getEmail())) {
+                                    guestListArray.add(attendee.getEmail());
+                                }
+                            }
+                            mAdapter.notifyDataSetChanged();
+                        }
+                        else {
+                            Log.d("CreateEventActivity", "Error: ", task.getException());
+                        }
+                    }
+                });
+
+        // mAdapter.notifyDataSetChanged();
+    }
+
     private boolean validateData() {
         String title = mTitle.getText().toString().trim();
         String date = mDate.getText().toString().trim();
@@ -486,13 +566,10 @@ public class CreateEventActivity extends AppCompatActivity {
         com.WKNS.gather.databaseModels.Events.Event event = new Event(title, description, ownerID, ownerFirst,
                 ownerLast, date, location, isPublished, imageURL);
 
-        // String eventID = intent.getStringExtra("eventID");
-        eventID = "";
-
         // Add event to events collection, if it doesn't already exist.
         // Otherwise, update the event document.
         if (eventID.isEmpty()) { // Initial Event Creation
-             db.collection("events")
+            db.collection("events")
                     .add(event)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
@@ -562,10 +639,6 @@ public class CreateEventActivity extends AppCompatActivity {
     }
 
     private boolean deleteEvent() {
-        // Owner + Event Details
-        // String eventID = intent.getStringExtra("eventID");
-        String eventID = "";
-
         // If event is in database, delete. Do nothing otherwise.
         if (!eventID.isEmpty()) {
             db.collection("events").document(eventID)

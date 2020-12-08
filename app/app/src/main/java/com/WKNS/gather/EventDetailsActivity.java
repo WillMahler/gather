@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.WKNS.gather.databaseModels.Events.Attendee;
 import com.WKNS.gather.databaseModels.Events.Event;
+import com.WKNS.gather.databaseModels.Users.User;
 import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsPeople;
 import com.WKNS.gather.ui.tabbedViewFragments.EventDetailsSummary;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,22 +25,26 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 public class EventDetailsActivity extends AppCompatActivity {
     public static final String TAG = EventDetailsActivity.class.getSimpleName();
 
-    private Event mEventObj;
-    private ArrayList<Attendee> mListAccepted, mListInvited, mListDeclined;
     private String mEventID;
     private Toolbar actionbar;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private SectionsPagerAdapter mAdapter;
+
     private FirebaseFirestore mDb;
     private DocumentReference mEventDoc;
+
+    private User userObject;
+    private Event mEventObj;
     private CollectionReference mEventInvitedCollection;
+    private ArrayList<Attendee> mListAccepted, mListInvited, mListDeclined;
 
     //Listeners for event attendees/invites to be updated. Used to update recycler views.
     private AttendeeRefreshListener attendeeRefreshListener;
@@ -65,6 +70,11 @@ public class EventDetailsActivity extends AppCompatActivity {
         mTabLayout = findViewById(R.id.tabs);
         mViewPager = findViewById(R.id.view_pager);
         mAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        // User Object
+        Gson gson = new Gson();
+        String userObjectString = getIntent().getStringExtra("USER_STR");
+        userObject = gson.fromJson(userObjectString, User.class);
 
         mAdapter.addFrag(new EventDetailsSummary(mEventObj), getString(R.string.label_details));
         mAdapter.addFrag(new EventDetailsPeople(mEventObj), getString(R.string.label_people));
@@ -99,7 +109,9 @@ public class EventDetailsActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         mEventObj = document.toObject(Event.class);
+                        mEventObj.setID(document.getId());
                         ((EventDetailsSummary) mAdapter.getItem(0)).setEventDetails(mEventObj);
+                        ((EventDetailsSummary) mAdapter.getItem(0)).displayFAB(mEventObj);
                     } else {
                         Log.d(TAG, "getEventSummary() - document does not exist");
                     }
@@ -210,4 +222,5 @@ public class EventDetailsActivity extends AppCompatActivity {
     public ArrayList<Attendee> getInvited(){ return mListInvited; }
     public ArrayList<Attendee> getDenied(){ return mListDeclined; }
 
+    public User getUserObject() { return userObject; }
 }

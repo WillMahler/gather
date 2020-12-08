@@ -12,6 +12,7 @@ import com.WKNS.gather.R;
 import com.WKNS.gather.databaseModels.Users.UserEvent;
 import com.WKNS.gather.recyclerViews.adapters.UserEventRecyclerViewAdapter;
 import com.WKNS.gather.recyclerViews.clickListeners.OnItemClickListener;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -62,6 +63,11 @@ public class HomeDraftsFragment extends Fragment {
             public void onItemClick(int position) {
                 Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
                 intent.putExtra("EVENT_ID", mUserEvents.get(position).getEventID());
+
+                Gson gson = new Gson();
+                String userObjectString = gson.toJson(((MainActivity) getActivity()).getUserObject());
+                intent.putExtra("USER_STR", userObjectString);
+
                 startActivity(intent);
             }
         });

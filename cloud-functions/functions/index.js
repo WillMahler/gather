@@ -59,21 +59,33 @@ exports.addUserEvents = functions.firestore
             });
     });
 
+<<<<<<< HEAD
+/* Listens for events updated from events/:eventID and updates event from the 
+=======
 /* Listens for events updated from events/:eventID and updates event from the
+>>>>>>> master
 releavant User Events collections. */
 exports.updateUserEvents = functions.firestore
     .document('events/{eventID}')
     .onUpdate((change, context) => {
         let updatedEvent = change.after.data();
         let eventID = context.params.eventID;
+<<<<<<< HEAD
+        
+=======
 
+>>>>>>> master
         let updatedUserEvent = {
             title: updatedEvent.title,
             date: updatedEvent.date,
             location: updatedEvent.location,
             ownerID: updatedEvent.ownerID,
             ownerFirstName: updatedEvent.ownerFirstName,
+<<<<<<< HEAD
+            ownerLastName: updatedEvent.ownerLastName, 
+=======
             ownerLastName: updatedEvent.ownerLastName,
+>>>>>>> master
             description: updatedEvent.description,
             published: updatedEvent.published
         };
@@ -89,7 +101,11 @@ exports.updateUserEvents = functions.firestore
                      querySnapshot.forEach((doc) => {
                      let attendeeID = doc.id;
                      functions.logger.log('Updating User Events of Attendee', attendeeID);
+<<<<<<< HEAD
+                     
+=======
 
+>>>>>>> master
                      db.collection('users')
                        .doc(attendeeID)
                        .collection('userEvents')

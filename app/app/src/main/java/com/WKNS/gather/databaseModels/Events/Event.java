@@ -17,6 +17,7 @@ public class Event {
     private String ownerLastName;
 
     private Date date;
+    private String time;
     private String location;
     private boolean published;
     private String photoURL;
@@ -26,13 +27,14 @@ public class Event {
     public Event(){ }
 
     public Event(String title, String description, String ownerID, String ownerFirstName,
-                 String ownerLastName, Date date, String location, boolean published, String photoURL) {
+                 String ownerLastName, Date date, String time, String location, boolean published, String photoURL) {
         this.title = title;
         this.description = description;
         this.ownerID = ownerID;
         this.ownerFirstName = ownerFirstName;
         this.ownerLastName = ownerLastName;
         this.date = date;
+        this.time = time;
         this.location = location;
         this.published = published;
         this.photoURL = photoURL;
@@ -46,6 +48,7 @@ public class Event {
     public void setOwnerFirstName(String ownerFirstName) { this.ownerFirstName = ownerFirstName; }
     public void setOwnerLastName(String ownerLastName){ this.ownerLastName = ownerLastName; }
     public void setDate(Date date) { this.date = date; }
+    public void setTime(String time) { this.time = time; }
     public void setLocation(String location) { this.location = location; }
     public void setPublished(boolean published) { this.published = published; }
     public void setPhotoURL(String url) { this.photoURL = url; }
@@ -60,6 +63,7 @@ public class Event {
     public String getOwnerFirstName(){ return this.ownerFirstName; }
     public String getOwnerLastName(){ return this.ownerLastName; }
     public Date getDate() { return this.date; }
+    public String getTime() { return this.time; }
     public String getLocation() {return this.location; }
     public boolean isPublished() { return this.published; }
     public String getPhotoURL() { return this.photoURL; }

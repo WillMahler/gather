@@ -20,14 +20,12 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="15dp"
-            android:paddingBottom="30dp">
+            android:paddingBottom="50dp">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/imgCard"
-                android:layout_width="130dp"
-                android:layout_height="130dp"
-                app:cardCornerRadius="250dp"
+                android:layout_width="match_parent"
+                android:layout_height="225dp"
                 app:cardElevation="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -37,8 +35,8 @@
                     android:id="@+id/imageView_createEvent_displayPic"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="45dp"
                     android:scaleType="centerCrop"
+                    android:padding="150dp"
                     android:src="@drawable/ic_round_add_photo_alternate_24"/>
             </androidx.cardview.widget.CardView>
 
@@ -67,7 +65,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView_createEvent_title" />
 
             <TextView
-                android:id="@+id/textView_createEvent_password"
+                android:id="@+id/textView_createEvent_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/horizontal_padding_general"
@@ -88,7 +86,31 @@
                 android:ems="10"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView_createEvent_password" />
+                app:layout_constraintTop_toBottomOf="@+id/textView_createEvent_date" />
+
+            <TextView
+                android:id="@+id/textView_createEvent_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/horizontal_padding_general"
+                android:layout_marginTop="22dp"
+                android:labelFor="@id/editText_createEvent_date"
+                android:text="@string/label_event_time"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editText_createEvent_date" />
+
+            <EditText
+                android:id="@+id/editText_createEvent_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/horizontal_padding_general"
+                android:layout_marginEnd="@dimen/horizontal_padding_general"
+                android:drawableStart="@drawable/ic_round_access_time_24"
+                android:editable="false"
+                android:ems="10"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_createEvent_time" />
 
             <TextView
                 android:id="@+id/textView_createEvent_location"
@@ -99,7 +121,7 @@
                 android:labelFor="@id/editText_createEvent_location"
                 android:text="@string/label_event_location"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editText_createEvent_date" />
+                app:layout_constraintTop_toBottomOf="@+id/editText_createEvent_time" />
 
             <EditText
                 android:id="@+id/editText_createEvent_location"

@@ -14,3 +14,5 @@
   - Rearranged db calls and listeners for changes, moved them into fragment
   - Attendees will display, but something's wrong with the cloud functions 
     that update attendees
+- Fixed Notifications not displaying:
+  - Moved listeners into fragment out of MainActivity

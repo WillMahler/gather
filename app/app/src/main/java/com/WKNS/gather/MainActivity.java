@@ -47,14 +47,16 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
 
     private User userObject;
-    private ArrayList<UserEvent> mUserEventsAccepted;
+    private ArrayList<UserEvent> mUserEventsUpcoming;
+    private ArrayList<UserEvent> mUserEventsDrafts;
     private ArrayList<UserEvent> mUserEventsInvited;
 
     private DocumentReference userObjDoc;
     private CollectionReference userEventsCollection;
 
     //Listeners for fragments to be updated on userEvents
-    private HomeFragmentRefreshListener homeFragRefreshListener;
+    private UpcomingEventsRefreshListener mHomeFragRefreshListener;
+    private DraftEventsRefreshListener mDraftsRefreshListener;
     private NotificationFragmentRefreshListener notificationFragmentRefreshListener;
 
     @Override
@@ -69,7 +71,8 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(actionBar);
 
-        mUserEventsAccepted = new ArrayList<>();
+        mUserEventsUpcoming = new ArrayList<>();
+        mUserEventsDrafts = new ArrayList<>();
         mUserEventsInvited = new ArrayList<>();
 
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
@@ -152,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
                 for (QueryDocumentSnapshot doc : value) {
                     UserEvent newEvent = doc.toObject(UserEvent.class);
                     newEvent.setEventID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)
+                    newEvent.setPublished(doc.getBoolean("published"));
                     mUserEventsInvited.add(newEvent);
                 }
 
@@ -176,32 +180,54 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 //Rebuilds the list every events are retrieved/ a change is made
-                mUserEventsAccepted.clear();
+                mUserEventsUpcoming.clear();
                 for (QueryDocumentSnapshot doc : value) {
                     UserEvent newEvent = doc.toObject(UserEvent.class);
                     newEvent.setEventID(doc.getId()); //Store the id in the obj, (implict on firebase through the doc ID)
-                    mUserEventsAccepted.add(newEvent);
+                    newEvent.setPublished(doc.getBoolean("published"));
+                    if (newEvent.isPublished()) {
+                        mUserEventsUpcoming.add(newEvent);
+                    } else {
+                        mUserEventsDrafts.add(newEvent);
+                    }
                 }
 
-                if (getHomeRefreshListener()!=null) {
-                    getHomeRefreshListener().onRefresh(mUserEventsAccepted);
+                if (mHomeFragRefreshListener != null ) {
+                    mHomeFragRefreshListener.onRefresh(mUserEventsUpcoming);
+                }
+
+                if (mDraftsRefreshListener != null) {
+                    mDraftsRefreshListener.onRefresh(mUserEventsDrafts);
                 }
             }
         });
     }
 
     //Listener setup for home fragment to recieve updates for when userEvents are downloaded properly
-    public interface HomeFragmentRefreshListener{
+    public interface UpcomingEventsRefreshListener {
         void onRefresh(ArrayList<UserEvent> userEvents);
     }
 
-    public HomeFragmentRefreshListener getHomeRefreshListener() {
-        return homeFragRefreshListener;
+    public UpcomingEventsRefreshListener getUpcomingRefreshListener() {
+        return mHomeFragRefreshListener;
     }
 
-    public void setHomeFragmentRefreshListener(HomeFragmentRefreshListener homeRefreshListener) {
-        this.homeFragRefreshListener = homeRefreshListener;
+    public void setUpcomingRefreshListener(UpcomingEventsRefreshListener listener) {
+        this.mHomeFragRefreshListener = listener;
     }
+
+    public interface DraftEventsRefreshListener {
+        void onRefresh(ArrayList<UserEvent> userEvents);
+    }
+
+    public DraftEventsRefreshListener getDraftRefreshListener() {
+        return mDraftsRefreshListener;
+    }
+
+    public void setDraftRefreshListener(DraftEventsRefreshListener listener) {
+        mDraftsRefreshListener = listener;
+    }
+
 
     //Listener setup for notification fragment to recieve updates for when userEvents are downloaded properly
     public interface NotificationFragmentRefreshListener{
@@ -240,7 +266,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public User getUserObject() { return userObject; }
-    public ArrayList<UserEvent> getUserEvents(){ return mUserEventsAccepted; }
+    public ArrayList<UserEvent> getUserEventsUpcoming(){ return mUserEventsUpcoming; }
+    public ArrayList<UserEvent> getmUserEventsDrafts() { return mUserEventsDrafts; }
     public ArrayList<UserEvent> getUserEventsInvited(){ return mUserEventsInvited; }
     public String getUserID(){ return mAuth.getUid(); }
 }

@@ -2,6 +2,7 @@ package com.WKNS.gather;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,7 +30,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.WKNS.gather.databaseModels.Events.Attendee;
 import com.WKNS.gather.databaseModels.Events.Event;
 import com.WKNS.gather.databaseModels.Users.User;
+import com.WKNS.gather.helperMethods.DateFormatter;
 import com.WKNS.gather.helperMethods.DownloadImageTask;
+import com.WKNS.gather.helperMethods.TimePicker;
 import com.WKNS.gather.recyclerViews.adapters.GuestListRecyclerViewAdapter;
 import com.WKNS.gather.recyclerViews.clickListeners.OnRemoveClickListener;
 import com.google.android.gms.tasks.Continuation;
@@ -62,7 +65,7 @@ import java.util.UUID;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CreateEventActivity extends AppCompatActivity {
+public class CreateEventActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
     public static String TAG = CreateEventActivity.class.getSimpleName();
 
@@ -87,7 +90,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
     private Toolbar actionbar;
     private ImageView mEventImage;
-    private EditText mTitle, mDate, mLocation, mDescription, mGuestListView;
+    private EditText mTitle, mDate, mTime, mLocation, mDescription, mGuestListView;
     private Button mClearGuestList;
     private FloatingActionButton mFabCancel, mFabDone;
 
@@ -104,6 +107,7 @@ public class CreateEventActivity extends AppCompatActivity {
         mEventImage = findViewById(R.id.imageView_createEvent_displayPic);
         mTitle = findViewById(R.id.editText_createEvent_title);
         mDate = findViewById(R.id.editText_createEvent_date);
+        mTime =findViewById(R.id.editText_createEvent_time);
         mLocation = findViewById(R.id.editText_createEvent_location);
         mDescription = findViewById(R.id.editText_createEvent_description);
         mGuestListView = findViewById(R.id.editText_guest_list);
@@ -172,6 +176,24 @@ public class CreateEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showDatePicker();
+            }
+        });
+
+        mTime.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    TimePicker timePicker = new TimePicker();
+                    timePicker.show(getSupportFragmentManager(), "time picker");
+                }
+            }
+        });
+
+        mTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePicker timePicker = new TimePicker();
+                timePicker.show(getSupportFragmentManager(), "time picker");
             }
         });
 
@@ -399,6 +421,11 @@ public class CreateEventActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    @Override
+    public void onTimeSet(android.widget.TimePicker view, int hourOfDay, int minute) {
+        mTime.setText(DateFormatter.getFormattedTime(hourOfDay, minute));
+    }
+
     private void showGuestDialog(View v) {
         LinearLayout container = new LinearLayout(context);
         container.setOrientation(LinearLayout.VERTICAL);
@@ -487,8 +514,8 @@ public class CreateEventActivity extends AppCompatActivity {
         mTitle.setText(event.getTitle());
         mLocation.setText(event.getLocation());
         mDescription.setText(event.getDescription());
-
         mDate.setText(new SimpleDateFormat("dd/MM/yyyy").format(event.getDate()));
+        mTime.setText(event.getTime());
 
         db.collection("events")
                 .document(event.getEventID())
@@ -518,6 +545,7 @@ public class CreateEventActivity extends AppCompatActivity {
     private boolean validateData() {
         String title = mTitle.getText().toString().trim();
         String date = mDate.getText().toString().trim();
+        String time = mTime.getText().toString().trim();
         String location = mLocation.getText().toString().trim();
         String description = mDescription.getText().toString().trim();
 
@@ -528,7 +556,10 @@ public class CreateEventActivity extends AppCompatActivity {
         }
         if (date.isEmpty()) {
             mDate.setError("Date is required.");
-            //mDate.requestFocus();
+            return false;
+        }
+        if (time.isEmpty()) {
+            mDate.setError("Time is required.");
             return false;
         }
         if (location.isEmpty()) {
@@ -559,12 +590,13 @@ public class CreateEventActivity extends AppCompatActivity {
         String title = mTitle.getText().toString().trim();
         String dateString = mDate.getText().toString().trim();
         Date date = new SimpleDateFormat("dd/MM/yyyy").parse(dateString);
+        String time = mTime.getText().toString().trim();
         String location = mLocation.getText().toString().trim();
         String description = mDescription.getText().toString().trim();
 
         // Instantiate New Event Object
         com.WKNS.gather.databaseModels.Events.Event event = new Event(title, description, ownerID, ownerFirst,
-                ownerLast, date, location, isPublished, imageURL);
+                ownerLast, date, time, location, isPublished, imageURL);
 
         // Add event to events collection, if it doesn't already exist.
         // Otherwise, update the event document.

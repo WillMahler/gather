@@ -51,6 +51,8 @@ public class EventDetailsSummary extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         mDisplayPic = view.findViewById(R.id.imageView_eventDetails_displayPic);
         mTitle = view.findViewById(R.id.textView_eventDetails_title);
         mDate = view.findViewById(R.id.textView_eventDetails_date);
@@ -61,8 +63,6 @@ public class EventDetailsSummary extends Fragment {
 
         mFAB.hide();
         mDisplayPic.setImageResource(R.drawable.ic_baseline_video_library_24);
-
-        super.onViewCreated(view, savedInstanceState);
 
         setEventDetails(mEventObj);
         displayFAB(mEventObj);
@@ -95,8 +95,8 @@ public class EventDetailsSummary extends Fragment {
 
     public void displayFAB(final Event event) {
         if (event != null) {
-            /* Hide editing button if the current user is not the owner of the event, otherwise
-             * the button should launch CreateEventActivity */
+        /*   Hide editing button if the current user is not the owner of the event, otherwise
+             the button should launch CreateEventActivity */
             if (event.getOwnerID().equals(userObject.getUserID())) {
                 mFAB.show();
                 mFAB.setOnClickListener(new View.OnClickListener() {
@@ -110,6 +110,7 @@ public class EventDetailsSummary extends Fragment {
                         intent.putExtra("eventID", event.getEventID());
 
                         startActivity(intent);
+                        getActivity().finish();
                     }
                 });
             }

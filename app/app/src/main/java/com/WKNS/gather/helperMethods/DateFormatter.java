@@ -29,7 +29,7 @@ public class DateFormatter {
         return b.toString();
     }
 
-    private static String getFormattedTime(int hour, int minutes) {
+    public static String getFormattedTime(int hour, int minutes) {
         StringBuilder b = new StringBuilder();
 
         boolean isPM = (hour >= 13);

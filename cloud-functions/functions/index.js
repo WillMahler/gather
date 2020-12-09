@@ -9,30 +9,24 @@ admin.initializeApp();
 const db = admin.firestore();
 
 
-/* Listens for events added to events/:eventID and adds event to
-the userEvents collections of the event organizer + adds event's
-private subcollection */
+/*
+  addUserEvents
+
+  Listens for and gets called when an event is created in events 
+  collection. Events are created through a call in the client.
+
+  PURPOSE:
+  Adds the event to the userEvent collection of the owner
+*/
 exports.addUserEvents = functions.firestore
     .document('events/{eventID}')
     .onCreate((snap, context) => {
+
         let event = snap.data();
         let ownerID = event.ownerID;
         let eventID = context.params.eventID;
 
-        functions.logger.log('Addding Private Subcollection', eventID);
-
-        let eventPrivate = {
-            ownerID: ownerID,
-            roles: {},
-            permissions: ['title', 'date', 'location', 'description']
-        };
-        eventPrivate['roles'][ownerID] = 'owner';
-
-        db.collection('events')
-          .doc(eventID)
-          .collection('private')
-          .doc(ownerID)
-          .set(eventPrivate);
+        functions.logger.log('addUserEvents: triggered for event created by:', event.ownerFirstName);
 
         let userEvent = {
             title: event.title,
@@ -43,10 +37,11 @@ exports.addUserEvents = functions.firestore
             ownerLastName: event.ownerLastName,
             description: event.description,
             status: 1,
-            published: event.published
+            published: event.published,
+            profileImg: event.profileImg
         };
 
-        functions.logger.log('Add to User Events', eventID);
+        functions.logger.log('addUserEvents: adding to owner\'s userEvents collection');
 
         return db
             .collection('users')
@@ -60,13 +55,24 @@ exports.addUserEvents = functions.firestore
             });
     });
 
-/* Listens for events updated from events/:eventID and updates event from the
-releavant User Events collections. */
+/*
+  updateUserEvents
+
+  Listens for and gets called when an event is updated in events 
+  collection. Events are updated through a call in the client.
+
+  PURPOSE:
+  Updates the UserEvents of all Attendees. It does this by grabbing every 
+  User corresponding to an AttendeeID of the event and updating their UserEvent 
+  corresponding to this updated event
+*/
 exports.updateUserEvents = functions.firestore
     .document('events/{eventID}')
     .onUpdate((change, context) => {
         let updatedEvent = change.after.data();
         let eventID = context.params.eventID;
+
+        functions.logger.log('updateUserEvents: triggered for update to eventID:', eventID);
 
         let updatedUserEvent = {
             title: updatedEvent.title,
@@ -76,10 +82,11 @@ exports.updateUserEvents = functions.firestore
             ownerFirstName: updatedEvent.ownerFirstName,
             ownerLastName: updatedEvent.ownerLastName,
             description: updatedEvent.description,
-            published: updatedEvent.published
+            published: updatedEvent.published,
+            profileImg: updatedEvent.profileImg
         };
 
-        functions.logger.log('Updating User Events for all attendees', eventID);
+        functions.logger.log('updateUserEvents: updating UserEvents for all Attendees');
 
         // Update UserEvents document of this Event for all Attendees
         return db.collection('events')
@@ -89,7 +96,8 @@ exports.updateUserEvents = functions.firestore
                  .then((querySnapshot) => {
                      querySnapshot.forEach((doc) => {
                      let attendeeID = doc.id;
-                     functions.logger.log('Updating User Events of Attendee', attendeeID);
+
+                     functions.logger.log('updateUserEvents: updating UserEvents for AttendeeID:', attendeeID);
 
                      db.collection('users')
                        .doc(attendeeID)
@@ -110,21 +118,21 @@ exports.updateUserEvents = functions.firestore
             });
     });
 
-/* Listens for events deleted from events/:eventID and deletes event from
-the relevant User Events collections + deletes event's private subcollection*/
+/*
+  deleteUserEvents
+
+  Listens for and gets called when an event is deleted in events 
+  collection. Events are deleted through a call in the client.
+
+  PURPOSE:
+  Right now, it just deletes the event from the owner's userEvent collection
+*/
 exports.deleteUserEvents = functions.firestore
     .document('events/{eventID}')
     .onDelete((snap, context) => {
         let deletedEvent = snap.data();
         let ownerID = deletedEvent.ownerID;
         let eventID = context.params.eventID;
-
-        functions.logger.log('Deleting Event Private Subcollection', eventID);
-        db.collection('events')
-          .doc(eventID)
-          .collection('private')
-          .doc(ownerID)
-          .delete();
 
         functions.logger.log('Deleting from User Events', eventID);
         // // TODO: Published; Delete from Attendees
@@ -140,7 +148,6 @@ exports.deleteUserEvents = functions.firestore
 
 //Using an email list, it sends an invite to every user on the List
 //If the list is being updated, those people get removed from the event
-
 exports.sendInvites = functions.https
   .onCall(async (data, context) => {
     const eventID = data.eventID;
@@ -169,16 +176,22 @@ exports.sendInvites = functions.https
     }
 
     for(const email of newEmailList){
-        const snapshot = await usersRef.where('email', '==', email).get();
-        snapshot.forEach(userDoc => {
-            let newAttendee = {
-              'firstName': userDoc.data().firstName,
-              'lastName': userDoc.data().lastName,
-              'email': userDoc.data().email,
-              'profileImg': userDoc.data().profileImg,
-              'status': 0
-            }
-            attendeesRef.doc(userDoc.id).set(newAttendee);
+        const promise = usersRef.where('email', '==', email).get();
+        promise.then(async doc => {
+            doc.forEach(userDoc => {
+                let newAttendee = {
+                  'firstName': userDoc.data().firstName,
+                  'lastName': userDoc.data().lastName,
+                  'email': userDoc.data().email,
+                  'profileImg': userDoc.data().profileImg,
+                  'status': 0
+                }
+                attendeesRef.doc(userDoc.id).set(newAttendee);
+            });
+            return true;
+        }).catch(e => {
+            functions.logger.log('Error', e);
+            return false;
         });
     }
   });
@@ -204,10 +217,17 @@ exports.createEventAttendee = functions.firestore
                 ownerLastName: eventData.ownerLastName,
                 description: eventData.description,
                 status: 0,
-                published: eventData.published
+                published: eventData.published,
+                profileImg: eventData.profileImg
             };
             userEventsRef.doc(eventDoc.id).set(userEvent);
-        })
+            
+            return true;
+        }).catch(e => {
+            functions.logger.log('Error', e);
+            
+            return false;
+        });
     });
 
 exports.deleteEventAttendee = functions.firestore
@@ -217,13 +237,18 @@ exports.deleteEventAttendee = functions.firestore
           const eventRef = snap.ref.parent.parent;
           eventRef.get().then(eventDoc => {
               const eventID = eventDoc.id;
-              console.log("User: " + userID + " Event: " + eventID);
               db.collection('users')
                 .doc(userID)
                 .collection('userEvents')
                 .doc(eventID)
                 .delete();
-          });
+
+                return true;
+          }).catch(e => {
+            functions.logger.log('Error', e);
+            
+            return false;
+        });
     });
 
 exports.updateAttendeeStatus = functions.firestore
@@ -231,13 +256,17 @@ exports.updateAttendeeStatus = functions.firestore
     .onUpdate((change, context) => {
         let eventID = context.params.eventID;
         let attendeeID = context.params.userID;
-        let updatedAttendee = change.after.data();
+        let updatedEvent = change.after.data();
+
+        let newStatus = updatedEvent.status
+
+        functions.logger.log('updateAttendeeStatus: updating status to:', newStatus);
 
         return db.collection('events')
                     .doc(eventID)
                     .collection('attendees')
                     .doc(attendeeID)
-                    .set(updatedAttendee)
+                    .update("status", newStatus)
                     .catch(e => {
                         functions.logger.log('Error', e);
                         return false;

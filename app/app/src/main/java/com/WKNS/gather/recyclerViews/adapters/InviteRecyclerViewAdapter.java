@@ -47,7 +47,7 @@ public class InviteRecyclerViewAdapter extends RecyclerView.Adapter<InviteViewHo
     public void onBindViewHolder(@NonNull InviteViewHolder holder, int position) {
         UserEvent n = mNotifications.get(position);
 
-        String imgURI = n.getPhotoURL();
+        String imgURI = n.getProfileImg();
 
         if (imgURI == null || imgURI.isEmpty()) {
             holder.mImageView.setImageResource(R.drawable.ic_testimg_6_ft_apart_24);

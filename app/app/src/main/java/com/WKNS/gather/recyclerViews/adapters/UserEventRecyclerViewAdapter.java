@@ -40,7 +40,7 @@ public class UserEventRecyclerViewAdapter extends RecyclerView.Adapter<EventView
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         UserEvent e = mEvents.get(position);
 
-        String imgURI = e.getPhotoURL();
+        String imgURI = e.getProfileImg();
 
         if (imgURI == null || imgURI.isEmpty()) {
             holder.mImageView.setImageResource(R.drawable.ic_testimg_6_ft_apart_24);

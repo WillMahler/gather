@@ -1,3 +1,8 @@
 - Event pictures now implemented.
 - Photos stored in database on event creation and retrieved in EventDetails activity.
 - Handled cases where a user may not supply an image.
+- User profiles now clickable and show corresponding user information.
+- User profile data linkified for easy contact.
+- Application icon added.
+- Implemented timePicker dialog in createEvent activity.
+- Minor debugging and refactoring. 

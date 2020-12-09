@@ -16,3 +16,6 @@
     that update attendees
 - Fixed Notifications not displaying:
   - Moved listeners into fragment out of MainActivity
+- Fixed pictures not displaying in cards in RecyclerViews
+- Fixed attendee status for events not being updated properly
+- Fixed some lint errors in cloud functions

@@ -308,14 +308,12 @@ public class CreateEventActivity extends AppCompatActivity implements TimePicker
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
-                                    if(imageURI != null && imageURL.isEmpty()) {
+                                    if (imageURI != null && imageURL.isEmpty()) {
                                         uploadPictureToDB(imageURI, false);
-                                    }
-                                    if (!eventID.isEmpty() && event.isPublished()) {
+                                    } else if (!eventID.isEmpty() && event.isPublished()) {
                                         addEvent(true);
                                         Toast.makeText(context, "Published Event Cannot Be Drafted - Event Published", Toast.LENGTH_SHORT).show();
-                                    }
-                                    else {
+                                    } else {
                                         addEvent(false);
                                         Toast.makeText(context, "Draft Saved", Toast.LENGTH_SHORT).show();
                                     }

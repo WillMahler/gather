@@ -8,6 +8,8 @@ public class UserEvent {
     @Exclude private String eventID;
     private String title;
     private String description;
+    private String ownerID;
+    private String location;
 
     private String ownerFirstName;
     private String ownerLastName;
@@ -20,7 +22,7 @@ public class UserEvent {
     // Constructors
     public UserEvent() {}
 
-    public UserEvent(String title, String description, String ownerFirstName, String ownerLastName, Date date, int status, boolean published) {
+    public UserEvent(String title, String description, String ownerFirstName, String ownerLastName, Date date, int status, boolean published, String profileImg, String location) {
         this.title = title;
         this.description = description;
         this.ownerFirstName = ownerFirstName;
@@ -28,6 +30,8 @@ public class UserEvent {
         this.date = date;
         this.status = status;
         this.published = published;
+        this.profileImg = profileImg;
+        this.location = location;
     }
     //Setters
     public void setEventID(String eventID) { this.eventID = eventID; }
@@ -37,10 +41,12 @@ public class UserEvent {
     public void setOwnerLastName(String ownerLastName) { this.ownerLastName = ownerLastName; }
     public void setDate(Date date) {this.date = date; }
     public void setStatus(int status) { this.status = status; }
-    public void setProfileImg(String url) { this.profileImg = url; }
+    public void setProfileImg(String profileImg) { this.profileImg = profileImg; }
     public void setPublished(boolean published) {
         this.published = published;
     }
+    public void setOwnerID(String ownerID) { this.ownerID = ownerID; }
+    public void setLocation(String location) { this.location = location; }
 
     // Getters
     @Exclude public String getEventID() { return eventID; }
@@ -54,4 +60,11 @@ public class UserEvent {
     public boolean isPublished() {
         return published;
     }
+    public String getOwnerID() { return ownerID; }
+    public String getLocation() { return location; }
+
+
+
+
+
 }

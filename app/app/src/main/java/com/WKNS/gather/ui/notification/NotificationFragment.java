@@ -79,6 +79,8 @@ public class NotificationFragment extends Fragment {
         mDB = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        userObject = ((MainActivity)getActivity()).getUserObject();
+
         setOnClickListeners(mAdapter);
 
         return mRoot;

@@ -43,7 +43,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -56,7 +55,6 @@ import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
 import com.google.gson.Gson;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -510,11 +508,11 @@ public class CreateEventActivity extends AppCompatActivity implements TimePicker
     }
 
     private void populateFields() {
-        if(!event.getPhotoURL().equals("")) {
-            imageURL = event.getPhotoURL();
+        if(!event.getProfileImg().equals("")) {
+            imageURL = event.getProfileImg();
             mEventImage.setImageResource(0);
             mEventImage.setPadding(0, 0, 0, 0);
-            new DownloadImageTask(mEventImage).execute(event.getPhotoURL());
+            new DownloadImageTask(mEventImage).execute(event.getProfileImg());
         }
         mTitle.setText(event.getTitle());
         mLocation.setText(event.getLocation());

@@ -71,7 +71,7 @@ public class EventDetailsSummary extends Fragment {
         if (event != null) {
             mEventObj = event;
 
-            String photoURL = event.getPhotoURL();
+            String photoURL = event.getProfileImg();
 
             if (photoURL == null || photoURL.isEmpty()) {
                 mDisplayPic.setImageResource(R.drawable.ic_baseline_video_library_24);

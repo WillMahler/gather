@@ -1,7 +1,6 @@
 package com.WKNS.gather.databaseModels.Events;
 
 import com.google.firebase.firestore.Exclude;
-import com.google.type.DateTime;
 
 import java.util.Date;
 import java.util.Map;
@@ -20,14 +19,14 @@ public class Event {
     private String time;
     private String location;
     private boolean published;
-    private String photoURL;
+    private String profileImg;
 
     @Exclude private Map<String, Attendee> attendeeMap;
 
     public Event(){ }
 
     public Event(String title, String description, String ownerID, String ownerFirstName,
-                 String ownerLastName, Date date, String time, String location, boolean published, String photoURL) {
+                 String ownerLastName, Date date, String time, String location, boolean published, String profileImg) {
         this.title = title;
         this.description = description;
         this.ownerID = ownerID;
@@ -37,7 +36,7 @@ public class Event {
         this.time = time;
         this.location = location;
         this.published = published;
-        this.photoURL = photoURL;
+        this.profileImg = profileImg;
     }
 
     // Setters
@@ -51,7 +50,7 @@ public class Event {
     public void setTime(String time) { this.time = time; }
     public void setLocation(String location) { this.location = location; }
     public void setPublished(boolean published) { this.published = published; }
-    public void setPhotoURL(String url) { this.photoURL = url; }
+    public void setProfileImg(String url) { this.profileImg = url; }
 
     public void addAttendee(String id, Attendee attendee) { attendeeMap.put(id, attendee); }
   
@@ -66,6 +65,6 @@ public class Event {
     public String getTime() { return this.time; }
     public String getLocation() {return this.location; }
     public boolean isPublished() { return this.published; }
-    public String getPhotoURL() { return this.photoURL; }
+    public String getProfileImg() { return this.profileImg; }
 
 }

@@ -1,7 +1,5 @@
 package com.WKNS.gather.databaseModels.Users;
 
-import android.net.Uri;
-
 import com.google.firebase.firestore.Exclude;
 import java.util.Date;
 
@@ -14,7 +12,7 @@ public class UserEvent {
     private String ownerFirstName;
     private String ownerLastName;
 
-    private String photoURL;
+    private String profileImg;
     private Date date;
     private int status; // User's invite status; 0 if invited, 1 if accepted, 2 if declined
     private boolean published;
@@ -39,7 +37,7 @@ public class UserEvent {
     public void setOwnerLastName(String ownerLastName) { this.ownerLastName = ownerLastName; }
     public void setDate(Date date) {this.date = date; }
     public void setStatus(int status) { this.status = status; }
-    public void setPhotoURL(String url) { this.photoURL = url; }
+    public void setProfileImg(String url) { this.profileImg = url; }
     public void setPublished(boolean published) {
         this.published = published;
     }
@@ -52,7 +50,7 @@ public class UserEvent {
     public String getOwnerLastName() { return ownerLastName; }
     public Date getDate() { return date; }
     public int getStatus() { return status; }
-    public String getPhotoURL() { return this.photoURL; }
+    public String getProfileImg() { return this.profileImg; }
     public boolean isPublished() {
         return published;
     }
